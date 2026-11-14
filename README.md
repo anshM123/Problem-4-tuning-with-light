@@ -8,7 +8,8 @@ phonon–phonon interactions together, is orders of magnitude cheaper than two-t
 Kadanoff–Baym propagation, is verified on Hubbard models against exact results and is
 applied to WSe2, graphite and MgB2.
 
-Status: in progress. See `refs/experimental_targets.md` for the experimental targets.
+Status: in progress. The full technical report with results, scorecard and limitations is
+[REPORT.md](REPORT.md); experimental targets are collected in `refs/experimental_targets.md`.
 
 ## Layout
 * `lightmat/` – library (exact diagonalization, time-linear factorized NEGF solvers, …)

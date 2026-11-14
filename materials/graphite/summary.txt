@@ -1,0 +1,4 @@
+t=0.5 ps  Te=3225 K  excess energy (meV/cell): TO 31.94, LO 34.83, LA 6.46, TA 5.56, ZO 4.83, ZA 0.71
+t=1.5 ps  Te=2289 K  excess energy (meV/cell): TO 22.78, LO 24.49, LA 11.80, TA 11.28, ZO 14.94, ZA 3.35
+t=5 ps  Te=1161 K  excess energy (meV/cell): TO 10.96, LO 11.20, LA 15.25, TA 15.58, ZO 25.47, ZA 12.19
+t=100 ps  Te=629 K  excess energy (meV/cell): TO 6.72, LO 6.65, LA 16.73, TA 17.96, ZO 18.60, ZA 24.23

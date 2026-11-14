@@ -1,0 +1,6 @@
+E(KK) reference = 1.73 eV (A resonance); E(SK)-E(KK) = 6.8 meV (binding energies 184 / 212 meV)
+Sigma peak at 0.82 ps (measured 0.4 ps); K peak at 0.15 ps (measured 0.08-0.1)
+delay of Sigma half-rise vs K half-rise: 125 fs (measured ~300 fs)
+mean K/Sigma over 1-3.6 ps: 0.65 (measured ~0.47)
+late decay time of Sigma: 6.05 ps (measured ~2.2-2.5 ps)
+peak Sigma / peak K: 0.63 (measured 1.3)
