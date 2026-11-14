@@ -4,3 +4,6 @@ __pycache__/
 materials/graphite/phph.npz
 materials/graphite/dynamics_out.npz
 *.log
+**/phph.npz
+**/dynamics_out.npz
+**/sens_*.npz
