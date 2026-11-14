@@ -232,6 +232,19 @@ class PPLadder:
         else:
             self.ru, self.rd, self.G = s
 
+    def purify(self):
+        """Positivity projection for the G1-G2 mode: X = A + G and Y = B + G are the
+        hole-hole and particle-particle pair matrices, which must be positive
+        semidefinite (N-representability).  Negative eigenvalues are removed and G is
+        rebuilt as the average of the two projected estimates."""
+        A, B = self._AB()
+        G = 0.5 * (self.G + self.G.conj().T)
+        out = []
+        for M0 in (A + G, B + G):
+            w, v = np.linalg.eigh(M0)
+            out.append((v * np.clip(w, 0, None)) @ v.conj().T)
+        self.G = 0.5 * ((out[0] - A) + (out[1] - B))
+
     def step(self, t, dt):
         s0 = self.state()
         k1 = self.rhs(t, s0)
@@ -240,6 +253,8 @@ class PPLadder:
         k4 = self.rhs(t + dt, [a + dt * b for a, b in zip(s0, k3)])
         self.set_state([a + dt / 6 * (b + 2 * c + 2 * d + e)
                         for a, b, c, d, e in zip(s0, k1, k2, k3, k4)])
+        if self.mode == "g1g2" and getattr(self, "project", False):
+            self.purify()
 
     # -- observables -----------------------------------------------------
     def pair_corr(self):

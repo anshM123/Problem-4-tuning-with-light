@@ -1,0 +1,9 @@
+numpy>=2.4
+scipy>=1.17
+matplotlib>=3.10
+h5py>=3.16
+phonopy==4.10.0
+phono3py==4.10.0
+ase>=3.29
+torch>=2.13
+mace-torch==0.3.17

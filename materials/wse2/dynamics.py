@@ -155,3 +155,47 @@ if __name__ == "__main__":
     for tt in [0.08, 0.4, 0.7, 1.0, 1.3, 1.6, 2.1, 2.6, 3.1, 3.6]:
         i = np.argmin(abs(r["t"] - tt * 1e-12))
         print(f"t={tt:4.2f} ps  K={K[i]:.3e}  S={S[i]:.3e}  K/S={K[i]/max(S[i],1):.2f}")
+
+
+def run_above_gap(params, tau_form=0.5e-12, Tc0=2000.0, tmax=4e-12, nt=181):
+    """Above-gap (2.48 eV) excitation: hot free carriers first.
+    Electrons occupy the 2 K and 6 Sigma conduction valleys (masses 0.39, 0.64; Jin et al.
+    2014) in quasi-equilibrium at the carrier temperature Tc(t).  Tc relaxes to the
+    lattice temperature by optical-phonon emission: the cooling time is the number of
+    30.7 meV phonons needed to remove the excess energy times the golden-rule emission
+    time for the intravalley optical deformation potential (2.3e8 eV/cm).  Carriers bind
+    into excitons in the valley they occupy with formation time tau_form; excitons then
+    follow the exciton kinetics of run().  ARPES signal per valley = excitons + carriers."""
+    m = build(params)
+    p = m["p"]; nE = m["nE"]; de = p["de"]; TL = p["T"]
+    dCB = p["dCB_SK"]
+    D, w = 2.3e8, 0.0307
+    Omega = w / HBAR
+    W_em = (2 * np.pi / HBAR) * HBAR * D ** 2 / (2 * RHO * Omega) * dos2d(0.39) * (1 / np.expm1(w / (KB * TL)) + 1)
+    tau_c = (KB * (Tc0 - TL) / w) / W_em
+    Tc = lambda t: TL + (Tc0 - TL) * np.exp(-max(t, 0.0) / tau_c)
+    sig = p["pulse_fwhm"] / (2 * np.sqrt(2 * np.log(2)))
+    gen = lambda t: p["n_exc_hot"] * np.exp(-0.5 * (t / sig) ** 2) / (np.sqrt(2 * np.pi) * sig)
+    rhs_x = rhs_factory(m, lambda t: 0.0)
+
+    def fK_of(T):
+        wK = 2 * 0.39; wS = 6 * 0.64 * np.exp(-dCB / (KB * T))
+        return wK / (wK + wS)
+
+    def rhs(t, y):
+        nfree = y[0]; N = y[1:]
+        T = Tc(t); fK = fK_of(T)
+        form = nfree / tau_form
+        inj = np.zeros((3, nE))
+        k = min(int(round(KB * T / de)), nE - 1)
+        inj[0, k] = 0.5 * fK; inj[1, k] = 0.5 * fK; inj[2, k] = 1 - fK
+        return np.concatenate([[gen(t) - form], rhs_x(t, N) + (form * inj).reshape(-1)])
+
+    t_eval = np.linspace(-0.5e-12, tmax, nt)
+    sol = solve_ivp(rhs, (-0.8e-12, tmax), np.zeros(1 + 3 * nE), t_eval=t_eval, method="LSODA",
+                    rtol=1e-6, atol=1e3)
+    nf = sol.y[0]
+    N = sol.y[1:].reshape(3, nE, -1).sum(1)
+    fK = np.array([fK_of(Tc(t)) for t in sol.t])
+    return dict(t=sol.t, K=N[0] + N[1] + nf * fK, S=N[2] + nf * (1 - fK), nfree=nf,
+                Tc=np.array([Tc(t) for t in sol.t]), tau_c=tau_c)

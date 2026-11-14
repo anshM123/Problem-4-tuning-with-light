@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from excitons import exciton_table
-from dynamics import PARAMS, run
+from dynamics import PARAMS, run, run_above_gap
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIG = os.path.join(HERE, "..", "..", "figures"); os.makedirs(FIG, exist_ok=True)
@@ -18,7 +18,7 @@ exp_K = np.array([0.1, 0.4, 7.5, 6.8, 5.1, 4.2, 3.5, 3.2, 2.5, 1.75, 1.65, 1.35]
 exp_S = np.array([0.1, 0.25, 6.55, 9.8, 9.55, 8.95, 7.8, 6.55, 5.25, 4.45, 3.35, 2.75])
 
 res = run(P, "resonant")
-hot = run(P, "hot")
+hot = run_above_gap(P, tau_form=0.5e-12)
 t = res["t"] * 1e12
 K = res["KK"] + res["KKp"]; S = res["SK"]
 scale = exp_K.max() / K.max()
@@ -34,7 +34,7 @@ ax[1].plot(exp_t[2:], exp_K[2:] / exp_S[2:], "ko", ms=4, label="measured")
 ax[1].set_ylim(0, 3.5); ax[1].set_xlim(0, 4); ax[1].set_xlabel("delay (ps)"); ax[1].set_title("bright/dark ratio")
 ax[1].legend(fontsize=7)
 th = hot["t"] * 1e12
-ax[2].plot(th, (hot["KK"] + hot["KKp"]) / np.maximum(hot["SK"], 1e-30), "k-", label="K / Sigma (model)")
+ax[2].plot(th, hot["K"] / np.maximum(hot["S"], 1e-30), "k-", label="K / Sigma (model: carriers + excitons)")
 ax[2].plot([0.1, 3.5], [0.15, 0.32], "ks", label="measured (start, late)")
 ax[2].set_ylim(0, 1); ax[2].set_xlim(0, 4); ax[2].set_xlabel("delay (ps)"); ax[2].set_title("above-gap 2.48 eV pump")
 ax[2].legend(fontsize=7)
@@ -56,4 +56,7 @@ with open(os.path.join(HERE, "summary.txt"), "w") as fh:
     fh.write(f"mean K/Sigma over 1-3.6 ps: {ratio_late:.2f} (measured ~0.47)\n")
     fh.write(f"late decay time of Sigma: {-1/slope:.2f} ps (measured ~2.2-2.5 ps)\n")
     fh.write(f"peak Sigma / peak K: {S.max()/K.max():.2f} (measured 1.3)\n")
+    rr = hot["K"] / np.maximum(hot["S"], 1)
+    fh.write("above-gap K/Sigma at 0.1, 1, 3.5 ps: " + ", ".join(f"{np.interp(x, th, rr):.2f}" for x in (0.1, 1.0, 3.5))
+             + " (measured 0.15 -> 0.32)\n")
 print(open(os.path.join(HERE, "summary.txt")).read())

@@ -36,8 +36,8 @@ fig.tight_layout(); fig.savefig(os.path.join(FIG, "hubbard_cdw_sweep.png"), dpi=
 
 ed = np.loadtxt(os.path.join(D, "ladder_gs_ed.txt"))
 fig, ax = plt.subplots(1, 3, figsize=(12, 3.4))
-others = [("ladder_gs_fast_gwx.txt", "ph fluctuations (RPA kernel)", "rs-"),
-          ("ladder_gs_twa_spin_x1.txt", "phase-space trajectories", "g^-")]
+others = [("ladder_gs_ppladder.txt", "pp ladder (factorized, this work)", "bs-"),
+          ("ladder_gs_fast_gwx.txt", "ph fluctuations (RPA kernel)", "r^-")]
 for k, name in enumerate(["C_loc", "C_leg", "C_rung"]):
     ax[k].plot(ed[:, 0], ed[:, k + 1], "ko-", label="exact (ED)")
     for fn, lab, sty in others:
@@ -47,4 +47,38 @@ for k, name in enumerate(["C_loc", "C_leg", "C_rung"]):
     ax[k].set_xlabel("U/J"); ax[k].set_title(name)
 ax[0].legend(fontsize=7)
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "hubbard_ladder.png"), dpi=150)
+
+# ---- laser-driven ladder ---------------------------------------------------------
+pe = os.path.join(D, "ladder_laser_ed.npz")
+if os.path.exists(pe):
+    fig, ax = plt.subplots(2, 3, figsize=(13, 6))
+    sets = [("ladder_laser_ed.npz", "exact (ED)", "k-"), ("ladder_laser_fast_gwx.npz", "ph fluctuations", "r-"),
+            ("ladder_laser_pp.npz", "pp ladder", "b-")]
+    w = np.linspace(2.5, 5.0, 300)
+    for fn, lab, sty in sets:
+        d = np.load(os.path.join(D, fn)); t = d["t"]; dC = d["C"] - d["C"][0]
+        m = (t > 15) & (t <= 100)
+        for k, name in enumerate(["C_loc", "C_leg", "C_rung"]):
+            ax[0, k].plot(t, dC[:, k], sty, lw=1, label=lab)
+            x = dC[m, k] - dC[m, k].mean()
+            win = np.hanning(m.sum())
+            spec = np.abs(np.sum((x * win)[:, None] * np.exp(1j * w[None, :] * t[m][:, None]), 0))
+            ax[1, k].plot(w, spec / spec.max(), sty, lw=1, label=lab)
+            ax[0, k].set_title(r"$\Delta$" + name); ax[1, k].set_xlabel(r"$\hbar\omega/J$")
+    ax[0, 0].legend(fontsize=7); ax[0, 0].set_xlabel("t J/hbar"); ax[1, 0].set_ylabel("|FT| (norm.)")
+    fig.tight_layout(); fig.savefig(os.path.join(FIG, "hubbard_ladder_laser.png"), dpi=140)
+
+# ---- optical conductivity of the chain -----------------------------------------------
+fig, ax = plt.subplots(1, 3, figsize=(13, 3.4))
+for k, U in enumerate([3, 6, 12]):
+    p = os.path.join(D, f"chain_sigma_U{U}_gwx_c0.npz")
+    if not os.path.exists(p):
+        continue
+    d = np.load(p)
+    re = d["sigma"].real
+    ax[k].plot(d["w"], re / re.max(), "r-", label="TDHF/RPA linear response (64 sites)")
+    ax[k].axvline(float(d["gap"]), color="orange", ls="--", label="exact Bethe-ansatz gap")
+    ax[k].set_title(f"U/J = {U}"); ax[k].set_xlabel(r"$\hbar\omega/J$"); ax[k].set_xlim(0, 1.5 * U + 6)
+ax[0].legend(fontsize=7); ax[0].set_ylabel(r"Re $\sigma(\omega)$ (norm.)")
+fig.tight_layout(); fig.savefig(os.path.join(FIG, "hubbard_chain_sigma.png"), dpi=140)
 print("ok")

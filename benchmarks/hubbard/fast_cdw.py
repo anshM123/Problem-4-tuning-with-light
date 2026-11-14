@@ -18,7 +18,8 @@ for i in range(L - 1):
     h[i, i + 1] = h[i + 1, i] = -1.0
 r0 = np.diag([1.0 if i in occ else 0.0 for i in range(L)])
 t0 = time.time()
-s = PPLadder(h, U if mode != "hf" else U, r0, r0, mode="factorized" if mode == "hf" else mode)
+s = PPLadder(h, U, r0, r0, mode={"hf": "factorized", "g1g2p": "g1g2"}.get(mode, mode))
+s.project = (mode == "g1g2p")
 if mode == "hf":   # time-dependent Hartree(-Fock): drop correlations
     s.x = s.x[:, :0]; s.y = s.y[:, :0]
     s._gsel_orig = s._gsel
