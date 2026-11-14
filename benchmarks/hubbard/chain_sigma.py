@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from lightmat.fluct_ph import PHFluct
 
 U = float(sys.argv[1]); L = int(sys.argv[2]) if len(sys.argv) > 2 else 32
-ns = int(sys.argv[3]) if len(sys.argv) > 3 else 200
+ns = (None if sys.argv[3] == "exact" else int(sys.argv[3])) if len(sys.argv) > 3 else 200
 kernel = sys.argv[4] if len(sys.argv) > 4 else "gwx"
 collide = bool(int(sys.argv[5])) if len(sys.argv) > 5 else True
 gap = U - 4 + 8 * quad(lambda w: j1(w) / (w * (1 + np.exp(w * U / 2))), 0, 200, limit=400)[0]
