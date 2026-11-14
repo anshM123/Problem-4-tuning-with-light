@@ -44,15 +44,24 @@ for k, (key, keyc, e, name) in enumerate((("FH", "FHc", eFH, "first harmonic"), 
     a.plot(*e, "ko", label="measured, 12 kV/cm (Fig. 4)")
     a.set_xlabel("T (K)"); a.set_ylabel(r"$I_{NL}/E_A^6$ (norm.)"); a.set_title(name); a.legend(fontsize=7)
     a.set_ylim(0, 2.6)
-# (f) pumped state
-Ts = [7, 20, 23, 26, 30, 34, 38]
-s05 = [sigma_total(0.5, gaps(t, wc) if t < 38 else [0, 0], t).imag / 100 for t in Ts]
-s08 = [sigma_total(0.8, gaps(t, wc) if t < 38 else [0, 0], t).real / 100 for t in Ts]
-ax[1, 2].plot(Ts, s05, "b-o", label=r"model $\sigma_2$(0.5 THz) at T*")
-ax[1, 2].plot(Ts, s08, "r-o", label=r"model $\sigma_1$(0.8 THz) at T*")
-ax[1, 2].axhline(2.6e4, color="b", ls="--", label=r"measured $\sigma_2$, 2 ps after 150 kV/cm")
-ax[1, 2].axhline(2.55e4, color="r", ls="--", label=r"measured $\sigma_1$")
-ax[1, 2].axvspan(17.5, 22.8, color="gray", alpha=0.3, label="predicted T* range")
-ax[1, 2].set_xlabel("quasi-equilibrium temperature T* (K)"); ax[1, 2].legend(fontsize=6)
+# (f) pumped state: quasiparticle-bottleneck (Owen-Scalapino) state vs thermal state
+import bottleneck as bn, pump as pm
+from scipy.optimize import brentq
+U_abs = pm.absorbed(normal=False) * pm.VM
+D0 = bn.gaps_mu(0.0); E0 = bn.qp_energy(0.0, D0)
+mu = brentq(lambda m: bn.qp_energy(m, bn.gaps_mu(m)) - E0 - U_abs, 0.0, 6.0)
+Dmu = bn.gaps_mu(mu)
+ff = np.linspace(0.3, 2.0, 30)
+sb = np.array([bn.sigma_mu(x, Dmu, mu) for x in ff]) / 100
+Tst = 20.5
+st = np.array([sigma_total(x, gaps(Tst, wc), Tst) for x in ff]) / 100
+ax[1, 2].plot(ff, sb.real, "r-", label=r"$\sigma_1$, bottleneck state ($\mu^*$=%.1f meV)" % mu)
+ax[1, 2].plot(ff, sb.imag, "b-", label=r"$\sigma_2$, bottleneck state")
+ax[1, 2].plot(ff, st.real, "r:", label=r"$\sigma_1$, thermal T*=20.5 K")
+ax[1, 2].plot(ff, st.imag, "b:", label=r"$\sigma_2$, thermal T*")
+ax[1, 2].plot([0.8], [2.55e4], "ro", label=r"measured $\sigma_1$ (2 ps, 150 kV/cm)")
+ax[1, 2].plot([0.5, 1.0], [2.6e4, 1.5e4], "bo", label=r"measured $\sigma_2$")
+ax[1, 2].set_xlabel("f (THz)"); ax[1, 2].set_ylabel(r"$\Omega^{-1}$cm$^{-1}$"); ax[1, 2].legend(fontsize=6)
+ax[1, 2].set_title("2 ps after 150 kV/cm pump, 7 K")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "mgb2.png"), dpi=140)
 print("ok")
