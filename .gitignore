@@ -7,3 +7,4 @@ materials/graphite/dynamics_out.npz
 **/phph.npz
 **/dynamics_out.npz
 **/sens_*.npz
+benchmarks/unified/
