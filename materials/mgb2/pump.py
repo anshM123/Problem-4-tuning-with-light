@@ -91,3 +91,33 @@ if __name__ == "__main__":
         row = [sigma_total(f, D, T) / 100 for f in (0.5, 0.8, 1.0)]
         print(f"T={T:4.0f}  s1(0.8)={row[1].real:.2e}  s2(0.5)={row[0].imag:.2e}  s2(1.0)={row[2].imag:.2e}")
     print("measured at 2 ps after 150 kV/cm (7 K): s1 peak ~2.55e4 near 0.8 THz, s2(0.5) ~2.6e4, s2(1.0) ~1.5e4")
+
+
+def self_consistent_heating(Epk=150e5, with_lattice=False, nsteps=40):
+    """Absorption bleaches as the film heats: integrate dU/dF = a(T(U)) over the incident
+    fluence F (a = absorbed energy density per unit incident fluence at temperature T)."""
+    Ts = np.linspace(7, 40, 34)
+    Ue = np.array([electron_energy(T) for T in Ts]); Ue -= Ue[0]
+    Ul = np.array([lattice_energy(T) for T in Ts]) if with_lattice else 0 * Ts
+    Utot = (Ue + Ul) / VM                                 # J/m^3
+    a_cache = {}
+    def a_of(T):
+        Tk = round(min(T, 39.9), 1)
+        if Tk not in a_cache:
+            a_cache[Tk] = absorbed(Epk=1.0, T=Tk, normal=Tk >= 38)   # per (V/m)^2 peak field
+        return a_cache[Tk]
+    # fluence scales with Epk^2: integrate in s = (E/Epk)^2 from 0 to 1
+    U = 0.0; ds = 1.0 / nsteps
+    for k in range(nsteps):
+        T = np.interp(U, Utot, Ts)
+        U += a_of(T) * Epk ** 2 * ds
+    return np.interp(U, Utot, Ts), U
+
+
+if __name__ == "__main__":
+    for lat in (False, True):
+        Tst, U = self_consistent_heating(with_lattice=lat)
+        D = gaps(Tst, wc) if Tst < 38 else [0, 0]
+        s05 = sigma_total(0.5, D, Tst) / 100; s10 = sigma_total(1.0, D, Tst) / 100; s08 = sigma_total(0.8, D, Tst) / 100
+        print(f"self-consistent heating ({'electrons+lattice' if lat else 'electrons only'}): U = {U:.3e} J/m^3, "
+              f"T* = {Tst:.1f} K; sigma2(0.5) = {s05.imag:.2e}, sigma2(1.0) = {s10.imag:.2e}, sigma1(0.8) = {s08.real:.2e}")

@@ -39,13 +39,23 @@ def build(params):
     M = dict(KK=p["M_KK"], KKp=p["M_KK"], SK=p["M_SK"])
     E0 = dict(KK=0.0, KKp=p["dE_KKp"], SK=p["dE_SK"])
     # processes: (from, to, z, D [eV/cm], hOmega [eV])
-    procs = [("KK", "SK", 6, p["D_KS"], p["w_KS"]), ("SK", "KK", 1, p["D_KS"], p["w_KS"]),
-             ("KKp", "SK", 6, p["D_KS"], p["w_KS"]), ("SK", "KKp", 1, p["D_KS"], p["w_KS"]),
-             ("KK", "KKp", 1, p["D_KK"], p["w_KK"]), ("KKp", "KK", 1, p["D_KK"], p["w_KK"]),
-             ("SK", "SK", 4, p["D_SS"], p["w_SS"]),            # Sigma <-> Sigma' (same hole)
-             ]
-    for s in sp:
-        procs.append((s, s, 1, p["D_op"], p["w_op"]))
+    # processes (from, to, z, D [eV/cm], hOmega [eV]) with first-principles (DFPT)
+    # deformation potentials of Jin, Li, Mullen, Kim, PRB 90, 045422 (2014), Tables II/IV:
+    # electron K->Q (phonon at Q'): ac 8.2e8 @ 13.0 meV, op 0.8e8 @ 30.1 meV   (3 target valleys)
+    # electron K->Q' (phonon at M):  ac 5.7e8 @ 15.8 meV, op 3.2e8 @ 30.0 meV  (3 target valleys)
+    # electron K->K' (phonon at K):  ac 1.3e8 @ 16.8 meV, op 0.8e8 @ 29.7 meV
+    # electron Q->Q' (Q3/Q5, M3/M4, K' phonons): ac 2.7/1.8/4.2e8 @ ~13-16 meV
+    # intravalley optical: K 2.3e8, Q 2.7e8 @ 30.7 meV
+    procs = []
+    for (D, w) in ((p["D_KQ_ac"], 0.0130), (p["D_KQ_op"], 0.0301)):
+        procs += [("KK", "SK", 3, D, w), ("SK", "KK", 0.5, D, w), ("KKp", "SK", 3, D, w), ("SK", "KKp", 0.5, D, w)]
+    for (D, w) in ((p["D_KM_ac"], 0.0158), (p["D_KM_op"], 0.0300)):
+        procs += [("KK", "SK", 3, D, w), ("SK", "KK", 0.5, D, w), ("KKp", "SK", 3, D, w), ("SK", "KKp", 0.5, D, w)]
+    for (D, w) in ((1.3e8, 0.0168), (0.8e8, 0.0297)):
+        procs += [("KK", "KKp", 1, D, w), ("KKp", "KK", 1, D, w)]
+    for (D, w, z) in ((2.7e8, 0.0130, 2), (1.8e8, 0.0158, 2), (4.2e8, 0.0168, 1)):
+        procs += [("SK", "SK", z, D, w)]
+    procs += [("KK", "KK", 1, 2.3e8, 0.0307), ("KKp", "KKp", 1, 2.3e8, 0.0307), ("SK", "SK", 1, 2.7e8, 0.0307)]
     # golden-rule prefactor:  W = (2 pi/hbar) * hbar D^2/(2 rho Omega) * dos2d(M_f) * occupation
     W = []
     nB = lambda w: 1 / np.expm1(w / kT)
@@ -58,7 +68,11 @@ def build(params):
     # acoustic intravalley energy relaxation: quanta of hw_ac with quasi-elastic rate
     wac = p["w_ac"]
     for s in sp:
-        rate = p["G_ac"]
+        # 2D quasi-elastic acoustic momentum-relaxation rate 1/tau = D^2 kT M / (hbar^3 rho v^2)
+        Dac = p["Dac_K"] if s != "SK" else p["Dac_S"]
+        erg = 1.602176634e-12
+        Mg = M[s] * 9.1093837e-28
+        rate = (Dac * erg) ** 2 * (kT * erg) * Mg / ((1.054571817e-27) ** 3 * p["rho_g"] * p["v_s"] ** 2)
         i = sp.index(s)
         W.append((i, i, rate * (nB(wac) + 1), int(round(-wac / de))))
         W.append((i, i, rate * nB(wac), int(round(wac / de))))
@@ -121,12 +135,11 @@ PARAMS = dict(
     M_KK=0.65, M_SK=0.93,
     dE_KKp=0.0, dE_SK=None,       # set below from binding energies + CB offset
     dCB_SK=0.035,                  # Sigma - K conduction band offset (eV), DFT value
-    D_KS=3.0e8, w_KS=0.017,        # K -> Sigma electron intervalley (eV/cm, eV)
-    D_KK=2.0e8, w_KK=0.019,        # K -> K' electron intervalley
-    D_SS=2.0e8, w_SS=0.017,        # Sigma -> Sigma'
-    D_op=3.0e8, w_op=0.031,        # intravalley optical (A1')
-    G_ac=2.0e12, w_ac=0.002,       # intravalley acoustic thermalization (1/s, quantum)
-    g_EEA=0.05,                    # cm^2/s
+    D_KQ_ac=8.2e8, D_KQ_op=0.8e8, D_KM_ac=5.7e8, D_KM_op=3.2e8,   # Jin et al. 2014
+    Dac_K=1.1, Dac_S=0.2,          # exciton acoustic D = |D_e - D_h| (eV), Jin et al. 2014
+    rho_g=6.2e-7, v_s=3.3e5,       # g/cm^2, cm/s
+    w_ac=0.002,                    # energy quantum of intravalley acoustic scattering (eV)
+    g_EEA=0.08,                    # cm^2/s, exciton-exciton annihilation (see report)
     n_exc=8e12, n_exc_hot=2e12,    # cm^-2
     pulse_fwhm=241e-15, E_hot=0.17,
 )

@@ -37,7 +37,7 @@ def film_absorption(nr=2.72 + 1.47j, d=70e-9, lam=800e-9):
 
 F_inc = 12.0  # mJ/cm^2
 Aabs = film_absorption()
-F_abs = float(sys.argv[1]) if len(sys.argv) > 1 else F_inc * Aabs
+F_abs = float(sys.argv[1]) if len(sys.argv) > 1 else F_inc * Aabs * float(os.environ.get("FABS_SCALE", "1"))
 V_cell = 5.258 * 3.35 * 1e-30                     # m^3 per 2-atom cell (graphite)
 E_abs_cell = (F_abs * 1e-3 / 1e-4) / 70e-9 * V_cell / 1.602176634e-19   # eV per cell
 print(f"absorptance {Aabs:.3f}; absorbed fluence {F_abs:.2f} mJ/cm^2; {E_abs_cell*1e3:.1f} meV/cell")
@@ -70,7 +70,7 @@ if GW:
     near_K = np.minimum(dist([1 / 3, 1 / 3]), dist([2 / 3, 2 / 3])) < dist([0, 0])
     scale = np.where(near_K, 193 / 92, (62 / 45.6) * (0.0405 / 0.0444))
     Atab *= scale[:, None, None]
-C = float(P["C"])
+C = float(P["C"]) * float(os.environ.get("PHPH_SCALE", "1"))
 trip = P["trip"]; wt = P["wt"]; phi2 = P["phi2"]
 valid = freq > 0.05
 
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     Ee = sol.y[0]; n = sol.y[1:].T.reshape(len(sol.t), Nq, nb)
     Te = Te_of(Ee)
     Eph = (n * hw[None]).sum((1, 2)) / Nq
-    np.savez(os.path.join(HERE, "dynamics_out.npz"), t=sol.t, n=n.astype(np.float32), Te=Te,
+    np.savez(os.path.join(HERE, os.environ.get("OUT", "dynamics_out.npz")), t=sol.t, n=n.astype(np.float32), Te=Te,
              Ee=Ee, Eph=Eph, freq=freq, qfrac=E["qfrac"], E_abs_cell=E_abs_cell, F_abs=F_abs)
     print("energy check (eV/cell): absorbed %.4f  final electrons+phonon excess %.4f" %
           (E_abs_cell, Ee[-1] + Eph[-1] - Eph[0]))

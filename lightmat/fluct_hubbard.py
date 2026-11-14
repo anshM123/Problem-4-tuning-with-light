@@ -31,7 +31,8 @@ import numpy as np
 class PPLadder:
     def __init__(self, h, U, rho_up, rho_dn, rank_tol=1e-12, mode="factorized",
                  contract=False, selfconsistent=False, lyap_eps=1e-2,
-                 gweights=None):
+                 gweights=None, Ufun=None):
+        self.Ufun = Ufun
         self.selfconsistent = selfconsistent
         self.gw = (0.5, 0.5) if gweights is None else gweights
         self.lyap_eps = lyap_eps
@@ -109,7 +110,9 @@ class PPLadder:
 
     # -- equations of motion --------------------------------------------
     def rhs(self, t, state):
-        L, U = self.L, self.U
+        L = self.L
+        U = self.U if self.Ufun is None else self.Ufun(t)
+        self._Ucur = U
         h = self.hfun(t)
         if self.mode == "factorized":
             ru, rd, x, y = state
@@ -189,7 +192,7 @@ class PPLadder:
         return out.reshape(L * L, -1)
 
     def _rhs_fact(self, ru, rd, x, y, hu, hd):
-        U = self.U
+        U = self._Ucur
         g = self._gsel(x, y, ru, rd)
         Iu = U * (g["iiji"] - g["ijjj"])
         Id = U * (g["iiij"] - g["jijj"])
@@ -239,6 +242,17 @@ class PPLadder:
                         for a, b, c, d, e in zip(s0, k1, k2, k3, k4)])
 
     # -- observables -----------------------------------------------------
+    def pair_corr(self):
+        """G_{ij,ij} = connected <n_i up n_j dn> for all i, j (factorized mode)."""
+        L = self.L
+        ru, rd = self.rhos()
+        ubar = np.eye(L) - ru; dbar = np.eye(L) - rd
+        out = 0.0
+        for smp, (Mu, Md), wgt in ((self.x, (ubar, dbar), self.gw[0]), (self.y, (ru, rd), self.gw[1])):
+            s4 = smp.reshape(L, L, -1)
+            out = out + wgt * (np.real(np.einsum("ijr,ijr->ij", s4, s4.conj())) - np.real(np.outer(np.diag(Mu), np.diag(Md))))
+        return out
+
     def rhos(self):
         if self.mode == "factorized" and self.contract:
             return self.contract_rho(self.x, self.y)

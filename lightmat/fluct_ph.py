@@ -24,7 +24,7 @@ import scipy.sparse as sp
 
 class PHFluct:
     def __init__(self, L, bonds, U, rho0, kernel="gwx", nsamp=None, seed=0,
-                 Ufun=None, peierls=None):
+                 Ufun=None, peierls=None, onsite=None):
         """bonds: list of (i, j, J_ij, dx) with hopping -J_ij c^+_i c_j (+h.c.), dx = x_i - x_j
         used for the Peierls phase exp(i A dx).  Ufun(t) overrides U (adiabatic switching).
         peierls(t) -> A(t) vector potential (scalar, along the bond displacement dx)."""
@@ -33,6 +33,7 @@ class PHFluct:
         self.Ufun = Ufun if Ufun is not None else (lambda t: U)
         self.Afun = peierls if peierls is not None else (lambda t: 0.0)
         self.kernel = kernel
+        self.onsite = onsite
         self.rho = rho0.astype(complex)
         self.partner = np.concatenate([np.arange(L, 2 * L), np.arange(L)])
         self.V = self._initial_samples(rho0, nsamp, seed)
@@ -138,15 +139,27 @@ class PHFluct:
         hs = self.hop(t)
         exh = self.kernel in ("gw", "gwx")
         exd = self.kernel == "gwx"
-        Hint = self.hf_terms(rho, U, exh)
+        p = self.partner
+        a = np.arange(self.M)
+        # local (on-site) HF potential: diagonal d and spin-partner element o
+        d = U * np.real(rho[p, p]).astype(complex)
+        o = (-U * rho[a, p]) if exh else np.zeros(self.M, complex)
+        if self.onsite is not None:
+            d = d + self.onsite(t)
+        Hint = np.zeros((self.M, self.M), complex)
+        Hint[a, a] = d; Hint[a, p] = o
         hd = self._hopD + Hint
         I = self.collision(rho, V, U) if self.collide else 0.0
         drho = -1j * (hd @ rho - rho @ hd + I)
-        # samples
-        HV = self._spmul_left(hs, V) + Hint[None] @ V
-        VH = np.conj(np.transpose(self._spmul_left(hs, np.conj(np.transpose(V, (0, 2, 1)))), (0, 2, 1))) + V @ Hint[None]
-        dH = self.dh_batch(V, U, exd)
-        dV = -1j * (HV - VH + dH @ rho[None] - rho[None] @ dH)
+        # samples: sparse hopping + local terms, O(S M^2)
+        HV = self._spmul_left(hs, V) + d[None, :, None] * V + o[None, :, None] * V[:, p, :]
+        VH = (np.conj(np.transpose(self._spmul_left(hs, np.conj(np.transpose(V, (0, 2, 1)))), (0, 2, 1)))
+              + V * d[None, None, :] + V[:, :, p] * o[p][None, None, :])
+        dd = U * V[:, p, p]
+        od = (-U * V[:, a, p]) if exd else np.zeros_like(dd)
+        dHr = dd[:, :, None] * rho[None, :, :] + od[:, :, None] * rho[None, p, :]
+        rdH = rho[None, :, :] * dd[:, None, :] + rho[None][:, :, p] * od[:, p][:, None, :]
+        dV = -1j * (HV - VH + dHr - rdH)
         return drho, dV
 
     collide = True
