@@ -77,6 +77,10 @@ for k, U in enumerate([3, 6, 12]):
     d = np.load(p)
     re = d["sigma"].real
     ax[k].plot(d["w"], re / re.max(), "r-", label="TDHF/RPA linear response (64 sites)")
+    pc = os.path.join(D, f"chain_sigma_U{U}_L16_corr.npz")
+    if os.path.exists(pc):
+        dc = np.load(pc); rc = dc["sigma"].real
+        ax[k].plot(dc["w"], rc / rc.max(), "b-", label="with correlation dynamics (16 sites)")
     ax[k].axvline(float(d["gap"]), color="orange", ls="--", label="exact Bethe-ansatz gap")
     ax[k].set_title(f"U/J = {U}"); ax[k].set_xlabel(r"$\hbar\omega/J$"); ax[k].set_xlim(0, 1.5 * U + 6)
 ax[0].legend(fontsize=7); ax[0].set_ylabel(r"Re $\sigma(\omega)$ (norm.)")
