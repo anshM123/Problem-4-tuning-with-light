@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 *.npy
+materials/graphite/phph.npz
+materials/graphite/dynamics_out.npz
+*.log
