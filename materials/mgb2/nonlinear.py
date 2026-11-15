@@ -20,25 +20,40 @@ OMEGA = 0.63
 wc = fit_wc()
 Ts = np.array([7, 9, 12, 15, 17, 20, 22, 24, 25, 27, 28, 30, 32, 34, 36, 37])
 from twoband import WP
-FH, TH, gp, FHc, THc = [], [], [], [], []
+# Light-Higgs vertices compared:
+#  (i)  superfluid-weight vertex  d rho_s / d Delta  (diamagnetic coupling, dirty limit), both bands;
+#  (ii) impurity-assisted paramagnetic vertex  ~ Delta  of the dirty pi band (Tsuji & Nomura,
+#       PRR 2, 043029 (2020); the form behind the experiment's Eq. (1)); the nearly clean sigma
+#       band does not contribute.  Amplitude-mode damping eta = 0.55 THz = 2.27 meV, the value
+#       the experiment extracts from its joint FH/TH fit.
+ETA_P = 0.55 * THZ
+FH, TH, gp, FHc, THc, FHraw = [], [], [], [], [], []
 for T in Ts:
     D = gaps(T, wc)
     rp = rho_prime(D, T) / 1e8
-    vc = (WP / 1e3) ** 2 * D            # clean (Raman-type) vertex ~ Drude weight x Delta
+    vp = np.array([D[0], 0.0])           # paramagnetic, pi band
     D2 = D_amp(2 * OMEGA * THZ, D, T, wc)
     D0 = D_amp(1e-4, D, T, wc)
+    D2p = D_amp(2 * OMEGA * THZ, D, T, wc, eta=ETA_P)
+    D0p = D_amp(1e-4, D, T, wc, eta=ETA_P)
     s1 = sigma_total(OMEGA, D, T); s3 = sigma_total(3 * OMEGA, D, T)
     f1 = abs(1 + NS + Z0 * s1 * DFILM) ** 2; f3 = abs(1 + NS + Z0 * s3 * DFILM) ** 2
     FH.append(abs(rp @ (2 * D0 + D2) @ rp) ** 2 / f1); TH.append(abs(rp @ D2 @ rp) ** 2 / f3)
-    FHc.append(abs(vc @ (2 * D0 + D2) @ vc) ** 2 / f1); THc.append(abs(vc @ D2 @ vc) ** 2 / f3)
+    FHc.append(abs(vp @ (2 * D0p + D2p) @ vp) ** 2 / f1); THc.append(abs(vp @ D2p @ vp) ** 2 / f3)
+    # un-normalized FH at fixed incident field: field in the film ~ 2/|1 + n_s + Z0 sigma d|
+    FHraw.append(abs(vp @ (2 * D0p + D2p) @ vp) ** 2 / f1 / f1 ** 3)
     gp.append(2 * D[0] / THZ)
 FH = np.array(FH) / FH[0]; TH = np.array(TH) / TH[0]
-FHc = np.array(FHc) / FHc[0]; THc = np.array(THc) / THc[0]
+FHc = np.array(FHc) / FHc[0]; THc = np.array(THc) / THc[0]; FHraw = np.array(FHraw) / max(FHraw)
 exp_FH = {7.5: 1.0, 12: 0.83, 17: 0.68, 20: 0.65, 23: 0.5, 27.5: 0.32, 31: 0.2, 35: 0.1}
 exp_TH = {8: 1.0, 12: 0.9, 17: 0.5, 20: 0.3, 22: 0.2, 25: 0.1}
-print(" T    2Dpi   FH(dirty)  TH(dirty)  FH(clean)  TH(clean)")
+print(" T    2Dpi   FH(sf weight) TH(sf weight)  FH(pi param.) TH(pi param.)  FH raw (pi param.)")
 for i, T in enumerate(Ts):
-    print(f"{T:4.0f}  {gp[i]:.3f}   {FH[i]:.3f}      {TH[i]:.3f}      {FHc[i]:.3f}      {THc[i]:.3f}")
+    print(f"{T:4.0f}  {gp[i]:.3f}   {FH[i]:.3f}         {TH[i]:.3f}          {FHc[i]:.3f}         {THc[i]:.3f}          {FHraw[i]:.3f}")
+print(f"un-normalized FH maximum at {Ts[np.argmax(FHraw)]:.0f} K (measured 35-36 K at 12 kV/cm)")
+for name, mod, ex in (("FH", FHc, exp_FH), ("TH", THc, exp_TH)):
+    dev = [abs(np.interp(T, Ts, mod) - v) for T, v in ex.items()]
+    print(f"{name} (pi paramagnetic vertex): max deviation from measured {max(dev):.2f}")
 print("measured FH (12 kV/cm):", exp_FH)
 print("measured TH (12 kV/cm):", exp_TH)
 
@@ -73,5 +88,5 @@ for T in Tb:
     spec_store.append(out[m])
     print(f"broadband T={T:4.0f} K: model peak {pk:.2f} THz   (2Dpi = {2*D[0]/THZ:.2f})")
 print("measured peaks: 7K 1.05, 12K 1.03, 17K 0.95, 22K 0.9, 27K 0.8, 30K 0.7, 32K 0.65, 36K 0.6, 37K 0.55")
-np.savez(os.path.join(HERE, "nonlinear_out.npz"), Ts=Ts, FH=FH, TH=TH, FHc=FHc, THc=THc, gap_pi=gp, Tb=Tb,
+np.savez(os.path.join(HERE, "nonlinear_out.npz"), Ts=Ts, FH=FH, TH=TH, FHc=FHc, THc=THc, FHraw=FHraw, gap_pi=gp, Tb=Tb,
          peaks=np.array(peaks), freqs=freqs[(freqs > 0.3) & (freqs < 2.0)], spectra=np.array(spec_store))

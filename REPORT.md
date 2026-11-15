@@ -66,8 +66,10 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | 2Δ_π(T) | on the measured points from 5 to 36 K | Fig. 3c | ✔ |
 | | σ₂(ω) at 5 K | 9.0, 5.3, 2.4, 0.9 ×10⁴ Ω⁻¹cm⁻¹ at 0.3, 0.5, 1, 2 THz | ≈ 8, 6, 2, 1 ×10⁴ | ✔ |
 | | broadband nonlinear peak vs T | 1.11, 0.98, 0.88, 0.78, 0.62 THz at 7, 12, 17, 22, 27 K | 1.05, 1.03, 0.95, 0.90, 0.80 | ✔ (≤ 22 K) |
-| | normalized TH vs T | 1, 0.84, 0.64, 0.52, 0.41 at 8, 12, 17, 20, 22 K | 1, 0.9, 0.5, 0.3, 0.2 | ✔ monotonic, shallower |
-| | normalized FH vs T | flat to ≈ 23 K, then falls | monotonic from 7 K | ✘ |
+| | normalized TH vs T (π-band paramagnetic vertex, δ = 0.55 THz from the experiment) | 1, 0.71, 0.41, 0.28, 0.21, 0.13 at 8, 12, 17, 20, 22, 25 K | 1, 0.9, 0.5, 0.3, 0.2, 0.1 | ✔ (≤ 0.19) |
+| | normalized FH vs T (same vertex) | 1, 0.88, 0.69, 0.56, 0.44, 0.25, 0.12, 0.03 at 7.5–35 K | 1, 0.83, 0.68, 0.65, 0.50, 0.32, 0.20, 0.10 | ✔ (≤ 0.09) |
+| | superfluid-weight (diamagnetic) vertex instead | FH rises to 2.5× toward T_c | monotonic fall | ✘, excluded by the data |
+| | un-normalized FH maximum | 25 K | 35–36 K | ✘ |
 | | conductivity 2 ps after 150 kV/cm (bottleneck state) | σ₁(0.8) = 2.23, σ₂(0.5) = 1.98, σ₂(1.0) = 1.15 ×10⁴ | 2.55, 2.6, 1.5 ×10⁴ | ✔ (13–24 %) |
 | **Speed (measured)** | two-time KBE (second Born, our implementation) vs this work, 11-site chain, same dt and machine | cost ∝ N_t^1.21 vs N_t^3.15; 300× faster at N_t = 400; extrapolated 10⁴× (9 s vs 29 h, KBE needing 48 GB) at t = 50 ħ/J | — | ✔ |
 | **Speed** | graphite: 576 q × 6 branches, 1.2×10⁷ three-phonon processes, 100 ps | 11 min, 1 CPU core | two-time NEGF: not feasible | ✔ |
@@ -190,7 +192,9 @@ kernels.
   D(ω) = [V⁻¹ − diag(N_a P_a(ω))]⁻¹,  P_a(ω) = ∫dξ tanh(E/2T)/E · 4ξ²/(4E² − ω²).
 
 **Nonlinear response.**
-- Light enters through the A² (Raman-type) vertex v_a ∝ ω²_p,a Δ_a.
+- Light couples to the gap amplitudes through a two-photon vertex v_a. We compare the
+  superfluid-weight (diamagnetic) vertex ∂ρ_s,a/∂Δ_a with the impurity-assisted paramagnetic
+  vertex v ∝ (Δ_π, 0) of the dirty π band. The nonlinear data select the second (Sec. 3.4).
 - The third-order current is j₃ ∝ Σ v_a D_ab v_b A³.
 - Thin-film radiation and the experiment's normalization by the transmitted field are included.
 
@@ -540,23 +544,38 @@ published couplings. The equilibrium σ₂(ω) agrees with the measurement withi
   measurement within 0.1 THz up to 22 K.
 - Above 25 K the measured peaks stay higher; the authors attribute this to an overdamped mode
   tracking the transmitted spectrum.
-- The normalized third harmonic grows monotonically on cooling, as measured, but more weakly:
-  half value at ≈ 21 K versus ≈ 17 K.
-- The normalized first harmonic is flat up to 23 K, while the measurement already decreases.
-  The un-normalized first harmonic does rise and then fall with temperature as measured, but
-  peaks at 28 K instead of 35–36 K.
-- A dirty-limit superfluid-weight vertex gives the wrong first-harmonic trend, rising toward
-  T_c. This discriminates between the two light–Higgs coupling mechanisms.
-- **Why the first harmonic fails.**
-  - Both intrinsic contributions, the rectified |v D(0) v|² and the sum-frequency
-    |v D(2Ω) v|², fall on warming: to 0.78 and 0.74 of their 7.5 K values at 17 K.
-  - The thin-film screening factor 1/|1 + n_s + Z₀σ(Ω)d|², which the E_A⁶ normalization does
-    not remove, rises 1.4–2.2× toward T_c and flattens the normalized curve.
-  - Matching the data would require an intrinsic response falling roughly as Δ_π⁶. Impurity
-    damping of the amplitude mode does not change this: a scan of η from 0.02 to 3 meV leaves
-    the trend unchanged.
-  - We regard this as an open question for the theory of the FH signal (e.g. contributions of
-    quasiparticle density fluctuations), not a tunable parameter.
+- **Light–Higgs coupling.** The normalized harmonics discriminate between the possible
+  couplings of the THz field to the gap amplitude. Each is propagated with the same two-band
+  amplitude propagator D(ω) = [V⁻¹ − diag(N P(ω))]⁻¹ and the same thin-film screening factor
+  1/|1 + n_s + Z₀σ(ω)d|², which the E_A⁶ normalization does not remove.
+  - **Superfluid-weight vertex** ∂ρ_s/∂Δ (diamagnetic coupling), in the dirty limit or with the
+    finite-purity weight that our σ₂ uses: the normalized FH rises toward T_c (to 2.5× at
+    28 K). Its intrinsic response is nearly temperature-independent, as in Ginzburg–Landau
+    theory, while the screening factor grows 2.2× as σ₂ falls.
+  - **Direct orbital depairing by the supercurrent** (Usadel; weight fixed by the Einstein
+    relation): about 0.46 of the Higgs term, and it falls too slowly to change this.
+  - **Impurity-assisted paramagnetic vertex ∝ Δ of the dirty π band** (Tsuji & Nomura,
+    PRR 2, 043029 (2020); the form behind the experiment's own Eq. (1)), with the
+    amplitude-mode damping δ = 0.55 THz that the experiment extracts:
+
+| T (K) | 7.5 | 12 | 17 | 20 | 23 | 27.5 | 31 | 35 |
+|---|---|---|---|---|---|---|---|---|
+| FH, model | 1.00 | 0.88 | 0.69 | 0.56 | 0.44 | 0.25 | 0.12 | 0.03 |
+| FH, measured | 1.00 | 0.83 | 0.68 | 0.65 | 0.50 | 0.32 | 0.20 | 0.10 |
+
+| T (K) | 8 | 12 | 17 | 20 | 22 | 25 |
+|---|---|---|---|---|---|---|
+| TH, model | 1.00 | 0.71 | 0.41 | 0.28 | 0.21 | 0.13 |
+| TH, measured | 1.00 | 0.90 | 0.50 | 0.30 | 0.20 | 0.10 |
+
+  - FH agrees within 0.09 at all eight temperatures and TH within 0.19, the largest
+    deviation being at 12 K.
+  - Giving the nearly clean σ band (γ_σ/2Δ_σ ≈ 0.6) a comparable coupling destroys the
+    agreement (FH deviation ≥ 0.36). The data therefore select a π-band, Δ-proportional
+    coupling. This is a structural choice, not a fitted number; the one parameter, δ, is the
+    experiment's.
+  - The un-normalized FH maximum comes at 25 K, against 35–36 K measured. The authors relate
+    the raw FH enhancement near T_c to the temperature-dependent refractive index of the film.
 
 **Strongly pumped state.**
 - A quasi-thermal state cannot reproduce the measured combination of a normal-like σ₁ with a
@@ -640,7 +659,11 @@ All timings are for one laptop CPU core, Python/NumPy.
    - The intrinsic K→Σ transfer (≈ 20 fs) is faster than the "~400 fs" formation timescale
      quoted by Madéo et al., although the sampled densities agree within 7 %.
    - The late decay is 3.7 ps against 2.2 ps measured.
-4. **MgB₂.** The temperature dependence of the first harmonic is not reproduced.
+4. **MgB₂.**
+   - The normalized FH and TH are reproduced only with a π-band coupling proportional to Δπ
+     (impurity-assisted, paramagnetic). The vertices derived from the superfluid weight fail,
+     and we have not derived from first principles why the σ band does not contribute.
+   - The un-normalized FH peaks at 25 K instead of 35–36 K.
 5. **Method coverage.**
    - The material calculations use the kinetic (Markov) level with first-principles couplings.
      Electron–electron, electron–phonon and phonon–phonon scattering are solved together for

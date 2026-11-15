@@ -39,8 +39,8 @@ eFH = ([7.5, 12, 17, 20, 23, 27.5, 31, 35], [1.0, 0.83, 0.68, 0.65, 0.5, 0.32, 0
 eTH = ([8, 12, 17, 20, 22, 25, 28], [1.0, 0.9, 0.5, 0.3, 0.2, 0.1, 0.0])
 for k, (key, keyc, e, name) in enumerate((("FH", "FHc", eFH, "first harmonic"), ("TH", "THc", eTH, "third harmonic"))):
     a = ax[1, k]
-    a.plot(d["Ts"], d[keyc], "rs-", label="model, Raman-type (clean) vertex")
-    a.plot(d["Ts"], d[key], "g^--", label="model, superfluid-weight (dirty) vertex")
+    a.plot(d["Ts"], d[keyc], "rs-", label=r"model, $\pi$-band paramagnetic vertex $\propto\Delta_\pi$")
+    a.plot(d["Ts"], d[key], "g^--", label="model, superfluid-weight vertex")
     a.plot(*e, "ko", label="measured, 12 kV/cm (Fig. 4)")
     a.set_xlabel("T (K)"); a.set_ylabel(r"$I_{NL}/E_A^6$ (norm.)"); a.set_title(name); a.legend(fontsize=7)
     a.set_ylim(0, 2.6)
