@@ -1,6 +1,6 @@
 """Reproduce every number and figure of REPORT.md.
 
-python run_all.py            # everything (several hours on one laptop CPU)
+python run_all.py            # everything (roughly 15-20 h on one laptop CPU)
 python run_all.py hubbard    # only the model benchmarks
 python run_all.py materials  # only graphite, WSe2, MgB2
 python run_all.py unified    # one solver: limits A, B, C, ED test, graphite end to end
