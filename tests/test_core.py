@@ -109,3 +109,16 @@ def test_wse2_equilibrium_is_stationary():
     # the residual (< 1 % of the outflow) comes from rounding phonon energies to the grid
     out = sum(w[2] for w in m["W"]) * N
     assert np.max(np.abs(d[:, :200]) / out[:, :200]) < 0.02
+
+
+def test_kbe_reference_matches_exact_at_weak_coupling():
+    from lightmat.kbe import KBE2B
+    L, U, occ = 4, 0.5, [0, 2]
+    h = _chain(L); r0 = np.diag([1.0 if i in occ else 0.0 for i in range(L)])
+    k = KBE2B(h, U, r0, 0.02, 50)
+    for _ in range(50):
+        k.step()
+    m = Hubbard(L, 2, 2, chain_bonds(L), U)
+    psi = m.product_state(occ, occ)
+    ex = evolve(m, psi, np.array([0.0, 1.0]), observe=lambda p, t: m.densities(p))
+    assert np.max(np.abs(k.density() - ex[1][0])) < 0.01

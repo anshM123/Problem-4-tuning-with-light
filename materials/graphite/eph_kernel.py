@@ -17,7 +17,7 @@ from eph_tb import bands, coupling, frac_to_cart, B, HBAR_eVs, THz2eV
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 Nk = 450; SIG = 0.03; BETA2 = 0.0994 / 0.00454; NSUB = 4
-DE, EMAX = 0.005, 3.0
+DE, EMAX = 0.002, 3.0
 edges = np.arange(-EMAX, EMAX + DE / 2, DE); centers = 0.5 * (edges[1:] + edges[:-1]); NB = len(centers)
 P = np.load(os.path.join(HERE, "eph_rates_point.npz"))
 qf, freq = P["qfrac"], P["freq"]; Nq1 = int(round(np.sqrt(len(qf))))
