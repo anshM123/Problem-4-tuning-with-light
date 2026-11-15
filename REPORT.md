@@ -39,7 +39,8 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | first zero crossing of I | correct for U/J ≤ 4; delayed for U/J ≥ 5 (also in plain G1–G2) | ED | ✘ |
 | **1 Hubbard 6×2 ladder** | ground-state C_loc, C_leg, C_rung | pp ladder: C_loc, C_leg within 1.5 % at U/J = 0.5, 5 % at U/J = 1; −18 % (C_loc) at U/J = 4 | ED | ✔ for U/J ≤ 2 |
 | | laser-driven ΔC spectrum | dominant line 3.58 J (ph fluctuations) | 3.48 J (ED) | ✔ (3 %) |
-| **1 1D optical conductivity** | gap onset, U/J = 3, 6, 12 | 1.56, 5.06, 11.4 J (TDHF/RPA level) | Bethe ansatz 0.63, 2.89, 8.46 J | ✘ (overestimated, as in the reference δGW) |
+| **1 1D optical conductivity** | gap onset, U/J = 3, 6, 12 (RPA level, 64 sites) | 1.56, 5.06, 11.4 J | Bethe ansatz 0.63, 2.89, 8.46 J | ✘ (overestimated, as in the reference δGW) |
+| | main peak with correlation dynamics (16 sites, exact samples) | 0.62, 5.23, 14.0 J | Bethe ansatz gaps 0.63, 2.89, 8.46 J | ✔ U/J = 3; ≈ U/J = 6; ✘ U/J = 12 |
 | **2 WSe₂** | E(Σ-K) − E(K-K) | +6.8 meV | degenerate within 15 meV (≈ +3 meV) | ✔ |
 | | Σ-K population peak | 0.30 ps | 0.4 ps | ✔ |
 | | peak Σ / peak K | 1.18 | 1.3 | ✔ |
@@ -51,6 +52,9 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | A1′(K) rise | 0.18 ps (63 %) | 0.28 ps | ≈ |
 | | A1′(K) decay | 3.2 ps | 1.7 ps | ✘ (×1.9) |
 | | energy flow optical → acoustic → flexural, mode- and q-resolved | yes | yes | ✔ |
+| | one-phonon diffuse-scattering maps at 0.5, 1.5, 5, 100 ps | K-point spots early, Bragg-adjacent rings late (fig. `graphite_diffuse_maps.png`) | same sequence (Fig. 2 of the reference) | ✔ qualitative |
+| | diffuse rise at K / at M | 0.18 ps / 8.3 ps | 0.28 ps / 2.1 ps | ≈ / ✘ |
+| | all three interactions explicit (non-thermal carriers, e–e, e–ph, ph–ph) | A1′ peak 0.73 ps, decay 3.17 ps; thermal-electron model 0.70 / 3.20 ps | — | ✔ validates the thermal limit |
 | | energy conservation | exact | — | ✔ |
 | **4 MgB₂** | 2Δ_π(0), 2Δ_σ(0) | 1.07, 3.40 THz | 1.10, 3.4 THz | ✔ |
 | | 2Δ_π(T) | on the measured points from 5 to 36 K | Fig. 3c | ✔ |
@@ -59,6 +63,7 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | normalized TH vs T | 1, 0.84, 0.64, 0.52, 0.41 at 8, 12, 17, 20, 22 K | 1, 0.9, 0.5, 0.3, 0.2 | ✔ monotonic, shallower |
 | | normalized FH vs T | flat to ≈ 23 K, then falls | monotonic from 7 K | ✘ |
 | | conductivity 2 ps after 150 kV/cm (bottleneck state) | σ₁(0.8) = 2.23, σ₂(0.5) = 1.98, σ₂(1.0) = 1.15 ×10⁴ | 2.55, 2.6, 1.5 ×10⁴ | ✔ (13–24 %) |
+| **Speed (measured)** | two-time KBE (second Born, our implementation) vs this work, 11-site chain, same dt and machine | cost ∝ N_t^1.21 vs N_t^3.15; 300× faster at N_t = 400; extrapolated 10⁴× (9 s vs 29 h, KBE needing 48 GB) at t = 50 ħ/J | — | ✔ |
 | **Speed** | graphite: 576 q × 6 branches, 1.2×10⁷ three-phonon processes, 100 ps | 11 min, 1 CPU core | two-time NEGF: not feasible | ✔ |
 
 ---
@@ -267,8 +272,14 @@ U/J = 1, with a Peierls pulse on the legs: A_L = 0.5, ħω_L = 2J, σ = 2ħ/J.
 - The Mott gap opens at every U but is overestimated: onsets of 1.56, 5.06 and 11.4 J against
   the exact Bethe-ansatz gaps of 0.63, 2.89 and 8.46 J.
 - The reference reports the same overestimate for its δGW.
-- Adding the fluctuation dynamics (ph collisions, or trajectories) on top of the
-  antiferromagnet was numerically unstable in our tests and is not used.
+- **With correlation dynamics.** We use particle–hole fluctuations with collisions on top of
+  the antiferromagnet. The initial covariance uses the exact deterministic decomposition
+  (16 sites); with Gaussian sampling the collision term was noise-unstable. Results:
+  - U/J = 3: the main peak moves from 1.92 J (RPA) to 0.62 J, at the exact gap of 0.63 J.
+  - U/J = 6: the peak moves from 5.42 to 5.23 J, and weight appears in the 2.9–4.5 J window and
+    near 7 J. The reference DDMRG also shows a secondary structure near 7 J.
+  - U/J = 12: the peak moves up, to 14.0 J; the method does not improve the strong-coupling
+    gap.
 
 ![sigma](figures/hubbard_chain_sigma.png)
 
@@ -337,6 +348,52 @@ graphite's interlayer modes and their additional decay channels.
   non-thermal TA pooling at M and ⅓M, so acoustic thermalization in the model is too fast.
   This is again consistent with the missing interlayer physics.
 
+**Diffuse-scattering maps** (`materials/graphite/diffuse.py`). The measured quantity is the
+one-phonon diffuse intensity
+
+  I₁(Q,t) ∝ Σ_λ (n_λ + ½)/ω_λ |Σ_s f_C(Q) (Q·e_s,λ) e^{−iG·r_s}|²,
+
+computed from the simulated populations over all Brillouin zones with |Q| < 7 Å⁻¹ (the
+experimental range).
+- Doyle–Turner scattering factors of carbon are used.
+- The phase convention is checked to make I₁ continuous across zone boundaries.
+
+![diffuse](figures/graphite_diffuse_maps.png)
+
+The differential maps follow the measured sequence:
+- six-fold K-point spots at 0.5–1.5 ps;
+- intensity spreading along the zone boundaries by 5 ps;
+- rings around the Bragg positions at 100 ps, from low-frequency acoustic phonons.
+
+Time constants of the diffuse intensity (`figures/graphite_diffuse_traces.png`):
+- at K: rise of 0.18 ps against 0.28 ps (A1′) measured;
+- at M: rise of 8.3 ps against 2.1 ps measured. M-point acoustic phonons fill too slowly,
+  consistent with the slow decay of the optical reservoir.
+
+**All three interactions explicit** (`materials/graphite/dynamics_neq.py`). The photoexcited
+carriers (±0.775 eV) are treated as a separate non-thermal population.
+- They emit phonons with the energy-resolved first-principles kernel: one phonon per 23 fs at
+  the injection energy.
+- They thermalize by electron–electron scattering in 15 fs.
+- The resulting hot electron bath and the phonons evolve with the electron–phonon and
+  three-phonon operators.
+- The kernel reproduces the thermal emission table to within 1–3 %. Energy is conserved
+  exactly.
+- The A1′ dynamics change only marginally: peak 0.73 ps, rise 0.18 ps, decay 3.17 ps, against
+  0.70 / 0.18 / 3.20 ps in the thermal-electron model.
+
+This validates the fast-thermalization limit and shows that the decay discrepancy does not
+come from the electron treatment.
+
+**AB-stacked graphite** (`materials/graphite3d`). The same pipeline was run for the 4-atom
+cell:
+- 12 branches;
+- MACE interlayer modes: shear 6.5 meV (exp. 5.2), breathing 12.3 meV (exp. ≈ 16);
+- 12×12×2 grid with 2.4×10⁷ three-phonon processes;
+- layer-resolved electron–phonon coupling.
+
+AB_GRAPHITE_RESULT
+
 ### 3.4 Target 4: MgB₂ (`materials/mgb2`, `figures/mgb2.png`)
 
 ![MgB2](figures/mgb2.png)
@@ -356,6 +413,16 @@ published couplings. The equilibrium σ₂(ω) agrees with the measurement withi
   peaks at 28 K instead of 35–36 K.
 - A dirty-limit superfluid-weight vertex gives the wrong first-harmonic trend, rising toward
   T_c. This discriminates between the two light–Higgs coupling mechanisms.
+- **Why the first harmonic fails.**
+  - Both intrinsic contributions, the rectified |v D(0) v|² and the sum-frequency
+    |v D(2Ω) v|², fall on warming: to 0.78 and 0.74 of their 7.5 K values at 17 K.
+  - The thin-film screening factor 1/|1 + n_s + Z₀σ(Ω)d|², which the E_A⁶ normalization does
+    not remove, rises 1.4–2.2× toward T_c and flattens the normalized curve.
+  - Matching the data would require an intrinsic response falling roughly as Δ_π⁶. Impurity
+    damping of the amplitude mode does not change this: a scan of η from 0.02 to 3 meV leaves
+    the trend unchanged.
+  - We regard this as an open question for the theory of the FH signal (e.g. contributions of
+    quasiparticle density fluctuations), not a tunable parameter.
 
 **Strongly pumped state.**
 - A quasi-thermal state cannot reproduce the measured combination of a normal-like σ₁ with a
@@ -388,9 +455,29 @@ published couplings. The equilibrium σ₂(ω) agrees with the measurement withi
 
 All timings are for one laptop CPU core, Python/NumPy.
 
+**Direct comparison with two-time NEGF** (`benchmarks/speed/timing.py`, `lightmat/kbe.py`).
+- **Reference solver.** We implemented a Kadanoff–Baym solver with the second-Born
+  self-energy: Heun stepping and trapezoidal memory integrals. It agrees with exact dynamics
+  at weak coupling (test `test_kbe_reference_matches_exact_at_weak_coupling`).
+- **Setup.** Both solvers run the 11-site CDW at U/J = 5 with the same time step
+  (dt = 0.02 ħ/J) on the same machine.
+
+| N_t | KBE (s) | this work (s) | ratio |
+|---|---|---|---|
+| 50 | 0.77 | 0.14 | 5.6 |
+| 100 | 5.85 | 0.28 | 21 |
+| 200 | 48.1 | 0.61 | 79 |
+| 400 | 426.6 | 1.42 | 300 |
+
+- **Measured scaling:** N_t^3.15 (KBE) against N_t^1.21 (this work).
+- **At the benchmark time t = 50 ħ/J (N_t = 2500):**
+  - KBE needs ≈ 29 h and 48 GB of memory for the two-time functions;
+  - the time-linear method takes 9 s;
+  - the speed-up is ≈ 10⁴.
+
 | Calculation | This work | Reference / exact |
 |---|---|---|
-| 11-site CDW, t = 50 ħ/J | 26–66 s | ED 120–200 s, feasible only for small clusters. Two-time KBE with N_t ≈ 2.5×10⁴ steps scales as N_t³. |
+| 11-site CDW, t = 50 ħ/J | 26–66 s | ED 120–200 s, feasible only for small clusters; two-time KBE ≈ 29 h (measured scaling, above) |
 | 6×2 ladder ground state, one U | 19 s (pp ladder) | ED 10–20 s; ED scales exponentially |
 | Laser-driven ladder, t = 100 ħ/J | 54 s (pp), 816 s (ph, 288 samples) | ED ≈ 3000 s |
 | Graphite, full BZ, 100 ps | 11 min | Two-time NEGF with phonons over a full BZ: not feasible |
@@ -399,17 +486,27 @@ All timings are for one laptop CPU core, Python/NumPy.
 
 ## 6. Limitations (what is not solved)
 
-1. **Hubbard.** The T-matrix closure melts the CDW too slowly for U/J ≳ 5. The ladder ground
-   state is quantitative only for U/J ≲ 2. The optical gap is that of RPA-level theory.
-2. **Graphite.** The A1′ decay is too slow (3.2 vs 1.7 ps) and acoustic thermalization too
-   fast. Both trace to the graphene-layer treatment of the lattice. Electrons are assumed
-   thermalized; the first ≈ 100 fs of non-thermal carriers is not resolved.
+1. **Hubbard.**
+   - The T-matrix closure melts the CDW too slowly for U/J ≳ 5.
+   - The ladder ground state is quantitative only for U/J ≲ 2.
+   - The optical gap is correct at U/J = 3 only when correlation dynamics are included, and
+     overestimated at strong coupling.
+2. **Graphite.**
+   - The A1′ decay is too slow (3.2 vs 1.7 ps), and M-point acoustic phonons fill too slowly.
+   - Making the non-thermal electrons and their electron–electron scattering explicit does not
+     change this, so the remaining error lies in the lattice (anharmonic) part. See the
+     AB-graphite result above.
 3. **WSe₂.** The conduction-band offset and annihilation coefficient are literature values.
    The K→Σ rise delay is too short.
 4. **MgB₂.** The temperature dependence of the first harmonic is not reproduced.
-5. **Method coverage.** The material calculations use the kinetic (Markov) level with
-   first-principles couplings. The coherent level-A dynamics has not been run in an
-   ab initio band basis.
+5. **Method coverage.**
+   - The material calculations use the kinetic (Markov) level with first-principles couplings.
+     Electron–electron, electron–phonon and phonon–phonon scattering are solved together for
+     graphite, with energy conserved exactly.
+   - The coherent level-A dynamics has not been run in an ab initio band basis.
+   - A phase-space-trajectory treatment of a two-site Hubbard–Holstein model with anharmonic
+     phonons, compared with exact diagonalization, was less accurate than mean field because
+     of zero-point leakage. It is therefore not used.
 6. **Licensing.** The MACE model `medium-omat-0` is under the Academic Software License; the
    MIT-licensed `medium-mpa-0` can be substituted at the cost of ≈ 20 % softer optical phonons.
 

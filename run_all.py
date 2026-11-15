@@ -30,6 +30,7 @@ if what in ("all", "hubbard"):
     for U in ("3", "6", "12"):
         run(H, "chain_sigma.py", U, "64", "2", "gwx", "0")
     run(H, "plots.py")
+    run("benchmarks/speed", "timing.py")
 if what in ("all", "materials"):
     G = "materials/graphite"
     if not os.path.exists(os.path.join(ROOT, G, "fc3.hdf5")):
@@ -39,7 +40,10 @@ if what in ("all", "materials"):
         os.replace(os.path.join(ROOT, G, "eph_rates.npz"), os.path.join(ROOT, G, "eph_rates_point.npz"))
     run(G, "eph_rates_avg.py", "4", "450")
     run(G, "phph.py", "24")
-    run(G, "dynamics.py"); run(G, "plots.py")
+    run(G, "dynamics.py"); run(G, "plots.py"); run(G, "diffuse.py")
+    run(G, "eph_kernel.py"); run(G, "dynamics_neq.py")
+    G3 = "materials/graphite3d"
+    run(G3, "phonons.py"); run(G3, "phph.py", "12", "2"); run(G3, "eph.py", "450"); run(G3, "dynamics.py")
     run("materials/wse2", "plots.py")
     M = "materials/mgb2"
     run(M, "nonlinear.py"); run(M, "pump.py"); run(M, "plots.py")
