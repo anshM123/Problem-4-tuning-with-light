@@ -71,6 +71,11 @@ if what in ("all", "materials"):
 if what in ("all", "unified"):
     run("benchmarks/unified_limits", "run.py")
     U = "materials/graphite_unified"
+    # prerequisites from the graphite Level B pipeline (not stored in git: phph.npz is ~0.5 GB)
+    if not os.path.exists(os.path.join(ROOT, "materials/graphite/phph.npz")):
+        run("materials/graphite", "phph.py", "24")
+    if not os.path.exists(os.path.join(ROOT, "materials/graphite/dynamics_out.npz")):
+        run("materials/graphite", "dynamics.py")
     run(U, "run.py", "450", "rta15", "1.0")
     run(U, "run.py", "450", "rta15", "1.09", "_matched")
     run(U, "run.py", "450", "U1.0", "1.0", "_localU")

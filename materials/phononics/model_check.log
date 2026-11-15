@@ -1,0 +1,4 @@
+medium-omat-0   nu 18.22 THz  a3 513  a4 94  a5 7 meV
+medium-mpa-0    nu 17.26 THz  a3 438  a4 139  a5 43 meV
+medium          nu 17.21 THz  a3 601  a4 106  a5 -32 meV
+DFT (von Hoegen et al. 2018): nu 19 THz (measured value used there), a3 1568, a4 901, a5 7.1 meV
