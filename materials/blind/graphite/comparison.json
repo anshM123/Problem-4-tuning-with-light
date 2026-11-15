@@ -1,0 +1,79 @@
+{
+ "dedicated_graphite_model": {
+  "Te_peak_K": 6686.131641819504,
+  "A1K": {
+   "rise63_ps": 0.19999999999999998,
+   "peak_ps": 0.7000000000000001,
+   "decay_to_1e_of_peak_ps": 3.1999999999999997,
+   "decay_1e_above_final_ps": 2.8999999999999995,
+   "fit_rise_ps": 0.2925295247806493,
+   "fit_decay_ps": 2.6600489414536344,
+   "peak_excess": 0.7617463032947853
+  },
+  "energy": {
+   "0.5ps": {
+    "acoustic_meV": 8.744270146495161,
+    "optical_meV": 75.64076652252642
+   },
+   "1.5ps": {
+    "acoustic_meV": 26.243173767113255,
+    "optical_meV": 62.401858705311675
+   },
+   "5ps": {
+    "acoustic_meV": 51.11081652310547,
+    "optical_meV": 39.54802305314599
+   },
+   "50ps": {
+    "acoustic_meV": 64.03320524618684,
+    "optical_meV": 26.86515405645374
+   }
+  },
+  "diffuse_K_fit": {
+   "tau_rise_ps": 0.29370804829492875,
+   "tau_decay_ps": 2.4562121550738425
+  }
+ },
+ "general_pipeline": {
+  "Te_peak_K": 7205.9009428983945,
+  "A1K": {
+   "rise63_ps": 0.46071428571428563,
+   "peak_ps": 1.420504201680672,
+   "decay_to_1e_of_peak_ps": 3.9408403361344546,
+   "decay_1e_above_final_ps": 3.6047058823529414,
+   "fit_rise_ps": 1.3364606877222287,
+   "fit_decay_ps": 2.449092724777467,
+   "peak_excess": 0.7074884183239192
+  },
+  "energy": {
+   "0.5ps": {
+    "acoustic_meV": 3.9603262105106922,
+    "optical_meV": 53.211711268935616
+   },
+   "1.5ps": {
+    "acoustic_meV": 19.199906916553665,
+    "optical_meV": 63.44189907351236
+   },
+   "5ps": {
+    "acoustic_meV": 50.342357260598625,
+    "optical_meV": 39.95104804743391
+   },
+   "50ps": {
+    "acoustic_meV": 64.0812141782713,
+    "optical_meV": 26.83354468116321
+   }
+  },
+  "absorbed_meV_per_cell": 90.9434088073144,
+  "diffuse_K_fit_rise_decay": {
+   "A": 1.2559541879506966,
+   "tau_rise_ps": 1.3592502548014949,
+   "tau_decay_ps": 2.2962468917337757,
+   "C": 0.13768117297626453,
+   "rel_rms_residual": 0.005984124624097346
+  }
+ },
+ "measured_Stern2018": {
+  "K_rise_ps": 0.28,
+  "K_decay_ps": 1.7,
+  "A1K_peak_ps": "0.6-0.7"
+ }
+}
