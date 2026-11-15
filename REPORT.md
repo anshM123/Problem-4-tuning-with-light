@@ -24,7 +24,7 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 |---|---|---|---|---|
 | A. Positive-factorized pair fluctuations | ρ and low-rank factors x, y of the pair matrices X = A+𝒢, Y = B+𝒢 (pp channel); Hermitian fluctuation samples V (ph channel) | e–e in the T-matrix (pp), self-interaction-free pp (strong coupling, exact for two particles) and RPA/GW (ph) channels | O(r L³) | Hubbard chains and ladders |
 | B. Kinetic (Markov) limit with first-principles couplings | electronic energy, phonon occupations n_qν on a full-BZ grid, exciton valley and energy populations, free carriers | e–ph (DFT/GW), full three-phonon scattering (MACE cubic force constants), exciton–ph (DFPT deformation potentials) | O(N_proc) | graphite, WSe₂ |
-| C. Pairing mean field plus Gaussian amplitude fluctuations | two-band gaps Δ_π, Δ_σ, the amplitude-mode propagator, nonequilibrium quasiparticle distribution | phonon-mediated pairing (Eliashberg-derived couplings), A² light coupling, Rothwarf–Taylor bottleneck | O(N_ξ) | MgB₂ |
+| C. Two-band time-dependent Bogoliubov–de Gennes with collisions | two-band Nambu one-body density matrices in the disorder-eigenstate basis; quasiparticle and phonon populations; amplitude-mode propagator (weak-field limit) | phonon-mediated pairing mean field (Liu–Mazin–Kortus λ), impurity-assisted light coupling (random velocity operator fixed by σ_n), thin-film electrodynamics, Chang–Scalapino electron–phonon collisions with first-principles α²F_ab, phonon escape | O(N³) per step, N ≈ 300 levels per band | MgB₂; weak-field harmonics also from the Level C amplitude propagator |
 
 **Scorecard.**
 - Every entry is a prediction: no parameter was adjusted to the data shown.
@@ -76,7 +76,15 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | normalized FH vs T (same vertex) | 1, 0.88, 0.69, 0.56, 0.44, 0.25, 0.12, 0.03 at 7.5–35 K | 1, 0.83, 0.68, 0.65, 0.50, 0.32, 0.20, 0.10 | ✔ (≤ 0.09) |
 | | superfluid-weight (diamagnetic) vertex instead | FH rises to 2.5× toward T_c | monotonic fall | ✘, excluded by the data |
 | | un-normalized FH maximum | 25 K | 35–36 K | ✘ |
-| | conductivity 2 ps after 150 kV/cm (bottleneck state) | σ₁(0.8) = 2.23, σ₂(0.5) = 1.98, σ₂(1.0) = 1.15 ×10⁴ | 2.55, 2.6, 1.5 ×10⁴ | ✔ (13–24 %) |
+| | conductivity 2 ps after 150 kV/cm: real-time dynamics + weak probe (no assumed state) | homog.: σ₁(0.8) = 2.06, σ₂(0.5) = 1.60, σ₂(1.0) = 1.69; beam: 2.05, 1.63, 1.59 ×10⁴ | 2.55, 2.6, 1.5 ×10⁴ | ≈ (−20 %, −37 %, +6 %) |
+| | same, previous Owen–Scalapino state fixed by the linear superconducting-state absorption | 2.23, 1.98, 1.15 ×10⁴ | 2.55, 2.6, 1.5 ×10⁴ | superseded: assumes 0.61 J/mol; the dynamics absorbs 8.0 J/mol on axis, 5.0 J/mol probe-weighted |
+| | narrowband 21 kV/cm pump: state at 2 ps | σ₂(0.5) −5 %, 2Δ_π −6 % | σ₂(0.5) −7 %, "almost intact" | ✔ |
+| | pump-probe signal vs pump field (Fig. S3b), normalized at 150 kV/cm | beam: 0.20, 0.39, 0.54, 0.72, 0.80, 0.96, 1 at 47, 60, 68, 79, 87, 116, 150 kV/cm (homog.: saturated from 68) | 0.15, 0.21, 0.32, 0.58, 0.82, 1.00, 1 | ✔ (beam; ≤ 0.22) |
+| | σ at 2 ps, 68 and 79 kV/cm | beam: σ₁(0.8) = 1.37, 1.71; σ₂(0.5) = 3.27, 2.57 ×10⁴ (homog.: 1.95, 2.12; 0.87, 0.98) | 0.65, 1.2; 4.7, 3.7 ×10⁴ | ✘ (beam: field scale ≈ 1.3–1.5× low) |
+| | FH intensity vs field per pulse, normalized at 12 kV/cm | beam: 4.4, 13.0, 27.8, 58, 133 at 15, 18, 21, 25, 30 kV/cm | 4.0, 20, 70, 420, 900 (E⁶: 3.8, 11.4, 28.7, 82, 244) | ✔ E⁶ to 21 kV/cm; ✘ super-E⁶ above |
+| | TH intensity vs field per pulse | beam: 1.6, 1.8, 1.8, 2.2, 4.5 | 4.3, 12.5, 32, 57, 79 | ✘ (saturates near 12 kV/cm) |
+| | static depairing current density, 7 K | 7.0×10⁷ A cm⁻² (Eilenberger with Born impurities, same inputs: 6.1×10⁷) | MgB₂ films 2×10⁷ (pulsed transport) to ~10⁸ | ✔ |
+| | π gap during a 30 kV/cm narrowband pulse | 0.85 (one pulse), 0.39 (A+B superposed), pulse-weighted | 0.81 (scale factor of the authors' fit) | ≈ / ✘ |
 | **5 Blind test: black phosphorus** (`run_material.py`, predictions committed before the data were compiled) | absorbed energy density | 377 J/cm³ | 380 ± 70 J/cm³ (Zahn 2020) | ✔ |
 | | ΔMSD zigzag τ₁ / τ₂ | 0.81 / 20.5 ps | 0.58 / 20 ps | ≈ / ✔ |
 | | ΔMSD armchair τ₁ / τ₂ | 0.12 / 14.0 ps | 0.48 / 22 ps | ✘ / ≈ |
@@ -230,13 +238,60 @@ kernels.
   film's. The total σ_n is therefore set to the measured 38 K value; band ratios and
   scattering rates are kept.
 
-**Strongly pumped state.**
-- The absorbed energy is computed from the 150 kV/cm pulse with thin-film optics.
-- Pair-breaking phonons and quasiparticles are in Rothwarf–Taylor equilibrium, so the
-  excitation is stored as excess quasiparticles at the bath temperature.
-- This is the Owen–Scalapino state, with quasiparticle chemical potential μ* fixed by energy
-  conservation.
-- Gaps and σ(ω) follow self-consistently, with no free parameter.
+**Real-time dynamics (G1 level).**
+- Each band is represented in the exact-eigenstate (Anderson) basis of the disordered normal
+  metal: N levels ε_n on [−W, W], each paired with its time-reversed partner. We propagate the
+  two-band Nambu one-body density matrices R_a (2N × 2N) with
+  iħ dR_a/dt = [H_a(t), R_a], where H_a = ε τ₃ − Δ_a τ₁ − α_a(t) τ₀ ⊗ Y_a.
+  The gaps are the pairing mean field Δ_a = Σ_b V_ab N_b δ_b Σ_{|ε_n|<ω_c} R_b,he[n,n]*, with
+  the Liu–Mazin–Kortus couplings and the cutoff used for the equilibrium gaps.
+- **Light.** The velocity operator between disorder eigenstates is a random Hermitian matrix
+  Y = iK, with K real antisymmetric (time-reversal-symmetric disorder) and
+  |Y_nm|² = L_a(ε_n − ε_m)/N, where L_a is the Drude Lorentzian of width 1/τ_a. Its strength
+  α_a = c_a A, with c_a² = σ_n,a W/(πħν_a), reproduces the normal-state Drude conductivity of
+  each band (Kubo formula, tested).
+  - This single τ₀ coupling is the impurity-assisted paramagnetic coupling:
+    - at first order in A it gives Mattis–Bardeen absorption;
+    - at second order it gives the dirty-limit superfluid stiffness and the A² drive of the
+      gap amplitude;
+    - at large A it gives Abrikosov–Gor'kov depairing by the supercurrent.
+  - The diamagnetic term −χ_dia A is fixed by gauge invariance: the normal state has no static
+    response.
+  - Validation: a weak probe on the 7 K equilibrium state gives σ₂ = 8.2, 5.1, 3.0, 2.2 ×10⁴
+    Ω⁻¹cm⁻¹ at 0.3, 0.5, 0.8, 1.0 THz. Mattis–Bardeen with the finite-purity correction gives
+    8.8, 5.2, 3.1, 2.3 ×10⁴. The model has no adjustable parameter here.
+- **Film.** (1 + n_s)E_f = 2E_in − Z₀ d j(t) and dA/dt = −E_f, with the measured pump waveform
+  of `pump.py` (single cycle, 0.6 THz). The field inside the 20 nm film is therefore computed
+  self-consistently as the film's response changes.
+- **Collisions.** Chang–Scalapino electron–phonon collision integrals are evaluated in each
+  level's instantaneous BCS eigenbasis:
+  - scattering, recombination and phonon pair breaking, with case-I coherence factors;
+  - the two-band first-principles Eliashberg functions α²F_ab(Ω) of Golubov et al. (2002),
+    digitized from the published figure (the digitized λ_ππ, λ_σπ, λ_πσ = 0.446, 0.213, 0.155
+    match the quoted 0.448, 0.213, 0.155);
+  - explicit phonon populations n(Ω) on a 0.1 meV grid (Debye density of states, Θ_D = 750 K);
+  - escape of phonons into the MgO substrate (τ_esc = 20 ps).
+  The collision step conserves energy and obeys detailed balance (tested). The coherence of
+  each level decays at half its in- plus out-scattering rate.
+- **Long times.** After the probe window the levels decouple. The run continues to 100 ps as
+  Anderson pseudospins with the same collision integrals.
+- **Observables.**
+  - The conductivity at τ = 2 ps is extracted as in the experiment: a 10 kV/cm single-cycle
+    probe is added, and the odd part of the transmitted-field change is inverted with the
+    thin-film formula.
+  - The quasi-stationary state at 2 ps is also evaluated with the nonequilibrium Mattis–Bardeen
+    formula, using the computed f(E) and gaps.
+- **No imposed state.** Nothing is imposed: there is no absorbed energy as input, no μ* and no
+  assumed bottleneck. No parameter was adjusted to the Katsumi pump-probe or field-dependence
+  data.
+- **Numerical checks.**
+  - N = 300/250 levels (π/σ). Increasing to N = 450/375 changes the absorbed energy at 47 kV/cm
+    by 2 % and σ₂(0.5) at 2 ps by 2 %.
+  - A second disorder realization changes them by 0.4 % and 0.8 %.
+  - Double precision agrees with single precision to 4×10⁻⁶.
+
+The weak-field harmonics (FH, TH versus temperature) use the Gaussian amplitude-mode
+propagator of this section, which is the linearization of the same equations (§2.0).
 
 ---
 
@@ -796,17 +851,189 @@ published couplings. The equilibrium σ₂(ω) agrees with the measurement withi
   - The un-normalized FH maximum comes at 25 K, against 35–36 K measured. The authors relate
     the raw FH enhancement near T_c to the temperature-dependent refractive index of the film.
 
-**Strongly pumped state.**
-- A quasi-thermal state cannot reproduce the measured combination of a normal-like σ₁ with a
-  large σ₂ at 2 ps.
-- The Rothwarf–Taylor/Owen–Scalapino bottleneck state, fixed by the absorbed energy alone
-  (0.61 J/mol → μ* = 3.6 meV), gives:
-  - 2Δ_π = 0.23 THz, so the π gap is almost closed;
-  - 2Δ_σ = 2.0 THz, so the σ gap is still open;
-  - σ₁(0.8 THz) = 2.23×10⁴ against 2.55×10⁴ measured;
-  - σ₂(0.5) = 1.98×10⁴ against 2.6×10⁴;
-  - σ₂(1.0) = 1.15×10⁴ against 1.5×10⁴.
-- The pump therefore leaves MgB₂ in a band-selective non-thermal state.
+**Strongly pumped state (real-time).**
+- At 150 kV/cm the film absorbs 8.0 J/mol. Energy absorption is set by the instantaneous
+  state: superconducting screening limits the in-film field until the induced supercurrent
+  (≈ 2E_in/Z₀d ≈ 4×10⁸ A cm⁻²) exceeds the depairing current. Both gaps then collapse within
+  0.3 ps, and the film absorbs like a normal metal for the rest of the pulse.
+- The earlier bottleneck state assumed 0.61 J/mol, the linear superconducting-state
+  absorption. The dynamics shows that this assumption does not hold at this field.
+- At 2 ps:
+  - 2Δ_π = 0.01 THz and 2Δ_σ = 0.06 THz;
+  - the quasiparticles of both bands are hot and non-thermal;
+  - 43 % of the absorbed energy is already in phonons below 50 meV.
+
+| 2 ps after 150 kV/cm (10⁴ Ω⁻¹cm⁻¹) | σ₁(0.8 THz) | σ₂(0.5) | σ₂(1.0) |
+|---|---|---|---|
+| measured (Fig. S3c,d) | 2.55 | 2.6 | 1.5 |
+| real-time dynamics + weak probe | 2.06 | 1.60 | 1.69 |
+| real-time state, quasi-stationary Mattis–Bardeen | 2.33 | ≈ 0 | ≈ 0 |
+| previous Owen–Scalapino state (assumed absorption) | 2.23 | 1.98 | 1.15 |
+
+- σ₁ near the normal-state value is reproduced: within 19 % from the probe and within 9 %
+  quasi-statically.
+- The probe-derived σ₂ is not zero, although the instantaneous gaps are. During the probe
+  window the gaps start to recover and the state evolves, and the probe-based inversion
+  records this as an inductive response. The measured σ₂ (2.6×10⁴) is larger still.
+- Agreement does not improve over the assumed bottleneck state: mean absolute deviation 23 %
+  against 20 %. The new numbers, however, come with no assumed absorbed energy or state.
+- **Bottleneck.**
+  - A Rothwarf–Taylor bottleneck does not form by 2 ps. The ratio of phonon pair breaking to
+    recombination is P/R = 0.46 (π) and 0.61 (σ) at 7 ps.
+  - It stays at 0.4–0.65 up to 100 ps. Pair-breaking phonons thus return about half of the
+    recombined pairs, which is a partial bottleneck.
+  - Full mutual equilibrium (P/R = 1) is prevented by phonon escape (20 ps) and by the weak
+    low-energy π-band coupling (α²F_ππ(5 meV) ≈ 1×10⁻³).
+  - The gaps recover over tens of ps: 2Δ_π = 0.17, 0.55, 0.73 THz at 20, 50, 100 ps.
+
+**Field dependence.** The same calculation was repeated at pump fields of 21 (narrowband), 30,
+47, 68, 79, 100, 116 and 150 kV/cm, and for narrowband 0.63 THz pulse pairs (E_NL = E_AB − E_A − E_B
+at τ = 0) at 6–30 kV/cm per pulse.
+
+| pump (kV/cm) | absorbed (J/mol) | 2Δ_π, 2Δ_σ at 2 ps (THz) | σ₁(0.8) model / meas. | σ₂(0.5) model / meas. (10⁴ Ω⁻¹cm⁻¹) |
+|---|---|---|---|---|
+| 0 (7 K) | 0 | 1.05, 3.37 | 0.09 / ≈ −0.1 to 0.2 (5 K) | 5.1 / 6.0 (5 K) |
+| 21, narrowband | 0.14 | 0.99, 3.31 | 0.16 / 0.25 | 4.80 / 5.6 |
+| 30 | 0.22 | 0.93, 3.25 | 0.40 / – | 4.56 / – |
+| 47 | 1.01 | 0.65, 2.82 | 1.04 / – | 3.52 / – |
+| 68 | 2.92 | 0.06, 0.26 | 1.95 / 0.65 | 0.87 / 4.7 |
+| 79 | 3.78 | 0.02, 0.08 | 2.12 / 1.2 | 0.98 / 3.7 |
+| 100 | 5.19 | ≈ 0 | 2.01 / – | 1.19 / – |
+| 116 | 6.14 | ≈ 0 | 2.05 / – | 1.34 / – |
+| 150 | 7.99 | ≈ 0 | 2.06 / 2.55 | 1.60 / 2.6 |
+
+- **Narrowband 21 kV/cm pump.** It leaves the state almost intact (σ₂(0.5) −5 %, 2Δ_π −6 %),
+  as measured (−7 %).
+- **Pump-probe signal (Fig. S3b).**
+  - Model rms change of the transmitted probe, normalized at 150 kV/cm: 0.08, 0.14, 0.42, 1.21,
+    1.20, 1.14, 1.08, 1.00 at 21, 30, 47, 68, 79, 100, 116, 150 kV/cm.
+  - Measured: 0.03, –, 0.15, 0.32, 0.58, –, 1.00, 1.00.
+  - Both show a threshold followed by saturation. The model threshold (between 47 and
+    68 kV/cm) is sharper and saturates at about 0.6× the measured field.
+  - The model state at 47 kV/cm resembles the measured one at 79 kV/cm: σ₁(0.8) = 1.04 against
+    1.2, σ₂(0.5) = 3.5 against 3.7.
+- **Narrowband harmonics (Fig. 3b), normalized at 12 kV/cm.**
+
+| E per pulse (kV/cm) | 15 | 18 | 21 | 25 | 30 |
+|---|---|---|---|---|---|
+| E⁶ | 3.8 | 11.4 | 28.7 | 82 | 244 |
+| FH model | 4.4 | 10.5 | 16.9 | 30.8 | 97 |
+| FH measured | 4.0 | 20 | 70 | 420 | 900 |
+| TH model | 0.9 | 1.0 | 1.7 | 2.5 | 34 |
+| TH measured | 4.3 | 12.5 | 32 | 57 | 79 |
+
+  - FH follows E⁶ to 18 kV/cm, as measured. Above that the model turns sub-E⁶ while the
+    measurement turns super-E⁶.
+  - The third harmonic of a single pulse follows E⁶ up to 12 kV/cm in the model. The A+B pair
+    (24 kV/cm combined at τ = 0) already depresses Δ_π by 8 % averaged over the pulse, which
+    saturates TH from about 9–12 kV/cm per pulse, against 25 kV/cm measured.
+  - With 1.5 ps instead of 3 ps narrowband pulses (the paper gives no duration), FH 12 → 21 →
+    30 becomes 24.8 and 173 (closer to E⁶) and TH 3.4 and 14.8. The conclusion is unchanged.
+  - Averaged over a 30 kV/cm pulse, Δ_π is reduced to 0.85 of its equilibrium value for one
+    pulse and 0.39 for the superposed A+B pair. The authors' fit uses 0.81.
+- **Interpretation.** Three independent observables (σ at 2 ps, the pump-probe threshold and the
+  harmonic saturation) place the model's nonlinear field scale about 1.7–2.5× below the
+  measured one.
+  - The model fixes this scale with no free parameter, through the depairing parameter
+    Γ ≈ σ_n A²/(2ħν) of a homogeneous dirty film with the measured σ_n, the measured stiffness
+    and the first-principles DOS.
+  - A smaller effective in-film field (spot size or calibration), or a film that is
+    inhomogeneous on the scale of the coherence length, would shift the scale. We have not
+    adjusted either.
+
+**Why is the model's field scale too low?**
+
+Four checks were made, none of them tuned to the Katsumi data.
+
+1. **What the paper states.**
+   - The paper and its SM give no fluence, spot size, absorbed energy or temperature rise.
+   - The fields are "peak THz E-field strengths" from electro-optic sampling of the transmitted
+     pulses in 1 mm ZnTe. Whether they were measured with an empty sample position or through
+     the substrate is not stated.
+   - The only thermal statement concerns 150 kV/cm: σ₁ at 2 ps "is close to that at 40 K in
+     equilibrium normal state", and σ₂ is "strongly suppressed but larger than that at 40 K".
+   - This argues for the large absorption of the dynamics rather than the 0.61 J/mol of the
+     linear superconducting-state estimate. A thermal state with 0.61 J/mol has T* = 17–23 K
+     and σ₁(0.8) = 0.8–1.2×10⁴, against 2.55×10⁴ measured. The Owen–Scalapino state matches
+     σ₁ only because it closes the π gap.
+   - The real-time absorbed energy is 8.0 J/mol on the beam axis and 5.0 J/mol averaged over
+     the probe spot. Electrons alone need 2.5 J/mol, and electrons plus lattice 9.7 J/mol, to
+     reach T_c from 7 K.
+2. **Clean σ band.** The random-matrix coupling is the same for both bands; only the Drude
+   width differs. We compared it with an independent Eilenberger calculation with Born impurity
+   scattering at any purity (`depairing.py`). That calculation contains the Doppler (Landau)
+   physics of the clean limit and reduces to Usadel for the dirty π band.
+   - Inputs are the same σ_n,a, 1/τ_a and DOS. The π band is treated in 3D, and the σ band
+     either as a cylinder with in-plane current or in 3D; the two σ-band geometries agree
+     within 3 %.
+   - For a static supercurrent at 7 K the two theories agree:
+     - linear stiffness within 5 %;
+     - 2Δ_π = 0.91 vs 0.89 and 2Δ_σ = 3.22 vs 3.18 THz at A = 4×10⁻⁸ V s/m;
+     - both gaps vanish at 1×10⁻⁷ V s/m.
+   - Near the depairing point the random-matrix model is somewhat harder to depair
+     (2Δ_π = 0.60 vs 0.48 THz at 8×10⁻⁸ V s/m). Treating the σ band as nearly clean does not reduce the depairing: with
+     γ_σ/2Δ_σ ≈ 0.6 and the film's Drude weight, the Doppler shift e v_σ A already reaches Δ_σ
+     at the fields reached in the film. Nothing in the model needs changing.
+3. **Depairing current.**
+   - Model: j_d = 7.0×10⁷ A cm⁻² at 7 K (Eilenberger: 6.1×10⁷).
+   - Measured MgB₂ films: about 2×10⁷ A cm⁻² from pulsed transport (Kunchur et al., 400 nm
+     films), and of order 10⁸ in the best films.
+   - The model is therefore not too easy to depair compared with real MgB₂ films.
+   - A 20 nm film that screens an incident field E must carry the sheet current 2E/Z₀,
+     independent of its parameters. That is 5.6×10⁷ A cm⁻² at 21 kV/cm and 4.0×10⁸ at
+     150 kV/cm, i.e. 6× the model j_d and 4–20× the measured ones. At 68–150 kV/cm the film
+     cannot remain fully superconducting at the beam centre in any homogeneous description.
+4. **Geometry.**
+   - Substrate-side incidence would raise the in-film current by 2n/(1+n) = 1.5. A
+     bare-substrate field reference would raise the incident field by 1.35. Neither reduces
+     the field.
+   - What the homogeneous calculation omits is the transverse beam profile. The quoted field is
+     the on-axis peak, while the detected probe averages over its own spot.
+   - With Gaussian pump and probe spots of equal size (the minimal assumption: the two pulses
+     share the focusing optics, and the SM notes the B pulse is focused less tightly, which
+     would increase the averaging), the detected response is ∫₀¹ X(E₀u) 2u du for the probe and
+     ∫₀¹ E_NL(E₀u) du for the nonlinear field. Local responses are interpolated between 13
+     computed pump fields (0–150 kV/cm) and 8 narrowband fields.
+   - This is now included. The added field points (10, 20, 58, 90, 130 kV/cm) were run with
+     the unchanged dynamics.
+
+5. **Numerical window (found during this check).**
+   - At strong drive the coupling energy α = c·A (up to 20 meV at 150 kV/cm) approaches the
+     level window W.
+   - The static calculation shows the consequence: with both gaps zero, the finite window
+     leaves a spurious normal-state current of 2×10⁷ to 1.3×10⁸ A cm⁻² for A = 1–2×10⁻⁷ V s/m.
+     This acts as extra screening.
+   - Doubling the window (W = 30 meV, `window_check.py`, pump-only to 2 ps) changes the
+     absorbed energy as follows:
+     - 30 kV/cm: 0.22 → 0.22 J/mol (converged);
+     - 47 kV/cm: 1.01 → 1.23 J/mol (2Δ_π(2 ps) 0.65 → 0.58 THz);
+     - 68 kV/cm: 2.92 → 3.89 J/mol;
+     - 150 kV/cm: 7.99 → 14.5 J/mol.
+   - A still wider window (45 meV) needs a smaller time step and was not completed. The
+     150 kV/cm absorption is therefore a lower bound.
+   - The production runs (W = 15/18 meV) thus underestimate pair breaking at ≥ 47 kV/cm, so the
+     field-scale discrepancy is, if anything, larger than stated.
+
+**Result.**
+- The beam profile makes the pump-probe signal rise gradually and saturate at about
+  116 kV/cm, as measured (deviation ≤ 0.22 of the saturated value). It also extends FH's E⁶
+  range to 21 kV/cm.
+- It halves the discrepancy at 68–79 kV/cm (σ₂(0.5) = 3.3 and 2.6 against 4.7 and 3.7). It does
+  not change the 150 kV/cm state (σ₂(0.5) = 1.63 against 2.6), and it does not cure the early
+  TH saturation.
+- After this justified change the model's field scale is still about 1.3–1.5× too low, and the
+  residual condensate at 150 kV/cm is not reproduced.
+- The window correction moves the model further from the data.
+- Nothing physically justified closes the gap.
+- Remaining candidates, none adjustable without new information:
+  - an in-sample field lower than quoted (the calibration geometry is not described);
+  - spatial inhomogeneity of the film;
+  - Higgs damping. The model's own amplitude-mode damping is not the δ = 0.55 THz the
+    experiment extracts. In the model the third harmonic is very sensitive to small shifts of
+    Δ_π: a pulse-averaged 8 % reduction at 24 kV/cm (A+B) suppresses TH about fivefold. This
+    bears on the TH saturation only.
+
+![MgB2 real time](figures/mgb2_realtime.png)
 
 ### 3.6 Any material from its structure: `run_material.py` and a blind prediction
 
@@ -1105,7 +1332,8 @@ All timings are for one laptop CPU core, Python/NumPy.
 | Laser-driven ladder, t = 100 ħ/J | 54 s (pp), 816 s (ph, 288 samples) | ED ≈ 3000 s |
 | Graphite, full BZ, 100 ps | 11 min | Two-time NEGF with phonons over a full BZ: not feasible |
 | WSe₂, 4 ps (excitonic Bloch equations, energy-resolved) | ≈ 30 s for the full analysis | — |
-| MgB₂ gaps, σ(ω), nonlinear and pumped-state response | 1–20 min | — |
+| MgB₂ gaps, σ(ω), nonlinear response (Level C propagator) | 1–20 min | — |
+| MgB₂ real-time BdG + collisions, one pump field to 100 ps (≈ 300 levels per band) | ≈ 13 min (2 threads) | two-time NEGF for a two-band superconductor with phonons: not attempted |
 
 ## 6. Limitations (what is not solved)
 
@@ -1143,6 +1371,29 @@ All timings are for one laptop CPU core, Python/NumPy.
      (impurity-assisted, paramagnetic). The vertices derived from the superfluid weight fail,
      and we have not derived from first principles why the σ band does not contribute.
    - The un-normalized FH peaks at 25 K instead of 35–36 K.
+   - **Field scale.** For a uniformly pumped film the real-time model reaches pair breaking at
+     about 1.7–2.5× lower field than measured; with the beam profile the factor is 1.3–1.5×. As
+     a result:
+     - at 68–79 kV/cm the gaps are already collapsed at 2 ps, while the experiment still sees
+       60–80 % of the equilibrium σ₂;
+     - TH saturates near 10 kV/cm per pulse instead of 25 kV/cm.
+   - **Residual σ₂ at 150 kV/cm.** The measured σ₂(0.5) = 2.6×10⁴ at 2 ps after 150 kV/cm is not
+     reproduced. The model gives 1.6×10⁴ from the probe and ≈ 0 quasi-statically.
+   - **Bottleneck.** The earlier agreement of the Owen–Scalapino state (13–24 %) depended on
+     assuming the linear superconducting-state absorption. The dynamics does not support that
+     assumption at 150 kV/cm. A full Rothwarf–Taylor bottleneck does not form within 100 ps
+     (P/R ≤ 0.65).
+   - **Missing physics.**
+     - Electron–electron scattering of quasiparticles is not included.
+     - Phonon anharmonic decay is neglected (ns scale at 5–15 meV).
+     - The phonon density of states is Debye-like.
+     - The narrowband pulse duration is assumed.
+   - **Window convergence.** At ≥ 47 kV/cm the finite level window underestimates the absorbed
+     energy (by 22 % at 47 kV/cm and at least 82 % at 150 kV/cm). The strong-field numbers are
+     lower bounds on the pair breaking.
+   - **Discretization.** The random-matrix representation of the dirty metal uses a finite window
+     (±15 and ±18 meV). Its normal-state σ₂ exceeds the Drude value by about 0.15×10⁴ Ω⁻¹cm⁻¹ at
+     0.5 THz, and σ₁ of the 7 K equilibrium state is about 0.05×10⁴ higher than Mattis–Bardeen.
 5. **Method coverage.**
    - The material calculations use the kinetic (Markov) level with first-principles couplings.
      Electron–electron, electron–phonon and phonon–phonon scattering are solved together for

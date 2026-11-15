@@ -1,0 +1,62 @@
+pumped state at tau = 2 ps (Ohm^-1 cm^-1); probe = real-time weak probe, MB = quasi-stationary Mattis-Bardeen
+pump-probe signal (rms change of transmitted probe, normalized to 150 kV/cm): 10: 0.01, 20: 0.05, 21: 0.08, 30: 0.14, 47: 0.42, 58: 0.89, 68: 1.21, 79: 1.20, 90: 1.17, 100: 1.14, 116: 1.08, 130: 1.04, 150: 1.00
+measured max dE_probe / value at 150 kV/cm: 21: 0.03, 47: 0.15, 60: 0.21, 68: 0.32, 79: 0.58, 87: 0.82, 116: 1.00, 150: 1.00
+narrowband harmonics (I normalized to 12 kV/cm):
+  E =    6 kV/cm: FH     0.01  TH     0.08   E^6     0.02
+  E =    9 kV/cm: FH     0.13  TH     0.49   E^6     0.18
+  E =   12 kV/cm: FH     1.00  TH     1.00   E^6     1.00   measured FH     1.0 TH     1.0
+  E =   15 kV/cm: FH     4.38  TH     0.92   E^6     3.81   measured FH     4.0 TH     4.3
+  E =   18 kV/cm: FH    10.45  TH     1.00   E^6    11.39   measured FH    20.0 TH    12.5
+  E =   21 kV/cm: FH    16.89  TH     1.70   E^6    28.72   measured FH    70.0 TH    32.1
+  E =   25 kV/cm: FH    30.83  TH     2.47   E^6    81.76   measured FH   420.0 TH    57.1
+  E =   30 kV/cm: FH    97.25  TH    34.24   E^6   244.14   measured FH   900.0 TH    78.6
+   nb21: U_abs =  0.135 J/mol, 2Dpi(2ps) = 0.993, 2Dsig(2ps) = 3.313 THz | probe s1(0.8) 1.61e+03 s2(0.5) 4.80e+04 s2(1.0) 2.10e+04 | MB s1(0.8) 1.72e+03 s2(0.5) 4.95e+04 s2(1.0) 2.17e+04
+     10: U_abs =  0.005 J/mol, 2Dpi(2ps) = 1.049, 2Dsig(2ps) = 3.366 THz | probe s1(0.8) 8.88e+02 s2(0.5) 5.03e+04 s2(1.0) 2.22e+04 | MB s1(0.8) 4.86e+02 s2(0.5) 5.20e+04 s2(1.0) 2.32e+04
+     20: U_abs =  0.049 J/mol, 2Dpi(2ps) = 1.019, 2Dsig(2ps) = 3.338 THz | probe s1(0.8) 1.56e+03 s2(0.5) 4.89e+04 s2(1.0) 2.17e+04 | MB s1(0.8) 1.24e+03 s2(0.5) 5.06e+04 s2(1.0) 2.25e+04
+     30: U_abs =  0.220 J/mol, 2Dpi(2ps) = 0.928, 2Dsig(2ps) = 3.248 THz | probe s1(0.8) 3.97e+03 s2(0.5) 4.56e+04 s2(1.0) 2.12e+04 | MB s1(0.8) 3.87e+03 s2(0.5) 4.61e+04 s2(1.0) 2.05e+04
+     47: U_abs =  1.007 J/mol, 2Dpi(2ps) = 0.652, 2Dsig(2ps) = 2.816 THz | probe s1(0.8) 1.04e+04 s2(0.5) 3.52e+04 s2(1.0) 1.94e+04 | MB s1(0.8) 1.25e+04 s2(0.5) 3.36e+04 s2(1.0) 1.61e+04
+     58: U_abs =  2.024 J/mol, 2Dpi(2ps) = 0.287, 2Dsig(2ps) = 1.276 THz | probe s1(0.8) 1.61e+04 s2(0.5) 1.85e+04 s2(1.0) 1.30e+04 | MB s1(0.8) 2.27e+04 s2(0.5) 1.19e+04 s2(1.0) 6.75e+03
+     68: U_abs =  2.918 J/mol, 2Dpi(2ps) = 0.060, 2Dsig(2ps) = 0.262 THz | probe s1(0.8) 1.95e+04 s2(0.5) 8.71e+03 s2(1.0) 1.08e+04 | MB s1(0.8) 2.31e+04 s2(0.5) 7.94e+02 s2(1.0) 2.82e+02
+     79: U_abs =  3.782 J/mol, 2Dpi(2ps) = 0.017, 2Dsig(2ps) = 0.077 THz | probe s1(0.8) 2.12e+04 s2(0.5) 9.76e+03 s2(1.0) 1.28e+04 | MB s1(0.8) 2.33e+04 s2(0.5) 9.27e+01 s2(1.0) 1.91e+01
+     90: U_abs =  4.552 J/mol, 2Dpi(2ps) = 0.002, 2Dsig(2ps) = 0.015 THz | probe s1(0.8) 2.02e+04 s2(0.5) 1.09e+04 s2(1.0) 1.19e+04 | MB s1(0.8) 2.34e+04 s2(0.5) 5.58e+00 s2(1.0) -4.20e-01
+    100: U_abs =  5.191 J/mol, 2Dpi(2ps) = 0.005, 2Dsig(2ps) = 0.029 THz | probe s1(0.8) 2.01e+04 s2(0.5) 1.19e+04 s2(1.0) 1.16e+04 | MB s1(0.8) 2.34e+04 s2(0.5) 1.18e+01 s2(1.0) 2.09e+00
+    116: U_abs =  6.136 J/mol, 2Dpi(2ps) = 0.002, 2Dsig(2ps) = 0.005 THz | probe s1(0.8) 2.05e+04 s2(0.5) 1.34e+04 s2(1.0) 1.32e+04 | MB s1(0.8) 2.34e+04 s2(0.5) 6.33e-02 s2(1.0) 5.31e-02
+    130: U_abs =  6.916 J/mol, 2Dpi(2ps) = 0.006, 2Dsig(2ps) = 0.043 THz | probe s1(0.8) 2.05e+04 s2(0.5) 1.46e+04 s2(1.0) 1.53e+04 | MB s1(0.8) 2.34e+04 s2(0.5) -1.02e+01 s2(1.0) 4.76e+00
+    150: U_abs =  7.986 J/mol, 2Dpi(2ps) = 0.011, 2Dsig(2ps) = 0.064 THz | probe s1(0.8) 2.06e+04 s2(0.5) 1.60e+04 s2(1.0) 1.69e+04 | MB s1(0.8) 2.33e+04 s2(0.5) -2.86e+01 s2(1.0) 1.24e+01
+equilibrium 7 K, real-time probe vs Mattis-Bardeen (twoband.sigma_total):
+  0.3 THz: s1 2.50e+03 (1.30e+03)  s2 8.22e+04 (8.84e+04)
+  0.5 THz: s1 1.17e+03 (7.47e+02)  s2 5.11e+04 (5.22e+04)
+  0.8 THz: s1 8.81e+02 (4.25e+02)  s2 3.04e+04 (3.11e+04)
+  1.0 THz: s1 8.86e+02 (3.24e+02)  s2 2.22e+04 (2.33e+04)
+  1.5 THz: s1 6.93e+03 (5.10e+03)  s2 1.32e+04 (1.28e+04)
+pump beam profile (equal Gaussian pump and probe spots), state at 2 ps vs nominal peak field:
+  E0 =   47 kV/cm: s1(0.8) 5.85e+03  s2(0.5) 4.48e+04  s2(1.0) 2.16e+04
+  E0 =   60 kV/cm: s1(0.8) 1.04e+04  s2(0.5) 3.83e+04  s2(1.0) 2.05e+04
+  E0 =   68 kV/cm: s1(0.8) 1.37e+04  s2(0.5) 3.27e+04  s2(1.0) 1.98e+04
+  E0 =   79 kV/cm: s1(0.8) 1.71e+04  s2(0.5) 2.57e+04  s2(1.0) 1.90e+04
+  E0 =   87 kV/cm: s1(0.8) 1.86e+04  s2(0.5) 2.23e+04  s2(1.0) 1.84e+04
+  E0 =  116 kV/cm: s1(0.8) 2.01e+04  s2(0.5) 1.73e+04  s2(1.0) 1.61e+04
+  E0 =  150 kV/cm: s1(0.8) 2.05e+04  s2(0.5) 1.63e+04  s2(1.0) 1.59e+04
+  rms probe change normalized at 150 kV/cm: 47: 0.20, 60: 0.39, 68: 0.54, 79: 0.72, 87: 0.80, 116: 0.96, 150: 1.00
+narrowband harmonics with the beam profile (I normalized to 12 kV/cm):
+  E0 =   12: FH    1.00  TH    1.00  E^6    1.00  measured FH    1.0 TH    1.0
+  E0 =   15: FH    4.38  TH    1.61  E^6    3.81  measured FH    4.0 TH    4.3
+  E0 =   18: FH   12.95  TH    1.77  E^6   11.39  measured FH   20.0 TH   12.5
+  E0 =   21: FH   27.82  TH    1.81  E^6   28.72  measured FH   70.0 TH   32.1
+  E0 =   25: FH   58.16  TH    2.15  E^6   81.76  measured FH  420.0 TH   57.1
+  E0 =   30: FH  132.61  TH    4.48  E^6  244.14  measured FH  900.0 TH   78.6
+Rothwarf-Taylor diagnostic, 47 kV/cm (P/R = pair breaking / recombination by phonons):
+  t =   7.0 ps: 2Dpi = 0.673, 2Dsig = 2.829 THz; P/R (pi, sigma) = 0.11, 0.57; phonon excess energy 8.59e+03 J/m^3
+  t =  20.0 ps: 2Dpi = 0.717, 2Dsig = 2.892 THz; P/R (pi, sigma) = 0.21, 0.65; phonon excess energy 1.03e+04 J/m^3
+  t =  50.0 ps: 2Dpi = 0.776, 2Dsig = 2.984 THz; P/R (pi, sigma) = 0.28, 0.61; phonon excess energy 7.00e+03 J/m^3
+  t =  98.0 ps: 2Dpi = 0.847, 2Dsig = 3.096 THz; P/R (pi, sigma) = 0.28, 0.55; phonon excess energy 3.35e+03 J/m^3
+Rothwarf-Taylor diagnostic, 68 kV/cm (P/R = pair breaking / recombination by phonons):
+  t =   7.0 ps: 2Dpi = 0.144, 2Dsig = 0.652 THz; P/R (pi, sigma) = 0.28, 0.27; phonon excess energy 3.47e+04 J/m^3
+  t =  20.0 ps: 2Dpi = 0.434, 2Dsig = 1.889 THz; P/R (pi, sigma) = 0.43, 0.34; phonon excess energy 4.01e+04 J/m^3
+  t =  50.0 ps: 2Dpi = 0.656, 2Dsig = 2.680 THz; P/R (pi, sigma) = 0.45, 0.59; phonon excess energy 2.35e+04 J/m^3
+  t =  98.0 ps: 2Dpi = 0.778, 2Dsig = 2.957 THz; P/R (pi, sigma) = 0.35, 0.59; phonon excess energy 7.96e+03 J/m^3
+Rothwarf-Taylor diagnostic, 150 kV/cm (P/R = pair breaking / recombination by phonons):
+  t =   7.0 ps: 2Dpi = 0.010, 2Dsig = 0.039 THz; P/R (pi, sigma) = 0.46, 0.61; phonon excess energy 2.07e+05 J/m^3
+  t =  20.0 ps: 2Dpi = 0.173, 2Dsig = 0.774 THz; P/R (pi, sigma) = 0.62, 0.65; phonon excess energy 1.35e+05 J/m^3
+  t =  50.0 ps: 2Dpi = 0.554, 2Dsig = 2.344 THz; P/R (pi, sigma) = 0.58, 0.65; phonon excess energy 5.71e+04 J/m^3
+  t =  98.0 ps: 2Dpi = 0.729, 2Dsig = 2.843 THz; P/R (pi, sigma) = 0.43, 0.64; phonon excess energy 1.53e+04 J/m^3

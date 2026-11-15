@@ -59,6 +59,12 @@ ax[1, 2].plot(ff, sb.real, "r-", label=r"$\sigma_1$, bottleneck state ($\mu^*$=%
 ax[1, 2].plot(ff, sb.imag, "b-", label=r"$\sigma_2$, bottleneck state")
 ax[1, 2].plot(ff, st.real, "r:", label=r"$\sigma_1$, thermal T*=20.5 K")
 ax[1, 2].plot(ff, st.imag, "b:", label=r"$\sigma_2$, thermal T*")
+rtp = os.path.join(HERE, "rt_out", "rt_pump_150.npz")
+if os.path.exists(rtp):            # real-time TDBdG + kinetics, weak probe at 2 ps (realtime_runs.py)
+    r = np.load(rtp)
+    m = (r["f"] > 0.35) & (r["f"] < 1.3)      # probe spectrum strong; above 1.3 THz the evolving state distorts the inversion
+    ax[1, 2].plot(r["f"][m], r["sig"][m].real / 100, "r-", lw=2, alpha=0.5, label=r"$\sigma_1$, real-time dynamics + probe")
+    ax[1, 2].plot(r["f"][m], r["sig"][m].imag / 100, "b-", lw=2, alpha=0.5, label=r"$\sigma_2$, real-time dynamics + probe")
 ax[1, 2].plot([0.8], [2.55e4], "ro", label=r"measured $\sigma_1$ (2 ps, 150 kV/cm)")
 ax[1, 2].plot([0.5, 1.0], [2.6e4, 1.5e4], "bo", label=r"measured $\sigma_2$")
 ax[1, 2].set_xlabel("f (THz)"); ax[1, 2].set_ylabel(r"$\Omega^{-1}$cm$^{-1}$"); ax[1, 2].legend(fontsize=6)

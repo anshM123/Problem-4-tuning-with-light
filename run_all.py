@@ -81,4 +81,17 @@ if what in ("all", "blind"):
     run("materials/blind/black_phosphorus", "compare_with_measurements.py")
 if what in ("all", "materials"):
     M = "materials/mgb2"
-    run(M, "nonlinear.py"); run(M, "pump.py"); run(M, "plots.py")
+    run(M, "nonlinear.py"); run(M, "pump.py")
+    # real-time two-band Bogoliubov-de Gennes dynamics with collisions: pumped state, field series,
+    # narrowband harmonics, beam-profile interpolation points, depairing and window checks
+    run(M, "realtime_runs.py", "validate")
+    for E in ("nb21", "30", "47", "68", "79", "100", "116", "150"):
+        run(M, "realtime_runs.py", "pump", E)
+    for E in ("6", "9", "12", "15", "18", "21", "25", "30"):
+        run(M, "realtime_runs.py", "harm", E)
+    for E in ("10", "20", "58", "90", "130"):
+        run(M, "realtime_runs.py", "pump", E, env={"RT_TKIN": "20"})
+    for E in ("30", "47", "68", "150"):
+        run(M, "window_check.py", E, "30", "30"); run(M, "window_check.py", E, "15", "18")
+    run(M, "depairing.py")
+    run(M, "realtime_plots.py"); run(M, "plots.py")
