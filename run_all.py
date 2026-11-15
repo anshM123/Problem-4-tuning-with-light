@@ -95,3 +95,6 @@ if what in ("all", "materials"):
         run(M, "window_check.py", E, "30", "30"); run(M, "window_check.py", E, "15", "18")
     run(M, "depairing.py")
     run(M, "realtime_plots.py"); run(M, "plots.py")
+    # light driving an infrared phonon: LiNbO3 (MACE surfaces, Maxwell + coherent modes + bath)
+    run("materials/phononics", "run_pipeline.py")
+    run("materials/phononics", "diagnostics.py")

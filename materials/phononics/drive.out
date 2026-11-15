@@ -1,0 +1,51 @@
+E0=2.0 MV/cm nu=17.5 THz: R=0.596 absorbed(deep)=0.021 mech=0.021 diss=0.360 field=0.002 -> sum 1.0000; bath excess / dissipation in tracked bins 1.000000 (29s)
+  A: E0=  2.0  f1=17.425 THz  Q4 in [-0.069, 0.068]  E_coh(surface) max 0.003 eV  T_bath(surface) max 301 K  Gamma4 max 0.162 THz  (29s)
+E0=5.7 MV/cm nu=17.5 THz: R=0.601 absorbed(deep)=0.021 mech=0.021 diss=0.356 field=0.002 -> sum 1.0000; bath excess / dissipation in tracked bins 1.000000 (29s)
+  A: E0=  5.7  f1=17.418 THz  Q4 in [-0.200, 0.193]  E_coh(surface) max 0.026 eV  T_bath(surface) max 306 K  Gamma4 max 0.165 THz  (58s)
+E0=8.0 MV/cm nu=17.5 THz: R=0.605 absorbed(deep)=0.021 mech=0.020 diss=0.351 field=0.002 -> sum 1.0000; bath excess / dissipation in tracked bins 1.000000 (26s)
+  A: E0=  8.0  f1=17.410 THz  Q4 in [-0.284, 0.269]  E_coh(surface) max 0.052 eV  T_bath(surface) max 312 K  Gamma4 max 0.169 THz  (84s)
+E0=11.6 MV/cm nu=17.5 THz: R=0.616 absorbed(deep)=0.022 mech=0.019 diss=0.341 field=0.002 -> sum 0.9999; bath excess / dissipation in tracked bins 1.000000 (26s)
+  A: E0= 11.6  f1=17.393 THz  Q4 in [-0.420, 0.385]  E_coh(surface) max 0.110 eV  T_bath(surface) max 325 K  Gamma4 max 0.177 THz  (110s)
+E0=14.8 MV/cm nu=17.5 THz: R=0.629 absorbed(deep)=0.022 mech=0.018 diss=0.329 field=0.002 -> sum 0.9999; bath excess / dissipation in tracked bins 1.000000 (25s)
+  A: E0= 14.8  f1=17.372 THz  Q4 in [-0.546, 0.487]  E_coh(surface) max 0.179 eV  T_bath(surface) max 341 K  Gamma4 max 0.189 THz  (135s)
+E0=17.6 MV/cm nu=17.5 THz: R=0.643 absorbed(deep)=0.023 mech=0.016 diss=0.317 field=0.001 -> sum 0.9998; bath excess / dissipation in tracked bins 1.000000 (28s)
+  A: E0= 17.6  f1=17.349 THz  Q4 in [-0.661, 0.574]  E_coh(surface) max 0.253 eV  T_bath(surface) max 357 K  Gamma4 max 0.203 THz  (162s)
+E0=20.0 MV/cm nu=17.5 THz: R=0.656 absorbed(deep)=0.023 mech=0.015 diss=0.304 field=0.001 -> sum 0.9998; bath excess / dissipation in tracked bins 1.000000 (26s)
+  A: E0= 20.0  f1=17.327 THz  Q4 in [-0.763, 0.646]  E_coh(surface) max 0.326 eV  T_bath(surface) max 374 K  Gamma4 max 0.219 THz  (188s)
+E0=20.9 MV/cm nu=17.5 THz: R=0.662 absorbed(deep)=0.023 mech=0.014 diss=0.299 field=0.001 -> sum 0.9998; bath excess / dissipation in tracked bins 1.000000 (22s)
+  A: E0= 20.9  f1=17.317 THz  Q4 in [-0.802, 0.672]  E_coh(surface) max 0.356 eV  T_bath(surface) max 381 K  Gamma4 max 0.226 THz  (210s)
+E0=20.0 MV/cm nu=17.5 THz: R=0.637 absorbed(deep)=0.031 mech=0.014 diss=0.317 field=0.001 -> sum 0.9998; bath excess / dissipation in tracked bins 1.000000 (23s)
+  sens Zbar_exp_strength: f1=17.394 Q4 [-0.751,0.639] Ecoh 0.319 eV
+E0=20.0 MV/cm nu=17.5 THz: R=0.661 absorbed(deep)=0.025 mech=0.015 diss=0.298 field=0.001 -> sum 0.9998; bath excess / dissipation in tracked bins 1.000000 (30s)
+  sens eps_inf_DFPT: f1=17.325 Q4 [-0.761,0.645] Ecoh 0.326 eV
+E0=20.0 MV/cm nu=17.5 THz: R=0.656 absorbed(deep)=0.023 mech=0.016 diss=0.303 field=0.001 -> sum 1.0000; bath excess / dissipation in tracked bins 0.000000 (23s)
+  sens no_bath: f1=17.353 Q4 [-0.764,0.649] Ecoh 0.330 eV
+E0=20.0 MV/cm nu=16.79567880080718 THz: R=0.521 absorbed(deep)=0.049 mech=0.019 diss=0.409 field=0.002 -> sum 0.9998; bath excess / dissipation in tracked bins 1.000000 (32s)
+  sens same_detuning: f1=17.342 Q4 [-0.695,0.597] Ecoh 0.275 eV
+E0=20.0 MV/cm nu=17.5 THz: R=0.656 absorbed(deep)=0.023 mech=0.015 diss=0.304 field=0.001 -> sum 0.9998; bath excess / dissipation in tracked bins 1.000000 (28s)
+  sens cep_pi2: f1=17.327 Q4 [-0.752,0.651] Ecoh 0.329 eV
+  A(DFT potential): E0=  2.0 f1=17.449 Q4 [-0.070, 0.067] E_coh 0.003 eV (372s)
+  A(DFT potential): E0=  5.7 f1=17.425 Q4 [-0.211, 0.184] E_coh 0.027 eV (398s)
+  A(DFT potential): E0= 11.6 f1=17.343 Q4 [-0.470, 0.350] E_coh 0.111 eV (426s)
+  A(DFT potential): E0= 17.6 f1=17.189 Q4 [-0.766, 0.477] E_coh 0.247 eV (455s)
+  A(DFT potential): E0= 20.9 f1=17.065 Q4 [-0.926, 0.534] E_coh 0.334 eV (482s)
+  B(DFT potential): F=  12.8: (P/P0) min 0.985
+  B(DFT potential): F=  28.7: (P/P0) min 0.974
+  B(DFT potential): F=  51.8: (P/P0) min 0.960
+  B(DFT potential): F=  94.5: (P/P0) min 0.938
+  B: nu=19.0 F=   1.8 mJ/cm2 (E0=2.9 MV/cm): (P/P0) min 0.996 max 1.003 at 0.06 ps  (619s)
+  B: nu=19.0 F=   6.7 mJ/cm2 (E0=5.6 MV/cm): (P/P0) min 0.992 max 1.005 at 0.06 ps  (650s)
+  B: nu=19.0 F=  12.8 mJ/cm2 (E0=7.8 MV/cm): (P/P0) min 0.988 max 1.006 at 0.06 ps  (682s)
+  B: nu=19.0 F=  20.7 mJ/cm2 (E0=9.9 MV/cm): (P/P0) min 0.983 max 1.007 at 0.06 ps  (711s)
+  B: nu=19.0 F=  28.7 mJ/cm2 (E0=11.6 MV/cm): (P/P0) min 0.979 max 1.008 at 0.06 ps  (743s)
+  B: nu=19.0 F=  37.8 mJ/cm2 (E0=13.4 MV/cm): (P/P0) min 0.975 max 1.009 at 0.06 ps  (771s)
+  B: nu=19.0 F=  51.8 mJ/cm2 (E0=15.6 MV/cm): (P/P0) min 0.968 max 1.010 at 0.06 ps  (795s)
+  B: nu=19.0 F=  65.9 mJ/cm2 (E0=17.6 MV/cm): (P/P0) min 0.962 max 1.010 at 0.06 ps  (819s)
+  B: nu=19.0 F=  94.5 mJ/cm2 (E0=21.1 MV/cm): (P/P0) min 0.951 max 1.010 at 0.06 ps  (842s)
+  B: nu=21.0 F=  24.4 mJ/cm2 (E0=10.7 MV/cm): (P/P0) min 0.988 max 1.005 at 0.06 ps  (867s)
+  B: nu=21.0 F=  52.4 mJ/cm2 (E0=15.7 MV/cm): (P/P0) min 0.979 max 1.006 at 0.06 ps  (890s)
+  B: nu=21.0 F=  90.2 mJ/cm2 (E0=20.6 MV/cm): (P/P0) min 0.969 max 1.007 at 0.06 ps  (915s)
+  B: nu=22.0 F=  49.4 mJ/cm2 (E0=15.3 MV/cm): (P/P0) min 0.983 max 1.005 at 0.05 ps  (936s)
+  B: nu=22.0 F= 103.7 mJ/cm2 (E0=22.1 MV/cm): (P/P0) min 0.970 max 1.006 at 0.05 ps  (959s)
+  B: nu=22.0 F= 173.8 mJ/cm2 (E0=28.6 MV/cm): (P/P0) min 0.954 max 1.006 at 0.05 ps  (983s)
+done (983s)

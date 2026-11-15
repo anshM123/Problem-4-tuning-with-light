@@ -1,0 +1,62 @@
+C:\Users\anshm\AppData\Roaming\Python\Python314\site-packages\e3nn\o3\_wigner.py:10: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  _Jd, _W3j_flat, _W3j_indices = torch.load(os.path.join(os.path.dirname(__file__), 'constants.pt'))
+C:\Users\anshm\AppData\Roaming\Python\Python314\site-packages\mace\calculators\mace.py:274: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  torch.load(f=model_path, map_location=device)
+cuequivariance or cuequivariance_torch is not available. Cuequivariance acceleration will be disabled.
+Using model under Academic Software License (ASL) license, see https://github.com/gabor1/ASL 
+ To use this model you accept the terms of the license.
+Using Materials Project MACE for MACECalculator with C:\Users\anshm\.cache\mace/maceomat0mediummodel
+Using float64 for MACECalculator, which is slower but more accurate. Recommended for geometry optimization.
+primitive cell: Li2Nb2O6 V = 106.071 A^3
+relaxed: a_r = 5.4944 A, alpha = 55.874 deg, V = 106.071 A^3 (exp 106.08), dE = -0.0873 eV, max F = 1.5e-05 (4s)
+hexagonal: a = 5.1483 (exp 5.1483), c = 13.8631 (exp 13.8631)
+fc2 displacements: 10 (53s)
+fc3 displacements: 1558
+  0/4810 (54s)
+  500/4810 (229s)
+  1000/4810 (480s)
+  1500/4810 (819s)
+  2000/4810 (1253s)
+  2500/4810 (1662s)
+  3000/4810 (2115s)
+  3500/4810 (2522s)
+  4000/4810 (2992s)
+  4500/4810 (3429s)
+C:\Users\anshm\Downloads\speedrunning annals\problem4\materials\phononics\phonons.py:90: DeprecationWarning: The symmetrize_fc2 parameter of Phono3py.produce_fc2 is deprecated. Call Phono3py.symmetrize_fc2 after Phono3py.produce_fc2 instead.
+  ph3.produce_fc2(symmetrize_fc2=True)
+C:\Users\anshm\Downloads\speedrunning annals\problem4\materials\phononics\phonons.py:91: DeprecationWarning: The symmetrize_fc3r parameter of Phono3py.produce_fc3 is deprecated. Call Phono3py.symmetrize_fc3 (and Phono3py.symmetrize_fc2 when applicable) after Phono3py.produce_fc3 instead.
+  ph3.produce_fc3(symmetrize_fc3r=True)
+C:\Users\anshm\Downloads\speedrunning annals\problem4\materials\phononics\phonons.py:100: DeprecationWarning: set_irreps() is deprecated. Use run_irreps() instead.
+  phn.set_irreps([0, 0, 0], degeneracy_tolerance=1e-3)
+Gamma modes (THz / cm-1):
+   0       -0.000 THz    -0.0 cm-1
+   1        0.000 THz     0.0 cm-1
+   2        0.000 THz     0.0 cm-1
+   3    E   4.534 THz   151.2 cm-1
+   4    E   4.534 THz   151.2 cm-1
+   5   A2   6.439 THz   214.8 cm-1
+   6    E   6.548 THz   218.4 cm-1
+   7    E   6.548 THz   218.4 cm-1
+   8   A1   7.276 THz   242.7 cm-1
+   9    E   7.861 THz   262.2 cm-1
+  10    E   7.861 THz   262.2 cm-1
+  11   A1   8.340 THz   278.2 cm-1
+  12   A2   9.237 THz   308.1 cm-1
+  13    E   9.592 THz   320.0 cm-1
+  14    E   9.592 THz   320.0 cm-1
+  15   A1  10.696 THz   356.8 cm-1
+  16    E  11.147 THz   371.8 cm-1
+  17    E  11.147 THz   371.8 cm-1
+  18    E  11.676 THz   389.5 cm-1
+  19    E  11.676 THz   389.5 cm-1
+  20   A2  12.125 THz   404.5 cm-1
+  21    E  12.632 THz   421.3 cm-1
+  22    E  12.632 THz   421.3 cm-1
+  23   A2  13.364 THz   445.8 cm-1
+  24    E  17.217 THz   574.3 cm-1
+  25    E  17.217 THz   574.3 cm-1
+  26   A1  18.235 THz   608.3 cm-1
+  27    E  19.850 THz   662.1 cm-1
+  28    E  19.850 THz   662.1 cm-1
+  29   A2  26.291 THz   877.0 cm-1
+total 3698s

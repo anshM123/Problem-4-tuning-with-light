@@ -1,0 +1,106 @@
+LiNbO3: light resonantly driving the A1(TO4) phonon (nonlinear phononics)
+All model numbers are predictions: MACE medium-omat-0 (phonons, anharmonic surface, fc3),
+DFPT mode polarities (Veithen, Gonze & Ghosez 2004), eps_inf = 4.6 (Barker & Loudon 1967).
+No parameter was adjusted to the measured nonlinear data.
+
+Linear properties
+  A1 TO frequencies (cm-1): MACE 243, 278, 357, 608; measured 252, 275, 332, 632
+  TO4 linewidth FWHM at 300 K: 10.8 cm-1 (meshes 6/8/10: 10.6, 10.6, 10.8); measured: 18.9 cm-1 (stoichiometric, Raman, Schwarz & Maier 1997), 33.5 cm-1 (congruent, reflectivity fit of experiment A)
+  TO4 FWHM at 10 K: MACE 5.0 cm-1; measured low-temperature limit (stoichiometric) 9.3 cm-1
+  TO4 bubble self-energy shift: -0.504 THz at 300 K, -0.670 THz at 500 K
+
+Anharmonic potential along Q_IR (eV, Å amu^1/2)
+  MACE: a3 = 513, a4 = 94, a5 = 7 meV; DFT (von Hoegen et al.): 1568, 901, 7.1 meV
+  excursions at U = 0.7 eV: MACE -1.17 / +0.91; DFT -1.27 / +0.75; measured (scaled onto DFT) -1.33 / +0.75 (U = 0.70, 0.66 eV)
+  measured points as published vs MACE: rms 85 meV (vs DFT curve: 31 meV)
+  one free scale factor (published procedure) onto MACE: B = 2.36, rms 33 meV; onto DFT: B = 0.96
+    i.e. the measured shape matches MACE only if all amplitudes are 2.4x and energies 5.6x those quoted
+  fc3 check: a3 (=Phi_444/2) = 516 meV vs frozen phonon 513
+  g_TO1 from fc3 = 134.5 meV vs frozen phonon 129.9
+  g_TO2 from fc3 = 95.9 meV vs frozen phonon 95.1
+  g_TO3 from fc3 = -71.1 meV vs frozen phonon -66.6
+  medium-omat-0   nu 18.22 THz  a3 513  a4 94  a5 7 meV
+  medium-mpa-0    nu 17.26 THz  a3 438  a4 139  a5 43 meV
+  medium          nu 17.21 THz  a3 601  a4 106  a5 -32 meV
+  DFT (von Hoegen et al. 2018): nu 19 THz (measured value used there), a3 1568, a4 901, a5 7.1 meV
+
+Experiment A (von Hoegen et al., Nature 555, 79 (2018)): 17.5 THz, 150 fs
+  at 20 MV/cm: Q_IR at the surface spans [-0.76, 0.65] Å amu^1/2 (measured max excursion 1.4 on the soft side)
+  peak coherent energy, surface cell: 0.33 eV/cell (measured 0.7 eV at max excursion; 0.6 eV deposited, estimate)
+  peak coherent energy, mean over first 1.3 µm: 0.11 eV/cell
+  bath temperature T* at the surface, max: 374 K; TO4 decay rate Gamma max 0.219 THz (300 K: 0.162)
+  harmonic amplitudes vs field (5-21 MV/cm), power-law exponents n=1,2,3: 0.87, 1.90, 2.89; measured 1, 2, 3
+  rectified (cycle-averaged) displacements at the surface, 20 MV/cm (Å amu^1/2): TO1 -0.165, TO2 -0.083, TO3 +0.036, TO4 -0.124; P_S change at peak (SH layer) -0.055 P_S0
+  fundamental of the SH signal at low field: 17.43 THz (measured polariton 16.2 THz, TO 19 THz; MACE TO 18.24 THz)
+  frequency renormalization omega'/omega:
+      5.7 MV/cm: model 0.9996   measured 1.004 +- 0.004
+     11.6 MV/cm: model 0.9981   measured 1.012 +- 0.004
+     17.6 MV/cm: model 0.9956   measured 1.020 +- 0.004
+     20.9 MV/cm: model 0.9938   measured 1.036 +- 0.004
+  sensitivity at 20 MV/cm (f1 THz, Q_IR range, coherent energy eV):
+    Zbar_exp_strength    f1 17.394  Q [-0.75, 0.64]  E 0.32
+    eps_inf_DFPT         f1 17.325  Q [-0.76, 0.64]  E 0.33
+    no_bath              f1 17.353  Q [-0.76, 0.65]  E 0.33
+    same_detuning        f1 17.342  Q [-0.70, 0.60]  E 0.27
+    cep_pi2              f1 17.327  Q [-0.75, 0.65]  E 0.33
+
+Experiment B (Mankowsky et al., PRL 118, 197601 (2017)): (P_S/P_S0) at peak
+  19 THz     1.8 mJ/cm2 (2.9 MV/cm): model 0.996  measured 0.99
+  19 THz     6.7 mJ/cm2 (5.6 MV/cm): model 0.992  measured 0.91
+  19 THz    12.8 mJ/cm2 (7.8 MV/cm): model 0.988  measured 0.79
+  19 THz    20.7 mJ/cm2 (9.9 MV/cm): model 0.983  measured 0.65
+  19 THz    28.7 mJ/cm2 (11.6 MV/cm): model 0.979  measured 0.48
+  19 THz    37.8 mJ/cm2 (13.4 MV/cm): model 0.975  measured 0.34
+  19 THz    51.8 mJ/cm2 (15.6 MV/cm): model 0.968  measured 0.17
+  19 THz    65.9 mJ/cm2 (17.6 MV/cm): model 0.962  measured -0.24
+  19 THz    94.5 mJ/cm2 (21.1 MV/cm): model 0.951  measured -0.35
+  21 THz    24.4 mJ/cm2 (10.7 MV/cm): model 0.988  measured 0.85
+  21 THz    52.4 mJ/cm2 (15.7 MV/cm): model 0.979  measured 0.71
+  21 THz    90.2 mJ/cm2 (20.6 MV/cm): model 0.969  measured 0.60
+  22 THz    49.4 mJ/cm2 (15.3 MV/cm): model 0.983  measured 0.93
+  22 THz   103.7 mJ/cm2 (22.1 MV/cm): model 0.970  measured 0.86
+  22 THz   173.8 mJ/cm2 (28.6 MV/cm): model 0.954  measured 0.70
+  susceptibility -d(P/P0)/dF (per mJ/cm^2; measured from points <= 55 mJ/cm^2): 19 THz model 0.00048 measured 0.0169; 21 THz model 0.00028 measured 0.0058; 22 THz model 0.00023 measured 0.0013
+  normalized to 19 THz: model 1.00, 0.59, 0.47; measured 1.00, 0.34, 0.08
+  with the published DFT Q_IR potential (19 THz): 12.8 mJ/cm2 -> 0.985, 28.7 mJ/cm2 -> 0.974, 51.8 mJ/cm2 -> 0.960, 94.5 mJ/cm2 -> 0.938
+
+Diagnostic: experiment A with the Q_IR self-potential of the published DFT fit (MACE couplings, MACE fc3):
+    2.0 MV/cm: Q_IR [-0.07, 0.07], coherent energy 0.00 eV, omega'/omega 1.0000
+    5.7 MV/cm: Q_IR [-0.21, 0.18], coherent energy 0.03 eV, omega'/omega 0.9986
+   11.6 MV/cm: Q_IR [-0.47, 0.35], coherent energy 0.11 eV, omega'/omega 0.9939
+   17.6 MV/cm: Q_IR [-0.77, 0.48], coherent energy 0.25 eV, omega'/omega 0.9851
+   20.9 MV/cm: Q_IR [-0.93, 0.53], coherent energy 0.33 eV, omega'/omega 0.9780
+
+Controlled diagnostics (diagnostics.py): same method, other energy surfaces / like-for-like readout
+  measured: fit sqrt(1 + a E^2) to Ext. Data Fig. 6 gives a = +1.57e-04 (MV/cm)^-2
+  Part 1, (P_S/P_S0) at peak, 19 THz, fluence 12.8 / 51.8 / 94.5 mJ/cm2 (measured 0.79 / 0.17 / -0.35):
+    MACE (default)  0.988 / 0.968 / 0.951
+    L1: Abalmasov first-principles part (c₂, double well): 0.988 / 0.969 / 0.952; first sign change at none up to 94.5 mJ/cm2; susceptibility 19/21/22 THz = 1 : 0.60 : 0.51 (19 THz 0.00066)
+    L2: L1 + DFT Q_IR anharmonicity (von Hoegen): 0.984 / 0.956 / 0.931; first sign change at none up to 94.5 mJ/cm2; susceptibility 19/21/22 THz = 1 : 0.60 : 0.52 (19 THz 0.00092)
+    L3: Abalmasov full (c₁, c₃, E_d fitted to this data): 0.992 / 0.980 / 0.968; first sign change at none up to 94.5 mJ/cm2; susceptibility 19/21/22 THz = 1 : 1.16 : 1.15 (19 THz 0.00044)
+    measured: first sign change between 51.8 and 65.9 mJ/cm2 (threshold 60); susceptibility 1 : 0.35 : 0.08 (19 THz 0.0168)
+    note: L3 (Abalmasov's c1, c3, E_d, adjusted to experiment B in the source) is not a consistent surface: with c3 its
+    stationary point moves to Q_P = 4.89, Q_IR = -0.90 (the source starts from the non-stationary Q_P0 = 3.1); listed only.
+  Part 3, field treatment: vacuum peak field applied directly to the modes (single cell, no reflection or screening,
+  as in the minimal models of the literature); (P_S/P_S0) min at 12.8 / 51.8 / 65.9 / 94.5 mJ/cm2, max |Q_IR|:
+    MACE  +0.793 / +0.413 / +0.300 / +0.129   |Q_IR| max at 12.8 mJ/cm2 0.93 (Maxwell, surface cell: 0.28)
+    L1    +0.790 / +0.315 / +0.110 / -1.161   |Q_IR| max at 12.8 mJ/cm2 0.85 (Maxwell, surface cell: 0.28)
+    L2    +0.747 / +0.537 / +0.470 / +0.329   |Q_IR| max at 12.8 mJ/cm2 0.84 (Maxwell, surface cell: 0.28)
+    driven-mode frequency, vacuum field, mace Q_IR potential, free window: 2.0: 1.000, 5.7: 0.987, 11.6: 0.951, 17.6: 0.938, 20.9: 0.923  (|Q_IR| max 2.74 at 20.9)
+    driven-mode frequency, vacuum field, dft Q_IR potential, free window: 2.0: 1.000, 5.7: 0.953, 11.6: 0.916, 17.6: 0.915, 20.9: 0.910  (|Q_IR| max 2.18 at 20.9)
+  Part 4, Maxwell, pump on the MACE TO4 resonance (18.24 THz, same relative detuning as 19 THz in the experiment):
+    MACE  (P_S/P_S0) min at 12.8 / 51.8 / 94.5 mJ/cm2: 0.986 / 0.964 / 0.944; |Q_IR| max at 94.5: 0.83
+    L1    (P_S/P_S0) min at 12.8 / 51.8 / 94.5 mJ/cm2: 0.986 / 0.964 / 0.944; |Q_IR| max at 94.5: 0.76
+  Part 2, omega'/omega at 5.7 / 11.6 / 17.6 / 20.9 MV/cm (measured 1.004 / 1.012 / 1.020 / 1.036):
+    polarization rotation, polariton peak, full window   0.9999 / 0.9994 / 0.9985 / 0.9977   a = -1.00e-05
+    polarization rotation, free window                   0.9999 / 0.9997 / 0.9994 / 0.9993   a = -3.76e-06
+    SH signal, dominant peak, full window                0.9995 / 0.9975 / 0.9942 / 0.9919   a = -3.70e-05
+    SH signal, free window                               0.9997 / 0.9988 / 0.9974 / 0.9964   a = -1.68e-05
+    PR, pump at the measured detuning (16.8 THz)         0.9998 / 0.9992 / 0.9982 / 0.9975   a = -1.15e-05
+    SH, pump at the measured detuning                    0.9995 / 0.9977 / 0.9946 / 0.9922   a = -3.52e-05
+    PR, DFT Q_IR potential                               0.9995 / 0.9978 / 0.9953 / 0.9940   a = -2.92e-05
+    SH, DFT Q_IR potential                               0.9981 / 0.9914 / 0.9812 / 0.9749   a = -1.17e-04
+  low-field peaks: PR polariton 14.49 THz (measured 15.3); SH dominant 17.23 THz, free window 17.62 THz (measured 16.2)
+  Linewidth: isotope (mass-disorder) scattering of TO4, natural abundances: mesh 12^3: isotope Gamma_TO4 = 0.00109 THz half width -> FWHM 0.073 cm-1
+
+Energy budget at 20 MV/cm (fractions of incident): reflected 0.656, coherent 0.0150, dissipated to bath 0.3039, absorbed deep 0.023, field 0.001; sum 0.9998

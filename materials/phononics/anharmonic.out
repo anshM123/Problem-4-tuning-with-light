@@ -1,0 +1,44 @@
+C:\Users\anshm\AppData\Roaming\Python\Python314\site-packages\e3nn\o3\_wigner.py:10: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  _Jd, _W3j_flat, _W3j_indices = torch.load(os.path.join(os.path.dirname(__file__), 'constants.pt'))
+C:\Users\anshm\AppData\Roaming\Python\Python314\site-packages\mace\calculators\mace.py:274: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  torch.load(f=model_path, map_location=device)
+cuequivariance or cuequivariance_torch is not available. Cuequivariance acceleration will be disabled.
+Using model under Academic Software License (ASL) license, see https://github.com/gabor1/ASL 
+ To use this model you accept the terms of the license.
+Using Materials Project MACE for MACECalculator with C:\Users\anshm\.cache\mace/maceomat0mediummodel
+Using float64 for MACECalculator, which is slower but more accurate. Recommended for geometry optimization.
+A1 modes (MACE): ['7.276 THz = 243 cm-1', '8.340 THz = 278 cm-1', '10.696 THz = 357 cm-1', '18.235 THz = 608 cm-1']
+measured A1 TO (Raman/IR): 252, 275, 332, 632 cm-1; DFPT-LDA 243, 287, 355, 617
+  A1 TO1: nominal-charge polarity 1.444 e/amu^1/2, DFPT 1.558
+  A1 TO2: nominal-charge polarity 0.038 e/amu^1/2, DFPT 0.192
+  A1 TO3: nominal-charge polarity 0.026 e/amu^1/2, DFPT 0.286
+  A1 TO4: nominal-charge polarity 0.488 e/amu^1/2, DFPT 1.631
+Q_IR orientation relative to the polar-charge convention: +1 (polarity sign of the driven mode = +1)
+Q_IR potential fit |Q|<=1.5 (paper form): w = 18.22 THz (harmonic 18.24), a3 = 513, a4 = 94, a5 = 7 meV  [DFT of von Hoegen et al.: a3 = 1568, a4 = 901, a5 = 7.1 meV, units amu^-n/2 Å^-n]
+10th-order fit rms 0.01 meV over |Q|<=3
+TO1: frozen-phonon freq 7.26 THz; g (Q_IR^2 Q_j) = 129.9 meV; Q_IR Q_j^2: 30.7; Q_IR^2 Q_j^2: -2.3 meV; fit rms 1.36 meV
+TO2: frozen-phonon freq 8.36 THz; g (Q_IR^2 Q_j) = 95.1 meV; Q_IR Q_j^2: 13.8; Q_IR^2 Q_j^2: 2.2 meV; fit rms 0.76 meV
+TO3: frozen-phonon freq 10.69 THz; g (Q_IR^2 Q_j) = -66.6 meV; Q_IR Q_j^2: -102.8; Q_IR^2 Q_j^2: -3.3 meV; fit rms 0.57 meV
+fc3 check: a3 (=Phi_444/2) = 516 meV vs frozen phonon 513
+  g_TO1 from fc3 = 134.5 meV vs frozen phonon 129.9
+  g_TO2 from fc3 = 95.9 meV vs frozen phonon 95.1
+  g_TO3 from fc3 = -71.1 meV vs frozen phonon -66.6
+adiabatic potential (Q, V_frozen, V_relaxed eV; relaxed TO1, TO2, TO3 coordinates):
+  -1.60 1.1786 0.7019   -2.575 -0.973 +0.519
+  -1.40 0.9449 0.5927   -2.271 -0.968 +0.409
+  -1.20 0.7278 0.5113   -1.771 -0.876 +0.289
+  -1.00 0.5304 0.4285   -1.271 -0.657 +0.181
+  -0.80 0.3565 0.3218   -0.771 -0.386 +0.100
+  -0.60 0.2107 0.2012   -0.311 -0.170 +0.050
+  -0.40 0.0984 0.0967   -0.117 -0.066 +0.022
+  -0.20 0.0259 0.0258   -0.026 -0.015 +0.006
+  -0.00 -0.0000 0.0000   +0.000 +0.000 +0.000
+  +0.20 0.0286 0.0285   -0.024 -0.012 +0.006
+  +0.40 0.1204 0.1188   -0.092 -0.046 +0.026
+  +0.60 0.2849 0.2768   -0.205 -0.095 +0.064
+  +0.80 0.5326 0.5069   -0.363 -0.152 +0.127
+  +1.00 0.8752 0.8112   -0.567 -0.209 +0.223
+  +1.20 1.3256 1.1895   -0.814 -0.254 +0.363
+  +1.40 1.8981 1.6388   -1.096 -0.277 +0.556
+  +1.60 2.6085 2.1537   -1.394 -0.269 +0.810
+P_S along +z (mean dz of the three short Nb-O bonds +0.877 Å)

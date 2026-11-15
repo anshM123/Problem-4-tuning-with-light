@@ -1,0 +1,46 @@
+L1: equilibrium Q_P = 3.100, Q_IR = +0.000 Å amu^1/2
+  L1 nu=19.0 F=   6.7: P/P0 min +0.992  q1 min -0.04
+  L1 nu=19.0 F=  12.8: P/P0 min +0.988  q1 min -0.06
+  L1 nu=19.0 F=  20.7: P/P0 min +0.983  q1 min -0.08
+  L1 nu=19.0 F=  28.7: P/P0 min +0.979  q1 min -0.11
+  L1 nu=19.0 F=  37.8: P/P0 min +0.975  q1 min -0.15
+  L1 nu=19.0 F=  51.8: P/P0 min +0.969  q1 min -0.19
+  L1 nu=19.0 F=  65.9: P/P0 min +0.963  q1 min -0.24
+  L1 nu=19.0 F=  94.5: P/P0 min +0.952  q1 min -0.34
+  L1 nu=21.0 F=  24.4: P/P0 min +0.988  q1 min -0.10
+  L1 nu=21.0 F=  52.4: P/P0 min +0.980  q1 min -0.18
+  L1 nu=21.0 F=  90.2: P/P0 min +0.970  q1 min -0.27
+  L1 nu=22.0 F=  49.4: P/P0 min +0.983  q1 min -0.16
+  L1 nu=22.0 F= 103.7: P/P0 min +0.971  q1 min -0.27
+  L1 nu=22.0 F= 173.8: P/P0 min +0.957  q1 min -0.39
+L2: equilibrium Q_P = 3.100, Q_IR = +0.000 Å amu^1/2
+  L2 nu=19.0 F=   6.7: P/P0 min +0.990  q1 min -0.04
+  L2 nu=19.0 F=  12.8: P/P0 min +0.984  q1 min -0.06
+  L2 nu=19.0 F=  20.7: P/P0 min +0.978  q1 min -0.08
+  L2 nu=19.0 F=  28.7: P/P0 min +0.972  q1 min -0.11
+  L2 nu=19.0 F=  37.8: P/P0 min +0.965  q1 min -0.14
+  L2 nu=19.0 F=  51.8: P/P0 min +0.956  q1 min -0.19
+  L2 nu=19.0 F=  65.9: P/P0 min +0.947  q1 min -0.24
+  L2 nu=19.0 F=  94.5: P/P0 min +0.931  q1 min -0.35
+  L2 nu=21.0 F=  24.4: P/P0 min +0.984  q1 min -0.10
+  L2 nu=21.0 F=  52.4: P/P0 min +0.972  q1 min -0.17
+  L2 nu=21.0 F=  90.2: P/P0 min +0.958  q1 min -0.24
+  L2 nu=22.0 F=  49.4: P/P0 min +0.976  q1 min -0.16
+  L2 nu=22.0 F= 103.7: P/P0 min +0.958  q1 min -0.26
+  L2 nu=22.0 F= 173.8: P/P0 min +0.936  q1 min -0.37
+L3: equilibrium Q_P = 4.891, Q_IR = -0.904 Å amu^1/2
+  L3 nu=19.0 F=   6.7: P/P0 min +0.995  q1 min -0.01
+  L3 nu=19.0 F=  12.8: P/P0 min +0.992  q1 min -0.02
+  L3 nu=19.0 F=  20.7: P/P0 min +0.989  q1 min -0.03
+  L3 nu=19.0 F=  28.7: P/P0 min +0.986  q1 min -0.03
+  L3 nu=19.0 F=  37.8: P/P0 min +0.984  q1 min -0.04
+  L3 nu=19.0 F=  51.8: P/P0 min +0.980  q1 min -0.06
+  L3 nu=19.0 F=  65.9: P/P0 min +0.976  q1 min -0.07
+  L3 nu=19.0 F=  94.5: P/P0 min +0.968  q1 min -0.10
+  L3 nu=21.0 F=  24.4: P/P0 min +0.985  q1 min -0.10
+  L3 nu=21.0 F=  52.4: P/P0 min +0.974  q1 min -0.18
+  L3 nu=21.0 F=  90.2: P/P0 min +0.961  q1 min -0.31
+  L3 nu=22.0 F=  49.4: P/P0 min +0.975  q1 min -0.30
+  L3 nu=22.0 F= 103.7: P/P0 min +0.954  q1 min -0.64
+  L3 nu=22.0 F= 173.8: P/P0 min +0.929  q1 min -1.18
+done (1142s)

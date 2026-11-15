@@ -85,7 +85,18 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | TH intensity vs field per pulse | beam: 1.6, 1.8, 1.8, 2.2, 4.5 | 4.3, 12.5, 32, 57, 79 | ✘ (saturates near 12 kV/cm) |
 | | static depairing current density, 7 K | 7.0×10⁷ A cm⁻² (Eilenberger with Born impurities, same inputs: 6.1×10⁷) | MgB₂ films 2×10⁷ (pulsed transport) to ~10⁸ | ✔ |
 | | π gap during a 30 kV/cm narrowband pulse | 0.85 (one pulse), 0.39 (A+B superposed), pulse-weighted | 0.81 (scale factor of the authors' fit) | ≈ / ✘ |
-| **5 Blind test: black phosphorus** (`run_material.py`, predictions committed before the data were compiled) | absorbed energy density | 377 J/cm³ | 380 ± 70 J/cm³ (Zahn 2020) | ✔ |
+| **5 LiNbO₃, light driving an IR phonon** (nonlinear phononics) | A1 TO frequencies | 243, 278, 357, 608 cm⁻¹ | 252, 275, 332, 632 cm⁻¹ | ✔ |
+| | TO4 three-phonon linewidth, 300 K / 10 K | 10.8 / 5.0 cm⁻¹ | 18.9 / 9.3 cm⁻¹ (stoichiometric Raman) | ✘ (×0.55) |
+| | harmonic field scaling n = 1, 2, 3 | exponents 0.87, 1.90, 2.89 | 1, 2, 3 | ✔ |
+| | excursion / coherent energy at 20 MV/cm | −0.76 Å amu^1/2 / 0.33 eV | 1.4 Å amu^1/2 (DFT-scaled) / 0.6–0.7 eV | ≈ (×0.5) |
+| | potential asymmetry (excursion ratio at 0.7 eV) | 1.29 | 1.77 | ✘ (MACE a₃ 3× below DFT) |
+| | frequency shift at 20.9 MV/cm, like-for-like readout (polarization rotation / SH, both windows) | −0.07 % to −0.8 % (DFT Q_IR: −2.5 %) | +3.6 % | ✘ (sign, independent of potential and readout) |
+| | polariton fundamental in the polarization-rotation signal | 14.49 THz | 15.3 THz | ✔ (−5 %) |
+| | P_S/P_S0 at 94.5 mJ/cm² (19 THz), Maxwell field | 0.95 (MACE); 0.95 / 0.93 (literature L1 / L2) | −0.35 | ✘ (not a MACE error) |
+| | same, vacuum field applied to the modes (literature-style single cell) | 0.13 (MACE), −1.16 (L1) | −0.35; 0.79 at 12.8 mJ/cm² (MACE: 0.79) | diagnostic |
+| | frequency ordering of P_S susceptibility (19 > 21 > 22 THz) | 1 : 0.60 : 0.51 (all surfaces) | 1 : 0.35 : 0.08 | ≈ |
+| | coherent ↔ incoherent energy conservation | 2×10⁻⁴ | — | ✔ |
+| **6 Blind test: black phosphorus** (`run_material.py`, predictions committed before the data were compiled) | absorbed energy density | 377 J/cm³ | 380 ± 70 J/cm³ (Zahn 2020) | ✔ |
 | | ΔMSD zigzag τ₁ / τ₂ | 0.81 / 20.5 ps | 0.58 / 20 ps | ≈ / ✔ |
 | | ΔMSD armchair τ₁ / τ₂ | 0.12 / 14.0 ps | 0.48 / 22 ps | ✘ / ≈ |
 | | diffuse at Seiler's A / X (points matched by coordinates) | rise 1.9 ps, relax 19 ps / 11.0 ps | 1.7, 30 ps / 14.3 ps | ✔, ≈ / ✔ |
@@ -1035,6 +1046,196 @@ Four checks were made, none of them tuned to the Katsumi data.
 
 ![MgB2 real time](figures/mgb2_realtime.png)
 
+### 3.5 Light driving phonons: nonlinear phononics in LiNbO₃ (`materials/phononics`, `figures/phononics.png`)
+
+![phononics](figures/phononics.png)
+
+**Why this case.** In the other targets, light drives the lattice indirectly, through hot carriers.
+Here a mid-infrared pulse drives one infrared-active phonon directly, deep into its anharmonic
+regime. The driven mode is the A1(TO4) mode of ferroelectric LiNbO₃ (19 THz).
+- Two experiments from the same laboratory use the same mode, the same 150 fs pulses and the same field range:
+  - A. von Hoegen et al., Nature 555, 79 (2018): 17.5 THz pump, up to 20 MV/cm. Observables: harmonics,
+    the reconstructed potential, and the field-dependent frequency.
+  - B. Mankowsky et al., PRL 118, 197601 (2017): 19, 21 and 22 THz pump, up to 95 mJ/cm². Observable: the
+    rectified ferroelectric polarization, read out by phase-resolved SHG.
+- Both experiments measure lattice quantities, so they test the same MACE + phono3py machinery used for
+  graphite.
+- SiC (Cartella et al. 2018) was rejected: its parametric gain is controlled by field-induced changes of
+  ε∞ and of the Born charge. Those are electronic quantities, and the original work fitted them.
+- Measured numbers and digitized figure points: `materials/phononics/experimental_targets.md`.
+
+**Model.** Light, coherent phonons and incoherent phonons are solved in one set of equations. Normal
+incidence on an x-cut crystal, with E ∥ c.
+- **Maxwell (1D Yee FDTD).** The incident pulse is injected with a total-field/scattered-field source:
+  - ε₀ε∞ ∂E/∂t = −∂H/∂x − ∂P/∂t, μ₀ ∂H/∂t = −∂E/∂x;
+  - P = Σ_j Z̄_j Q_j / Ω.
+- **Coherent modes.** The four A1 modes are tracked in every 20 nm depth cell:
+  - Q̈_j = −∂V/∂Q_j − 2γ_j Q̇_j + Z̄_j E.
+  - V(Q₁…Q₄) is the MACE frozen-phonon energy surface:
+    - a 10th-order fit along Q_IR up to |Q| = 3 Å amu^1/2;
+    - 2D fits of every coupling Q_IR^m Q_j^n with m + n ≤ 6, for the three other A1 modes. These are the
+      only modes that couple linearly to Q_IR² by symmetry.
+  - The cubic couplings agree with the phono3py fc3 summed at Γ: a₃ 516 vs 513 meV, g_TO1 134.5 vs 129.9
+    meV, all within 7 %.
+- **Coherent decay.** γ₄(t, z) is the golden-rule decay of the coherent TO4 mode into all phonon pairs of
+  an 8³ Brillouin-zone mesh. It uses the MACE fc3, with the stimulated factors (1 + n + n′) and (n − n′)
+  evaluated with the current bath populations. The prefactor is calibrated against phono3py and rescaled
+  to the converged tetrahedron linewidth.
+- **Incoherent phonons.** n_λ(t, z) covers all 30 branches on the irreducible 8³ mesh, in 0.2 µm depth
+  bins.
+  - Each decay channel deposits its share of the dissipated power 2γ₄Q̇₄².
+  - Relaxation uses the MACE three-phonon lifetimes, towards a temperature T* fixed by energy conservation.
+- **Feedback from the bath.** The bath acts back on the coherent mode in two ways:
+  - through the stimulated factors;
+  - through the real part of the three-phonon bubble, which shifts ω₄ by Δ(T*) − Δ(300 K).
+- **Energy budget.** Incident energy = reflected + coherent + bath + field + absorbed deep in the crystal,
+  closed to 2×10⁻⁴ at 20 MV/cm. The bath energy equals the dissipated energy to 10⁻⁶.
+
+**Inputs and their sources.**
+- **Structure:** room-temperature lattice of Abrahams et al. (1966); internal coordinates relaxed with MACE
+  (`medium-omat-0`).
+- **Phonons:** MACE, 3×3×3 supercell (fc2) and 2×2×2 supercell (fc3, 1558 supercells).
+- **Mode polarities:** DFPT-LDA values of Veithen, Gonze & Ghosez (PRL 93, 187401 (2004)), p₃ = 3.65,
+  0.45, 0.67, 3.82 ×10⁻² a.u. for TO1–TO4, i.e. Z̄ = 1.56, 0.19, 0.29, 1.63 e amu^-1/2. Their signs
+  relative to the MACE eigenvectors are fixed with nominal ionic charges.
+- **ε∞ = 4.6:** Barker & Loudon (1967). The DFPT value 5.8 changes nothing measurable (sensitivity run).
+- **P_S0 = 0.71 C/m²:** Wemple et al. (1968).
+- **Pulses:** taken as published. Fluence is converted to peak field for a Gaussian with 150 fs intensity
+  FWHM, so 95 mJ/cm² corresponds to 21.2 MV/cm.
+- Nothing was adjusted to either nonlinear experiment.
+
+**Linear and lifetime checks.**
+- **Frequencies.**
+  - MACE A1 TO frequencies: 243, 278, 357, 608 cm⁻¹. Measured: 252, 275, 332, 632.
+  - The driven mode is 3.8 % soft, so the 17.5 THz pump is closer to resonance in the model. Driving at the
+    measured detuning instead changes the amplitude by −9 %.
+- **Linewidth.** TO4 three-phonon FWHM from MACE: 10.8 cm⁻¹ at 300 K and 5.0 cm⁻¹ at 10 K. The meshes
+  6³–10³ agree to 2 %. Stoichiometric Raman data (Schwarz & Maier 1997) give 18.9 and 9.3 cm⁻¹, so MACE
+  is 0.55× the measurement at both temperatures. The congruent sample of experiment A has 33.5 cm⁻¹, which
+  includes defect broadening.
+- **Anharmonic coefficients.** Along Q_IR, MACE gives a₃ = 513, a₄ = 94, a₅ = 7 meV (amu^-n/2 Å^-n).
+  - The DFT fit of von Hoegen et al. is 1568, 901, 7.1.
+  - Two other MACE foundation models agree with `medium-omat-0` (a₃ = 438 and 601, a₄ = 139 and 106).
+  - So the MACE family consistently finds this Nb–O mode 3× less cubic and 7–10× less quartic than DFT,
+    and its decay 0.55× slower than measured.
+  - This is the opposite error to graphite, where MACE overestimated the anharmonic decay by about 2×.
+
+**Results** (summary in `materials/phononics/summary.txt`).
+
+| Observable | Model | Measured | |
+|---|---|---|---|
+| Harmonics n = 1, 2, 3 vs field (5–21 MV/cm), power-law exponent | 0.87, 1.90, 2.89 | 1, 2, 3 | ✔ |
+| Soft-side excursion at 20 MV/cm (surface) | −0.76 Å amu^1/2 (range −0.76…+0.65) | 1.4 (inferred with the DFT potential) | ≈ (×0.55) |
+| Peak coherent energy, surface cell | 0.33 eV | 0.6–0.7 eV (estimate) | ≈ (×0.5) |
+| Potential asymmetry: excursion ratio at 0.7 eV | 1.29 (MACE), 1.70 (DFT) | 1.77 | ✘ MACE |
+| Measured shape onto the MACE potential (the paper's one-factor procedure) | rms 33 meV, but only with amplitudes ×2.36 | — | ✘ |
+| Fundamental frequency shift ω′/ω at 5.7, 11.6, 17.6, 20.9 MV/cm | 0.9996, 0.9981, 0.9956, 0.9938 | 1.004, 1.012, 1.020, 1.036 | ✘ (sign) |
+| Same, with the published DFT Q_IR potential | 0.9986, 0.9939, 0.9851, 0.9780 (at 5.7, 11.6, 17.6, 20.9) | same | ✘ (sign) |
+| P_S/P_S0 at peak, 19 THz, 12.8 / 51.8 / 94.5 mJ/cm² | 0.988 / 0.968 / 0.951 | 0.79 / 0.17 / −0.35 | ✘ (35× weaker) |
+| Initial slope −d(P/P0)/dF at 19, 21, 22 THz (per mJ/cm²) | 0.00048, 0.00028, 0.00023 | 0.0169, 0.0058, 0.0013 | ✘ magnitude; ✔ ordering |
+| Rectified TO1 (ferroelectric-mode) displacement, 20 MV/cm | −0.165 Å amu^1/2 (reduces P_S) | sign: reduces P_S | ✔ sign |
+| Bath heating, surface, 20 MV/cm | T* = 374 K; TO4 decay rate rises from 0.162 to 0.219 THz | — | |
+| Energy conservation | 0.9998 (budget), 1.000000 (bath) | — | ✔ |
+
+**What the comparison shows.**
+- **Reproduced.** The linear response, the field scaling of the phonon harmonics, the energy scale of the
+  driven mode (within 2×) and the sign of the rectified polar displacement.
+- **Not reproduced: magnitudes of the strongly nonlinear observables.** MACE underestimates the cubic and
+  quartic anharmonicity of this mode relative to DFT. Its three-phonon width is also 0.55× the Raman
+  value, so it underestimates the anharmonicity relative to experiment too.
+- **Not reproduced by any potential tried: the two largest measured effects** — the blue shift of the
+  fundamental and the polarization reversal. The controlled diagnostics below separate the method from
+  the potential.
+
+**Controlled diagnostics: method vs. MACE potential** (`materials/phononics/diagnostics.py`). Every run
+uses the same Maxwell + coherent-mode + bath equations, the same DFPT mode charges and the same MACE
+three-phonon decay; only the stated ingredient is changed. MACE stays the default result. The
+literature surfaces are used as labelled controls.
+
+- *Literature TO4–TO1 surfaces.* None of the papers suggested gives a complete first-principles
+  coefficient set for LiNbO₃:
+  - Subedi (PRB 92, 214303, 2015) states only that the coupling is large;
+  - the Mankowsky 2017 supplement uses a dimensionless model;
+  - Hardy et al. (arXiv:2312.04732) give neither coefficients nor absolute fields.
+
+  The usable published surface is Abalmasov's thermodynamic potential (arXiv:1910.05020). From it we use
+  only the parts taken from first principles or spectroscopy, plus one combination:
+  - **L1**: Landau double well for Q_P (7.5 THz, Q_P0 = 3.1 Å amu^1/2) and the biquadratic coupling
+    c₂ Q_P² Q_IR² with c₂ = 34 meV amu⁻² Å⁻⁴. This gives an effective g = 211 meV, against 130 meV in MACE.
+  - **L2**: L1 plus the DFT Q_IR anharmonicity of von Hoegen et al.
+  - **L3**: his additional terms c₁, c₃ and the depolarizing field were fitted to this experiment. They
+    also move the stationary point of his own potential to Q_P = 4.9 Å amu^1/2, so they cannot be used
+    consistently. L3 is listed only.
+- **Result 1: in the full method, no surface reverses the polarization.** (P_S/P_S0) at 12.8 / 51.8 /
+  94.5 mJ/cm², 19 THz:
+
+  | Surface | 12.8 | 51.8 | 94.5 |
+  |---|---|---|---|
+  | MACE | 0.988 | 0.968 | 0.951 |
+  | L1 | 0.988 | 0.969 | 0.952 |
+  | L2 | 0.984 | 0.956 | 0.931 |
+  | measured | 0.79 | 0.17 | −0.35 |
+
+  - Pumping exactly on the MACE resonance (18.24 THz) changes these by at most 0.01.
+  - The pump-frequency ordering of the susceptibility (19 : 21 : 22 THz) is 1 : 0.60 : 0.51 for every
+    surface, against 1 : 0.35 : 0.08 measured. It is set by the optics, not by the potential.
+  - **Conclusion: the miss is not attributable to MACE's anharmonicity.** A first-principles-constrained
+    literature surface fails in the same way, to within 2 % of P_S0.
+- **Result 2: the decisive ingredient is the field that acts on the mode.**
+  - At 19 THz the crystal reflects strongly (reststrahlen band). With Maxwell propagation and Born-charge
+    screening, Q_IR at the surface reaches 0.28 Å amu^1/2 at 12.8 mJ/cm².
+  - If the vacuum peak field is applied directly to the modes, as in the single-cell models of the
+    literature, Q_IR reaches 0.93, about 3.3× more.
+  - With that assumption, the MACE surface gives 0.79 / 0.41 / 0.13 at 12.8 / 51.8 / 94.5 mJ/cm². This
+    matches the measured 0.79 at low fluence and stays non-reversed at high fluence.
+  - L1 gives 0.79 / 0.32 / −1.16, i.e. it reverses between 66 and 95 mJ/cm² (measured threshold 60).
+  - So the reversal threshold depends on the surface only in a treatment that overestimates the
+    internal field about 3×. MACE's Q_P well and coupling are stiffer than the Landau double well.
+- **Result 3: the frequency-shift sign does not flip when the signals are compared like for like.**
+  - **Definition used in the paper.** Extended Data Fig. 6 plots the fundamental of the Fourier-transformed
+    time-resolved signals against peak field and fits it with sqrt(1 + aE²), giving a = +1.6×10⁻⁴ (MV/cm)⁻².
+  - **Same observables in the model.** We built both measured observables:
+    - the polarization-rotation signal: E integrated along the 800 nm light line to 18 µm, group index 2.30;
+    - the SH signal: dQ/dt along the 400 nm light line over 2 µm.
+
+    We used both the full window (−0.3 to 1.2 ps) and the free window (0.25 to 1.2 ps). The model's
+    polarization-rotation fundamental is the phase-matched polariton at 14.49 THz (measured 15.3; the
+    MACE TO is 4 % soft).
+  - **Result.** Every variant red-shifts at 20.9 MV/cm:
+    - polariton −0.23 %;
+    - SH −0.8 % (full window) and −0.4 % (free window);
+    - pump at the measured detuning −0.25 %;
+    - DFT Q_IR potential −0.6 % (polarization rotation) and −2.5 % (SH).
+
+    The fitted a ranges from −4×10⁻⁶ to −1.2×10⁻⁴ (MV/cm)⁻².
+  - **Driven → free hypothesis.** In the SH signal the free component (17.62 THz) lies 2.2 % above the
+    driven one (17.23 THz). A transfer of spectral weight to it could mimic a blue shift; in the
+    experiment, with the TO 8.6 % above the drive, it could mimic one of up to 8.6 %. The model shows no
+    such transfer at any field: the weight stays with the driven component.
+  - **Depth/field inhomogeneity.** The 18 µm polarization-rotation integral dilutes the shift relative to
+    the 2 µm SH integral. This reduces its size but never changes its sign.
+  - **Vacuum-field single-cell model.** It red-shifts even more: −7.7 % (MACE) and −9 % (DFT) at
+    20.9 MV/cm.
+  - **Conclusion.** Every lattice-anharmonic treatment gives a red shift. The measured blue shift needs
+    another origin: field-dependent electronic polarizability or Born charges, or a readout effect.
+- **Linewidth ×0.55.** Isotope scattering computed with phono3py at natural abundances adds only
+  0.07 cm⁻¹. Nb is monoisotopic, oxygen is 99.8 % ¹⁶O, and the mode is O-dominated.
+  - **Defects:** congruent crystals add a temperature-independent width (Schwarz & Maier 1997). That is
+    why the congruent value is 33.5 cm⁻¹ and the stoichiometric one 18.9 cm⁻¹; we compare with
+    stoichiometric.
+  - **Four-phonon processes:** we found no LiNbO₃-specific calculation. The measured ratio
+    Γ(293 K)/Γ(→0) = 2.03 matches the MACE three-phonon ratio of 2.16. A sizeable four-phonon term
+    (∝ T²) would steepen it, so the ×0.55 is most likely a uniform underestimate of the MACE cubic
+    couplings, consistent with its low a₃.
+
+**Cost.**
+- fc3 (1558 supercells of 80 atoms): 62 min on 4 threads, with the machine shared. It is cached in
+  `fc3.hdf5` (12.6 MB).
+- Anharmonic scans: 6 min. Three-phonon rates: 1 min.
+- 37 coupled Maxwell + coherent + bath runs (1650 cells, 57 000 steps, 30 bath bins × 1950 classes):
+  16 min.
+- Diagnostics (76 further runs plus single-cell models): about 35 min. Plots: 3 s.
+
 ### 3.6 Any material from its structure: `run_material.py` and a blind prediction
 
 **What it does.** `run_material.py` takes a crystal structure (any ASE-readable file, or a
@@ -1333,6 +1534,7 @@ All timings are for one laptop CPU core, Python/NumPy.
 | Graphite, full BZ, 100 ps | 11 min | Two-time NEGF with phonons over a full BZ: not feasible |
 | WSe₂, 4 ps (excitonic Bloch equations, energy-resolved) | ≈ 30 s for the full analysis | — |
 | MgB₂ gaps, σ(ω), nonlinear response (Level C propagator) | 1–20 min | — |
+| LiNbO₃ driven IR phonon: Maxwell + 4 coherent modes + 30-branch bath, 1650 depth cells, one field | ≈ 25 s (37 runs: 16 min) | — |
 | MgB₂ real-time BdG + collisions, one pump field to 100 ps (≈ 300 levels per band) | ≈ 13 min (2 threads) | two-time NEGF for a two-band superconductor with phonons: not attempted |
 
 ## 6. Limitations (what is not solved)
@@ -1394,7 +1596,15 @@ All timings are for one laptop CPU core, Python/NumPy.
    - **Discretization.** The random-matrix representation of the dirty metal uses a finite window
      (±15 and ±18 meV). Its normal-state σ₂ exceeds the Drude value by about 0.15×10⁴ Ω⁻¹cm⁻¹ at
      0.5 THz, and σ₁ of the 7 K equilibrium state is about 0.05×10⁴ higher than Mattis–Bardeen.
-5. **Method coverage.**
+5. **Light driving an IR phonon (LiNbO₃).**
+   - MACE makes the driven Nb–O mode about 3× less cubic and 7–10× less quartic than DFT, and its
+     three-phonon width is 0.55× the measured one.
+   - The measured blue shift of the driven mode and the polarization reversal are not reproduced.
+     The controls show that this is not a MACE error: literature first-principles surfaces in the
+     same Maxwell + phonon equations fail in the same way. Reversal appears only if the vacuum
+     field is applied to the mode, which ignores reflection and screening; the blue shift needs
+     physics beyond lattice anharmonicity (field-dependent electronic response or the readout).
+6. **Method coverage.**
    - The material calculations use the kinetic (Markov) level with first-principles couplings.
      Electron–electron, electron–phonon and phonon–phonon scattering are solved together for
      graphite, with energy conserved exactly.
@@ -1402,7 +1612,7 @@ All timings are for one laptop CPU core, Python/NumPy.
    - A phase-space-trajectory treatment of a two-site Hubbard–Holstein model with anharmonic
      phonons, compared with exact diagonalization, was less accurate than mean field because
      of zero-point leakage. It is therefore not used.
-6. **Licensing.** The MACE model `medium-omat-0` is under the Academic Software License; the
+7. **Licensing.** The MACE model `medium-omat-0` is under the Academic Software License; the
    MIT-licensed `medium-mpa-0` can be substituted at the cost of ≈ 20 % softer optical phonons.
 
 ## 7. Reproduction

@@ -1,0 +1,22 @@
+  mace_17.5 E0=  2.0: PR full dom/pol/TO 14.491/14.491/17.604  free dom 15.014 | SH full dom/pol/TO 17.235/17.000/17.604 free dom 17.617
+  mace_17.5 E0=  5.7: PR full dom/pol/TO 14.489/14.489/17.604  free dom 15.013 | SH full dom/pol/TO 17.225/17.000/17.604 free dom 17.612
+  mace_17.5 E0=  8.0: PR full dom/pol/TO 14.487/14.487/17.604  free dom 15.012 | SH full dom/pol/TO 17.215/17.000/17.604 free dom 17.607
+  mace_17.5 E0= 11.6: PR full dom/pol/TO 14.482/14.482/17.604  free dom 15.010 | SH full dom/pol/TO 17.192/17.000/17.604 free dom 17.596
+  mace_17.5 E0= 14.8: PR full dom/pol/TO 14.475/14.475/17.604  free dom 15.007 | SH full dom/pol/TO 17.165/17.000/17.604 free dom 17.584
+  mace_17.5 E0= 17.6: PR full dom/pol/TO 14.468/14.468/17.604  free dom 15.005 | SH full dom/pol/TO 17.136/17.000/17.604 free dom 17.571
+  mace_17.5 E0= 20.9: PR full dom/pol/TO 14.458/14.458/17.604  free dom 15.003 | SH full dom/pol/TO 17.094/17.000/17.604 free dom 17.553
+  mace_16.8 E0=  2.0: PR full dom/pol/TO 14.401/14.401/17.604  free dom 14.906 | SH full dom/pol/TO 17.163/17.000/17.604 free dom 17.633
+  mace_16.8 E0=  5.7: PR full dom/pol/TO 14.399/14.399/17.604  free dom 14.904 | SH full dom/pol/TO 17.155/17.000/17.604 free dom 17.628
+  mace_16.8 E0=  8.0: PR full dom/pol/TO 14.396/14.396/17.604  free dom 14.902 | SH full dom/pol/TO 17.145/17.000/17.604 free dom 17.623
+  mace_16.8 E0= 11.6: PR full dom/pol/TO 14.390/14.390/17.604  free dom 14.897 | SH full dom/pol/TO 17.124/17.000/17.604 free dom 17.613
+  mace_16.8 E0= 14.8: PR full dom/pol/TO 14.383/14.383/17.604  free dom 14.892 | SH full dom/pol/TO 17.098/17.000/17.604 free dom 17.600
+  mace_16.8 E0= 17.6: PR full dom/pol/TO 14.376/14.376/17.604  free dom 14.886 | SH full dom/pol/TO 17.070/17.000/17.604 free dom 17.586
+  mace_16.8 E0= 20.9: PR full dom/pol/TO 14.365/14.365/17.604  free dom 14.878 | SH full dom/pol/TO 17.028/17.000/17.604 free dom 17.568
+  dftIR_17.5 E0=  2.0: PR full dom/pol/TO 14.510/14.510/17.604  free dom 15.041 | SH full dom/pol/TO 17.255/17.000/17.604 free dom 17.642
+  dftIR_17.5 E0=  5.7: PR full dom/pol/TO 14.503/14.503/17.604  free dom 15.036 | SH full dom/pol/TO 17.221/17.000/17.604 free dom 17.628
+  dftIR_17.5 E0=  8.0: PR full dom/pol/TO 14.495/14.495/17.604  free dom 15.032 | SH full dom/pol/TO 17.185/17.000/17.604 free dom 17.615
+  dftIR_17.5 E0= 11.6: PR full dom/pol/TO 14.478/14.478/17.604  free dom 15.027 | SH full dom/pol/TO 17.107/17.000/17.604 free dom 17.586
+  dftIR_17.5 E0= 14.8: PR full dom/pol/TO 14.459/14.459/17.604  free dom 15.031 | SH full dom/pol/TO 17.019/17.000/17.604 free dom 17.546
+  dftIR_17.5 E0= 17.6: PR full dom/pol/TO 14.442/14.442/17.604  free dom 15.043 | SH full dom/pol/TO 16.930/16.930/17.604 free dom 17.489
+  dftIR_17.5 E0= 20.9: PR full dom/pol/TO 14.422/14.422/19.127  free dom 15.062 | SH full dom/pol/TO 16.822/16.822/17.604 free dom 17.386
+done (584s)

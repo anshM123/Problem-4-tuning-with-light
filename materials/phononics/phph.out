@@ -1,0 +1,13 @@
+mesh 6: Gamma_TO4(T) THz = [0.1586 0.259  0.3618 0.4649 0.5682]  FWHM(300K) = 10.6 cm-1 (7s)
+mesh 8: Gamma_TO4(T) THz = [0.1594 0.2597 0.3623 0.4655 0.5688]  FWHM(300K) = 10.6 cm-1 (15s)
+mesh 10: Gamma_TO4(T) THz = [0.1618 0.2635 0.3676 0.4722 0.577 ]  FWHM(300K) = 10.8 cm-1 (22s)
+10 K: FWHM = 5.0 cm-1
+bath: 65 irreducible q of 512; kappa_zz(300K) = 5.79 W/mK (39s)
+C:\Users\anshm\Downloads\speedrunning annals\problem4\materials\phononics\phph.py:75: DeprecationWarning: get_phonons() is deprecated and will be removed in v5.0. Use the phonons property.
+  freqs_bz, _, _ = itr.get_phonons()
+C:\Users\anshm\Downloads\speedrunning annals\problem4\materials\phononics\phph.py:101: DeprecationWarning: Use attribute, ImagSelfEnergy.temperature instead of ImagSelfEnergy.set_temperature().
+  ise.set_grid_point(0); ise.set_sigma(SIG); ise.set_temperature(300.0)
+TO4 at sigma=0.2 THz: phono3py Gamma = 0.1833 THz; prefactor 3.3062e+06; tetrahedron (10^3) 0.1618 THz
+decay channels with weight: 6625
+TO4 bubble shift (THz) vs T: [-0.504  -0.6696 -0.8643 -1.071  -1.2837]
+saved (39s)
