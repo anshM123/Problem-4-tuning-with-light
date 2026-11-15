@@ -11,6 +11,7 @@ materials that:
 - are applied to WSe₂, graphite and MgB₂.
 
 **Where to find things**
+- **One-page summary:** [SUBMISSION.md](SUBMISSION.md).
 - **Report:** [REPORT.md](REPORT.md) — method, results, scorecard, known limits, speed and limitations.
 - **Experimental targets:** `refs/experimental_targets.md` (quoted with sources).
 - **Figures:** `figures/`.
