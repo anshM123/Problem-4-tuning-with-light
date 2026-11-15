@@ -1,0 +1,50 @@
+# Optical conductivity of the half-filled Hubbard chain, eta = 0.1 J.
+# Finite-chain comparisons on the same open 14-site chain as the exact diagonalization.
+# th = 10%-of-maximum threshold, pk = peak, D = normalized line-shape distance (0..2) at eta = 0.1,
+# D(eta=0.5) = same distance after re-broadening both spectra to eta = 0.5 J (envelope), W = weight ratio
+
+U/J = 3:  Bethe-ansatz gap 0.631
+  ED open L=14:      th 0.92  pk 1.22
+  ED ring L=14:      th 1.67  pk 1.97
+  TDHF/RPA (gwx)            L=14: th 1.67  pk 2.00  D 0.94  D(eta=0.5) 0.48  W 1.02
+  ph fluct + collisions     L=14: th 0.02  pk 0.63  D 0.97  D(eta=0.5) 0.34  W 1.02
+  d-h pairs, leading order  L=14: th 0.02  pk 1.16  D 0.98  D(eta=0.5) 0.36  W 1.02
+  d-h pairs, HF             L=14: th 0.38  pk 1.20  D 0.49  D(eta=0.5) 0.15  W 1.02
+  d-h, HF+spin waves (main) L=14: th 0.95  pk 2.61  D 0.88  D(eta=0.5) 0.38  W 1.39
+  TDHF/RPA 64 sites         : th 1.56  pk 1.92
+  ph fluct + coll. 16 sites : th 0.02  pk 0.62
+  d-h pairs, ring 128 sites : th 0.02  pk 0.72
+  d-h + spin waves, ring 128: th 0.47  pk 1.61
+  doublon-holon bulk band edge (L -> inf): 0.324  (-48.7 % vs Bethe ansatz)
+  d-h + spin waves bulk band edge (L -> inf): 0.805  (+27.5 % vs Bethe ansatz)
+
+U/J = 6:  Bethe-ansatz gap 2.893
+  ED open L=14:      th 3.06  pk 4.67
+  ED ring L=14:      th 3.45  pk 3.73
+  TDHF/RPA (gwx)            L=14: th 5.08  pk 5.42  D 1.23  D(eta=0.5) 0.71  W 0.88
+  ph fluct + collisions     L=14: th 0.92  pk 5.25  D 1.59  D(eta=0.5) 0.76  W 0.88
+  d-h pairs, leading order  L=14: th 2.74  pk 5.74  D 0.86  D(eta=0.5) 0.23  W 0.88
+  d-h pairs, HF             L=14: th 2.81  pk 4.88  D 0.87  D(eta=0.5) 0.11  W 0.88
+  d-h, HF+spin waves (main) L=14: th 3.06  pk 5.31  D 0.70  D(eta=0.5) 0.12  W 1.19
+  TDHF/RPA 64 sites         : th 5.06  pk 5.42
+  ph fluct + coll. 16 sites : th 0.94  pk 5.23
+  d-h pairs, ring 128 sites : th 2.42  pk 3.98
+  d-h + spin waves, ring 128: th 2.68  pk 4.39
+  doublon-holon bulk band edge (L -> inf): 2.667  (-7.8 % vs Bethe ansatz)
+  d-h + spin waves bulk band edge (L -> inf): 2.909  (+0.6 % vs Bethe ansatz)
+
+U/J = 12:  Bethe-ansatz gap 8.458
+  ED open L=14:      th 8.63  pk 11.44
+  ED ring L=14:      th 8.84  pk 10.52
+  TDHF/RPA (gwx)            L=14: th 11.41  pk 11.75  D 1.33  D(eta=0.5) 0.77  W 0.84
+  ph fluct + collisions     L=14: th 0.26  pk 14.19  D 20.43  D(eta=0.5) 0.88  W 0.84
+  d-h pairs, leading order  L=14: th 8.49  pk 12.30  D 0.36  D(eta=0.5) 0.21  W 0.84
+  d-h pairs, HF             L=14: th 8.49  pk 11.10  D 0.94  D(eta=0.5) 0.17  W 0.84
+  d-h, HF+spin waves (main) L=14: th 8.63  pk 11.38  D 0.40  D(eta=0.5) 0.15  W 1.15
+  TDHF/RPA 64 sites         : th 11.38  pk 11.72
+  ph fluct + coll. 16 sites : th 0.36  pk 13.98
+  d-h pairs, ring 128 sites : th 8.15  pk 10.65
+  d-h + spin waves, ring 128: th 8.25  pk 10.72
+  doublon-holon bulk band edge (L -> inf): 8.333  (-1.5 % vs Bethe ansatz)
+  d-h + spin waves bulk band edge (L -> inf): 8.454  (-0.0 % vs Bethe ansatz)
+

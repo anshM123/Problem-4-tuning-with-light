@@ -5,7 +5,7 @@ with identical fluctuation samples, one with a weak vector-potential step A0 at 
 including the correlation dynamics.  sigma(w) = -j(w)/(A0 L), Lorentzian eta = 0.1 J.
 Compared with the exact Bethe-ansatz Mott gap of the infinite chain:
   Delta(U) = U - 4J + 8J int_0^inf J1(w) / (w (1 + exp(w U / 2J))) dw.
-Usage: python chain_sigma.py U [L] [nsamp] [kernel] [collide 0/1]
+Usage: python chain_sigma.py U [L] [nsamp|exact] [kernel] [collide 0/1] [output suffix]
 """
 import sys, os, time
 import numpy as np
@@ -18,7 +18,7 @@ U = float(sys.argv[1]); L = int(sys.argv[2]) if len(sys.argv) > 2 else 32
 ns = (None if sys.argv[3] == "exact" else int(sys.argv[3])) if len(sys.argv) > 3 else 200
 kernel = sys.argv[4] if len(sys.argv) > 4 else "gwx"
 collide = bool(int(sys.argv[5])) if len(sys.argv) > 5 else True
-gap = U - 4 + 8 * quad(lambda w: j1(w) / (w * (1 + np.exp(w * U / 2))), 0, 200, limit=400)[0]
+gap = U - 4 + 8 * quad(lambda w: j1(w) / (w * (1 + np.exp(min(w * U / 2, 700.0)))), 0, 200, limit=400)[0]
 A0 = 2e-3
 h = np.zeros((L, L))
 for i in range(L - 1):
@@ -51,7 +51,7 @@ eta = 0.1
 sig = np.array([-np.sum(j * np.exp((1j * x - eta) * tt)) * dt for x in w]) / (A0 * L)
 re = sig.real
 thr = w[np.argmax(re > 0.1 * re.max())]
-tag = f"U{U:g}_{kernel}_c{int(collide)}"
+tag = f"U{U:g}_{kernel}_c{int(collide)}" + (sys.argv[6] if len(sys.argv) > 6 else "")
 np.savez(os.path.join(os.path.dirname(__file__), "data", f"chain_sigma_{tag}.npz"),
          w=w, sigma=sig, gap=gap, gap_hf=gap_hf, t=tt, j=j)
 print(f"U={U} [{tag}]: Bethe-ansatz gap {gap:.3f}; HF gap {gap_hf:.3f}; sigma onset(10%) {thr:.2f}, "

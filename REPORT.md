@@ -40,17 +40,22 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | first zero crossing of I | mean error 1.8 ħ/J (T-matrix ladder 10.4 ħ/J); late at U/J = 15 (16.7 vs 5.4), where the curve hovers just above zero | ED | ≈ |
 | **1 Hubbard 6×2 ladder** | ground-state C_loc, C_leg, C_rung | pp ladder: C_loc, C_leg within 1.5 % at U/J = 0.5, 5 % at U/J = 1; −18 % (C_loc) at U/J = 4 | ED | ✔ for U/J ≤ 2 |
 | | laser-driven ΔC spectrum | dominant line 3.58 J (ph fluctuations) | 3.48 J (ED) | ✔ (3 %) |
-| **1 1D optical conductivity** | gap onset, U/J = 3, 6, 12 (RPA level, 64 sites) | 1.56, 5.06, 11.4 J | Bethe ansatz 0.63, 2.89, 8.46 J | ✘ (overestimated, as in the reference δGW) |
-| | main peak with correlation dynamics (16 sites, exact samples) | 0.62, 5.23, 14.0 J | Bethe ansatz gaps 0.63, 2.89, 8.46 J | ✔ U/J = 3; ≈ U/J = 6; ✘ U/J = 12 |
+| **1 1D optical conductivity** | Mott gap (band edge, L = ∞), U/J = 6, 12; doublon–holon pair closure, HF + spin-wave ground state | 2.91, 8.45 J | Bethe ansatz 2.89, 8.46 J | ✔ (+0.6 %, −0.0 %) |
+| | same, Hartree–Fock ground state only | 2.67, 8.33 J | 2.89, 8.46 J | ✔ (−7.8 %, −1.5 %) |
+| | threshold / peak on the open 14-site chain, U/J = 6 | 3.06 / 5.31 J | ED 3.06 / 4.67 J | ✔ / ≈ |
+| | threshold / peak on the open 14-site chain, U/J = 12 | 8.63 / 11.38 J | ED 8.63 / 11.44 J | ✔ |
+| | line-shape distance to ED (0 = identical, 2 = disjoint), envelope η = 0.5 J, U/J = 6, 12 | 0.12, 0.15 (TDHF/RPA: 0.71, 0.77) | ED, open 14 sites | ✔ |
+| | U/J = 3 (outside the strong-coupling closure) | band edge 0.81 J; 14-site threshold / peak 0.95 / 2.61 J | Bethe 0.63 J; ED 0.92 / 1.22 J | ✘ (peak); TDHF/RPA 1.56 J onset at 64 sites |
 | **2 WSe₂** | E(Σ-K) − E(K-K) | +6.8 meV | degenerate within 15 meV (≈ +3 meV) | ✔ |
-| | Σ-K population peak | 0.30 ps | 0.4 ps | ✔ |
+| | Σ maximum among the measured delays (the "~400 fs", Fig. 3d,e) | 0.40 ps | 0.40 ps | ✔ |
+| | delay between the sampled K and Σ maxima (the "~300 fs", SI §9, Fig. S11) | 0.31 ps | 0.31 ps | ✔ |
+| | effective K→Σ time, two-level fit at the measured delays (same fit for model and data) | 81 fs | 115 fs (104–130; 88–158 with ±50 fs time zero) | ≈ (×0.7) |
+| | K/Σ at −0.2, 0.09, 0.4 ps | 1.56, 1.03, 0.70 | 1.6, 1.15, 0.69 | ✔ |
+| | K and Σ densities at all measured delays (0.09–3.6 ps), one common scale | rms deviation 6.7 % of the Σ peak | Fig. 3c | ✔ |
 | | peak Σ / peak K | 1.18 | 1.3 | ✔ |
 | | late K/Σ ratio (resonant) | 0.57 | 0.47 | ✔ (≈) |
-| | decay time | 3.7 ps | 2.2 ps | ≈ |
-| | K and Σ densities at all measured delays (0.09–3.6 ps), one common scale | rms deviation 7 % of the Σ peak | Fig. 3c | ✔ |
-| | K/Σ at 0.09 ps and 0.4 ps | 1.01, 0.69 | 1.15, 0.69 | ✔ |
-| | bright-exciton phonon linewidth at 50 K (independent check of the couplings) | 6.9 meV | 6.0 meV (Moody et al. 2015) | ✔ |
-| | intrinsic K→Σ formation time | ≈ 20 fs (Σ at 79 % of its peak at 0.09 ps) | "~400 fs timescale" in the text; Σ at 67 % of its peak at 0.09 ps in Fig. 3c | open |
+| | late decay of Σ, 1–3.6 ps | 3.7 ps (two-level fit 2.9 ps) | 2.2–2.5 ps (two-level fit 2.4 ps) | ≈ |
+| | bright-exciton phonon linewidth at 50 K (independent check of the couplings) | 6.9 meV FWHM | 6.0 meV (Moody et al. 2015) | ✔ |
 | | above-gap K/Σ | 0.28 → 0.57 (rising) | 0.15 → 0.32 (rising) | qualitative |
 | **3 Graphite** | A1′(K) peak time | 0.70 ps | 0.6–0.7 ps | ✔ |
 | | K-point diffuse rise (fit as in experiment) | 0.29 ps | 0.28 ps | ✔ |
@@ -347,18 +352,89 @@ U/J = 1, with a Peierls pulse on the legs: A_L = 0.5, ħω_L = 2J, σ = 2ħ/J.
 
 #### Optical conductivity of the half-filled chain (`figures/hubbard_chain_sigma.png`)
 
-- Linear response from the self-consistent HF antiferromagnet (64 sites).
-- The Mott gap opens at every U but is overestimated: onsets of 1.56, 5.06 and 11.4 J against
-  the exact Bethe-ansatz gaps of 0.63, 2.89 and 8.46 J.
-- The reference reports the same overestimate for its δGW.
-- **With correlation dynamics.** We use particle–hole fluctuations with collisions on top of
-  the antiferromagnet. The initial covariance uses the exact deterministic decomposition
-  (16 sites); with Gaussian sampling the collision term was noise-unstable. Results:
-  - U/J = 3: the main peak moves from 1.92 J (RPA) to 0.62 J, at the exact gap of 0.63 J.
-  - U/J = 6: the peak moves from 5.42 to 5.23 J, and weight appears in the 2.9–4.5 J window and
-    near 7 J. The reference DDMRG also shows a secondary structure near 7 J.
-  - U/J = 12: the peak moves up, to 14.0 J; the method does not improve the strong-coupling
-    gap.
+**Exact reference.** We compute Re σ(ω) of the half-filled chain by exact diagonalization:
+Lanczos ground state and a continued-fraction (Gauss-quadrature) representation of the current
+spectral function, for open chains and rings of L = 10, 12 and 14 sites (14 sites: 11.8 × 10⁶
+states, matrix-free). Rings use periodic boundary conditions for odd and antiperiodic for even
+N_σ, so the ground state is non-degenerate. All spectra, exact and approximate, use the same
+definition, σ(ω) = −j(ω)/(A₀L) after a vector-potential step, with the same Lorentzian
+broadening η = 0.1 J (`chain_sigma_ed.py`). The infinite-chain reference is the Bethe-ansatz
+Mott gap. At strong coupling σ(ω) is a band from the Mott gap up to ≈ U + 4J, so the gap is
+compared with band edges and thresholds, and peaks with peaks.
+
+**Why the mean-field kernels fail.** Linear response from the Hartree–Fock antiferromagnet
+(TDHF/RPA) gives a narrow line at ≈ U: in a Néel background a doublon cannot move without
+leaving a string of misaligned spins, so its band width is only ~J²/U. On the open 14-site
+chain the TDHF/RPA threshold is 5.08 J at U/J = 6 and 11.41 J at U/J = 12, against 3.06 J and
+8.63 J exactly. Adding the collision term of the particle–hole fluctuations (exact sample
+decomposition) does not fix this: the spectra acquire spurious low-frequency weight
+(10 %-thresholds 0.9 J and 0.3 J) and at U/J = 12 large negative regions. The 0.62 J peak at
+U/J = 3 reported earlier lies below the exact 14-site threshold (0.92 J) and is therefore not
+evidence of a correct gap. The particle–particle ladders cannot represent the doublon–holon
+continuum either: started from the Hartree–Fock antiferromagnet they are not stationary
+(densities oscillate by ±20 % and Σd_corr reaches −1.9 within 20 ħ/J at U/J = 12), and the
+kicked self-interaction-free run becomes non-finite.
+
+**Doublon–holon pair closure** (`DoublonHolonPairs` in `lightmat/fluct_ph.py`). The optical
+excitation of a Mott insulator is a doublon–holon (D–H) pair. We propagate its amplitude
+ψ(i, j) exactly as a two-body problem in the self-interaction-free field of the other
+electrons, the particle–hole counterpart of the self-interaction-free pp ladder:
+- The other electrons form a singly occupied background. In one dimension a moving D or H only
+  shifts the order of the background spins (spin–charge separation), so both hop with the full
+  amplitude J; D and H cannot occupy the same site.
+- To second order in J/U: bonds touching D or H lose their ground-state energy e_b, so the pair
+  energy is U − Σ e_b over those bonds; D and H also hop across a singly occupied site with
+  amplitude K_b/4 (three-site terms, K_b the bond kinetic energy).
+- The current creates the pair on a bond with an amplitude ∝ (bond singlet weight)^½,
+  alternating in sign for the antiferromagnetic background. It also carries the first-order
+  vertex correction from the virtual pairs of the ground state. The overall weight is fixed by
+  the exact f-sum rule.
+- For uniform inputs the band edge is U − 4J − 4e_b − |K_b|. With the exact Heisenberg bond
+  energy this is the exact strong-coupling gap U − 4J + 8 ln2 J²/U (unit test).
+- At U/J = 200 the closure reproduces the exact spectrum of the 8-site chain line by line
+  (distance 0.07 at η = 0.2 J). With exact uniform bond inputs on the 8-site chain the vertex correction lowers the distance at U/J = 25 from 0.15 to 0.09 (η = 0.1 J), so
+  its sign is fixed independently of the U/J = 6–12 results.
+
+All inputs come from the method's own ground state, the Hartree–Fock antiferromagnet: bond
+kinetic energies and bond energies. In the main variant the bond singlet weight is raised from
+its Néel value 1/2 by the RPA zero-point spin fluctuations of the antiferromagnet (linear spin
+waves: 1/2 + ½(1 − 2/π), a factor 1.363 on K_b and e_b). No parameter is adjusted to the exact
+spectra. The cost is O(L²) per time step: 0.2 s for 14 sites and 40 s for a 128-site ring.
+
+**Results** (`data/chain_sigma_summary.txt`; th = first frequency at 10 % of the maximum,
+D = normalized line-shape distance, 0 = identical, 2 = disjoint):
+
+| U/J | Bethe gap | doublon–holon band edge (HF + spin waves / HF) | ED open 14: th, peak | doublon–holon open 14: th, peak, D(η = 0.1), D(η = 0.5) | TDHF/RPA open 14: th, peak, D(0.5) |
+|---|---|---|---|---|---|
+| 3 | 0.63 | 0.81 / 0.32 | 0.92, 1.22 | 0.95, 2.61, 0.88, 0.38 | 1.67, 2.00, 0.48 |
+| 6 | 2.89 | 2.91 / 2.67 | 3.06, 4.67 | 3.06, 5.31, 0.70, 0.12 | 5.08, 5.42, 0.71 |
+| 12 | 8.46 | 8.45 / 8.33 | 8.63, 11.44 | 8.63, 11.38, 0.40, 0.15 | 11.41, 11.75, 0.77 |
+
+- **Gap.** At U/J = 6 and 12 the band edge agrees with the Bethe-ansatz gap within 1 %. With
+  the bare Hartree–Fock ground state the errors are −7.8 % and −1.5 %. The earlier
+  overestimate, 5.06 J and 11.4 J, is removed.
+- **Finite chain.** On the open 14-site chain the 10 % thresholds equal the exact ones (3.06 J
+  and 8.63 J). The broadened line shape agrees with ED to a distance of 0.12–0.15, against
+  0.71–0.77 for TDHF/RPA.
+- **U/J = 12 peak.** It is 11.38 J against 11.44 J exactly. Individual lines are resolved
+  only approximately (D = 0.40 at η = 0.1).
+- **U/J = 6 peak.** Too high, 5.31 J against 4.67 J: the weight sits ≈ 0.6 J too high in the
+  band, the expected size of third-order terms at J/U = 1/6.
+- **Long chains.** On a 128-site ring the band is semicircle-like with peaks at 10.7 J
+  (U/J = 12) and 4.4 J (U/J = 6).
+
+**U/J = 3 is outside the closure.** The strong-coupling expansion is not controlled there
+(d = 0.13 against 0.25 for U = 0):
+- The band edge is 0.81 J against 0.63 J (+28 %); with the Hartree–Fock ground state it is
+  0.32 J (−49 %).
+- On the 14-site chain the threshold matches (0.95 vs 0.92 J), but the weight is spread too
+  far up (peak 2.61 vs 1.22 J).
+- No fast method here gets the exact gap at U/J = 3: TDHF/RPA gives a 1.56 J onset at 64
+  sites; the collision runs give spurious weight below the exact finite-chain threshold.
+
+**Finite-size note.** The exact finite-chain thresholds lie well above the Bethe-ansatz gap at
+weak coupling (14-site ring: 1.67 J at U/J = 3, 3.45 J at U/J = 6, 8.84 J at U/J = 12), so a
+weak-coupling 14–16-site calculation cannot by itself confirm a gap of 0.63 J.
 
 ![sigma](figures/hubbard_chain_sigma.png)
 
@@ -370,40 +446,134 @@ U/J = 1, with a Peierls pulse on the legs: A_L = 0.5, ħω_L = 2J, σ = 2ħ/J.
 With the DFT conduction-band offset this places Σ-K 6.8 meV above K-K. The measurement finds
 them degenerate within 15 meV.
 
-**Resonant 1.72 eV, 90 K.** With first-principles deformation potentials and no fitted
-parameter:
-- the K-valley population rises with the pulse;
-- the dark Σ-K population peaks at 0.30 ps (measured 0.4 ps) and dominates after ≈ 0.5 ps;
-- the peak Σ/K ratio is 1.18 (measured 1.3);
-- K/Σ falls from 1.2 to 0.57 (measured 1.15 → 0.47), the Boltzmann value of the computed
-  energy landscape;
-- the late decay is 3.7 ps (measured 2.2 ps).
+**Model of the resonant experiment (`bloch.py`).** The resonant pump creates a coherent
+excitonic polarization p at Q = 0 of the bright K-K exciton, not an incoherent population. We
+solve the excitonic Bloch equations in the second-order Born–Markov limit (Selig et al. 2018;
+Brem et al. 2018; Christiansen et al. 2019):
+- p is driven by the measured 241 fs Gaussian pulse at 1.72 eV, 10 meV below the 1.73 eV
+  resonance, and decays by phonon-induced dephasing and radiative decay (τ_rad = 0.2 ps, the
+  radiative limit of the 1.6 meV zero-temperature homogeneous linewidth of Moody et al. 2015);
+- phonon dephasing converts |p|² into incoherent excitons in exactly the final states, valley
+  and kinetic energy, into which the Q = 0 exciton scatters, with the same DFPT couplings that
+  then act on the incoherent occupations;
+- incoherent occupations of K-K, K-K′ and Σ-K are resolved in centre-of-mass kinetic energy
+  (0.5 meV bins up to 0.3 eV), with phonon absorption and emission and detailed balance at
+  90 K, exciton–exciton annihilation, and radiative decay of the light cone (E_lc = 4.5 µeV);
+- the K signal is |p|² + N_KK + N_KK′ (coherent excitons photoemit at the exciton energy at K,
+  Christiansen et al. 2019); the Σ signal is N_ΣK. Both lie inside the measured window
+  (1–2.5 eV above VB1, all 2 K and 6 Σ valleys).
+- The pump amplitude is fixed by the stated absorbed density, 8×10¹² cm⁻².
 
-**Timing.** The measured densities are sampled at −0.2, 0.09, 0.4, 0.7 ps, … with a 240 fs
-pump, so rise and peak times between samples are not resolved. We therefore compare at the
-measured delays, with one common scale for both valleys:
-- the rms deviation over all K and Σ points is 7 % of the Σ peak;
-- K/Σ is 1.01 at 0.09 ps (measured 1.15) and 0.69 at 0.4 ps (measured 0.69);
-- Σ reaches 79 % of its peak by 0.09 ps (measured 67 %).
+The coherent stage matters little because dephasing is fast. At 90 K the Q = 0 bright exciton
+scatters out at 48.9 ps⁻¹ (20 fs), 98 % of it by phonon absorption into Σ-K states 6.8 meV
+higher. Phonon emission into Σ-K needs kinetic energy above 20 meV, so a Q = 0 exciton can
+only absorb. The coherent density peaks at 19 % of the peak K signal, during the pulse, and
+10 % of the absorbed energy is re-radiated coherently. Injecting incoherent excitons directly
+at Q = 0, the rate-equation limit, changes every reported number by at most 0.03.
 
-The paper describes Σ-K formation "on a ~400 fs timescale". With the DFPT couplings, the
-model's intrinsic K→Σ transfer, by phonon absorption into the Σ-K states 6.8 meV higher, takes
-≈ 20 fs. The same couplings give a phonon linewidth of the bright exciton of 6.9 meV at 50 K,
-against 6.0 meV measured (Moody et al. 2015). This is an independent check of the coupling
-strength, and the linewidth bounds the out-scattering rate from above.
+**How the experiment defines the timing.** The delays were sampled at −0.5, −0.2, 0.09, 0.4,
+0.7, 1.0 ps, …, about 0.3 ps apart. The "~400 fs timescale" of the main text points to SI §9.
+There Fig. S11 shows the normalized sampled K and Σ densities with dotted lines at their sampled
+maxima, 0.09 ps and 0.4 ps, and the text states "a delay of ~300 fs". The dashed line of
+Fig. 3d,e marks the same 0.4 ps Σ maximum. The paper fits no function; the timing is the
+position of the sampled maxima. It is therefore quantized by the 0.31 ps delay step: any
+continuous Σ peak between about 0.25 and 0.55 ps gives the same 0.4 ps.
 
-Weakening the couplings to slow the transfer worsens the agreement with the measured points:
-- ×0.5 gives an rms deviation of 8 % and K/Σ(0.4 ps) = 0.84;
-- ×0.3 gives 11 % and 0.94 (parameter `s_iv` in `dynamics.py`).
+**Resonant 1.72 eV, 90 K: timing compared like for like.** We sample the simulated signal at
+the measured delays and apply the same definition.
+- Σ maximum among the sampled delays: 0.40 ps (measured 0.40 ps).
+- Delay between the sampled K and Σ maxima: 0.31 ps (measured 0.31 ps).
+- Adding a 100 fs XUV probe envelope to the 241 fs pump, i.e. a wider instrument response,
+  changes neither number.
 
-We therefore keep the first-principles couplings and leave the difference between the quoted
-formation timescale and the sampled data open.
+For a comparison that is not quantized, we fit one effective two-level model (pump ⊗ K→Σ
+transfer time τ_f, back-transfer to a ratio r, common decay) to the 24 measured points and,
+identically, to the model sampled at the same delays.
+- Data: τ_f = 115 fs; 1σ range 104–130 fs for a 0.5 a.u. reading error, 88–158 fs if time zero
+  is uncertain by ±50 fs.
+- Model: τ_f = 81 fs.
+
+On this measure the simulated dark-exciton buildup is about 0.7 times the measured one, not 20
+times faster.
+
+**What the ~400 fs corresponds to in the simulation.** Three times combine:
+- intrinsic phonon-absorption K→Σ scattering, 20 fs;
+- the 241 fs pump envelope;
+- the energy relaxation of the cold exciton gas that the resonant pump creates at Q = 0.
+
+The K/Σ ratio of a gas at temperature T_x is (4 M_KK)/(12 M_ΣK)·exp(ΔE/k T_x), which is large
+while T_x is far below the lattice temperature. Σ dominates only after the gas has warmed to
+90 K. The linear relaxation spectrum of the kinetic operator shows this directly. After the
+dephasing step the bright/dark imbalance N_K − r_eq N_Σ relaxes through fast modes (11 fs and
+85 fs) and a group of slow modes (175–230 fs, amplitude-weighted 242 fs) with the largest
+weight. Most of the slow relaxation is carried by the intervalley phonons of different
+energies (13–30 meV). Without intravalley acoustic scattering the slow modes stay at 261 fs,
+and changing the acoustic quantum from 1 to 3 meV moves them between 228 and 251 fs.
+
+The sampled Σ maximum at 0.4 ps therefore marks the pump (half-rise at 0) plus this
+≈ 0.24 ps warming of the K/Σ population. It is not an intrinsic intervalley scattering time.
+
+**Why the couplings are not weakened.** The same couplings give a bright-exciton linewidth of
+6.9 meV FWHM at 50 K, against 6.0 meV measured (Moody et al. 2015); the prediction at 90 K is
+32 meV. An intrinsic K→Σ time of 400 fs at 90 K would need couplings 20 times weaker, and
+hence a 50 K linewidth of 0.35 meV. Scaling the couplings to reproduce the data's two-level
+τ_f of 115 fs takes a factor of about 0.55. That gives a 50 K linewidth of 3.8 meV and worsens
+the rms deviation to 8 %:
+
+| coupling scale | rms | τ_f (two-level) | K/Σ at 0.09 / 0.4 ps | 50 K linewidth |
+|---|---|---|---|---|
+| 1 (DFPT) | 6.7 % | 81 fs | 1.03 / 0.70 | 6.9 meV |
+| 0.7 | 7.1 % | 93 fs | 1.11 / 0.77 | 4.9 meV |
+| 0.5 | 8.3 % | 105 fs | 1.20 / 0.83 | 3.5 meV |
+| 0.3 | 11.3 % | 130 fs | 1.36 / 0.92 | 2.2 meV |
+
+Caveat on the linewidth check: Moody et al. quote 1.6 meV as equivalent to T2 = 0.4 ps, i.e.
+their linewidth is ħ/T2, a half width. If the 6.0 meV phonon part is a half width as well, the
+measured full width is about 12 meV. The model would then underestimate the out-scattering,
+which argues for faster transfer, not slower.
+
+**Agreement with the measured points.**
+- With one common scale for both valleys, the rms deviation over all K and Σ points is 6.7 % of
+  the Σ peak.
+- K/Σ is 1.56, 1.03 and 0.70 at −0.2, 0.09 and 0.4 ps (measured 1.6, 1.15, 0.69).
+- Σ(0.09)/Σ(0.4) is 0.77 (measured 0.67).
+- The peak Σ/K ratio is 1.18 (measured 1.3).
+- The late K/Σ is 0.57 (measured 0.47). This is the Boltzmann value of the computed energy
+  landscape; the measured 0.47 corresponds to ΔE ≈ 3 meV instead of 6.8 meV.
+
+Note that the inset of Fig. 3c is plotted about 0.2 ps later than the main panel: its first
+point, 1.6 at "0 ps", is the −0.2 ps sample of the main panel.
+
+**Late decay.** Σ decays with a time of 3.7 ps over 1–3.6 ps (measured 2.2–2.5 ps); the
+two-level fits give 2.9 ps (model) and 2.4 ps (data). The only loss channel with a non-negligible
+rate is exciton–exciton annihilation, γ = 0.08 cm²/s. Radiative decay of the thermal light-cone
+population has an effective time of about 2 ns at 90 K and does not contribute.
+
+Varying γ does not fix the shape: the measured decay is close to exponential (2.1 ps over
+1.0–2.1 ps, 2.3 ps over 2.1–3.6 ps), whereas annihilation slows as the density falls.
+
+| γ (cm²/s) | late decay (1–3.6 ps) | two-level τ_d | rms |
+|---|---|---|---|
+| 0.04 | 5.3 ps | 4.7 ps | 11 % |
+| 0.08 | 3.7 ps | 2.9 ps | 6.7 % |
+| 0.16 | 2.9 ps | 1.8 ps | 10 % |
+| 0.30 | 2.5 ps | 1.2 ps | 18 % |
+
+A monomolecular channel of a few ps, for example trapping at defects or charge transfer to the
+substrate, would be needed. It has no first-principles value, so it is not included.
 
 **Above-gap 2.48 eV.**
 - Free carriers created near Λ/Σ give an initially Σ-rich ratio, K/Σ = 0.28, rising as
   excitons form.
 - The measurement shows the same trend, 0.15 → 0.32.
-- The model relaxes too far, to 0.57.
+- The model relaxes too far, to 0.57, the same Boltzmann limit as the resonant case.
+
+**Not included.**
+- Spin-forbidden K-K excitons, about 40 meV below the bright state; they would photoemit
+  inside the K window.
+- Density effects beyond annihilation. At 8×10¹² cm⁻², n·a_B² ≈ 0.2, and the cold excitons
+  formed during the pulse reach occupations of order one per state, so bosonic final-state
+  factors and phase-space filling are outside the dilute kinetic limit used here.
 
 ### 3.3 Target 3: graphite (`materials/graphite`, `figures/graphite_*.png`)
 
@@ -674,11 +844,12 @@ All timings are for one laptop CPU core, Python/NumPy.
 
 | Calculation | This work | Reference / exact |
 |---|---|---|
+| 1D optical conductivity, doublon–holon closure | 0.2 s (14 sites), 40 s (128-site ring) | ED 6–20 min (14 sites) |
 | 11-site CDW, t = 50 ħ/J | 26–66 s | ED 120–200 s, feasible only for small clusters; two-time KBE ≈ 29 h (measured scaling, above) |
 | 6×2 ladder ground state, one U | 19 s (pp ladder) | ED 10–20 s; ED scales exponentially |
 | Laser-driven ladder, t = 100 ħ/J | 54 s (pp), 816 s (ph, 288 samples) | ED ≈ 3000 s |
 | Graphite, full BZ, 100 ps | 11 min | Two-time NEGF with phonons over a full BZ: not feasible |
-| WSe₂, 4 ps | ≈ 2 s | — |
+| WSe₂, 4 ps (excitonic Bloch equations, energy-resolved) | ≈ 30 s for the full analysis | — |
 | MgB₂ gaps, σ(ω), nonlinear and pumped-state response | 1–20 min | — |
 
 ## 6. Limitations (what is not solved)
@@ -689,8 +860,11 @@ All timings are for one laptop CPU core, Python/NumPy.
      negative overshoot of the imbalance at U/J = 15, and its long-time Σd_corr is less
      accurate at weak coupling (17 % mean error, against 12 %).
    - The ladder ground state is quantitative only for U/J ≲ 2.
-   - The optical gap is correct at U/J = 3 only when correlation dynamics are included, and
-     overestimated at strong coupling.
+   - Optical conductivity: the doublon–holon pair closure is a strong-coupling (second order in
+     J/U) theory. It gives the Mott gap within 1 % and the 14-site line shape within a distance
+     of 0.12–0.15 at U/J = 6 and 12. At U/J = 6 the spectral weight sits ≈ 0.6 J too high, and
+     at U/J = 3 the closure is not controlled (band edge +28 %, peak 2.6 J vs 1.2 J). The
+     spin-wave enhancement of the bond singlet weight is the analytic linear-spin-wave value.
 2. **Graphite.**
    - The K-point decay is too slow (2.46 vs 1.7 ps with the experiment's fit).
    - The 2018 diffuse-intensity rise at M (2.1 ps) is reproduced only if the intensity is
@@ -702,9 +876,13 @@ All timings are for one laptop CPU core, Python/NumPy.
      only 7 %. The likely remaining error is the K-point coupling at high T_e, which sets how
      strongly the hot electrons refeed A1′.
 3. **WSe₂.** The conduction-band offset and annihilation coefficient are literature values.
-   - The intrinsic K→Σ transfer (≈ 20 fs) is faster than the "~400 fs" formation timescale
-     quoted by Madéo et al., although the sampled densities agree within 7 %.
-   - The late decay is 3.7 ps against 2.2 ps measured.
+   - The "~400 fs" and "~300 fs" timings, defined as in the paper by the sampled maxima, are
+     reproduced (0.40 and 0.31 ps). On a continuous two-level fit applied identically to model
+     and data, the simulated buildup is 81 fs against 115 fs.
+   - The late decay is 3.7 ps against 2.2–2.5 ps measured. Annihilation alone cannot give the
+     measured near-exponential shape; a few-ps monomolecular loss without a first-principles
+     value would be needed.
+   - Spin-forbidden excitons and high-density effects beyond annihilation are not included.
 4. **MgB₂.**
    - The normalized FH and TH are reproduced only with a π-band coupling proportional to Δπ
      (impurity-assisted, paramagnetic). The vertices derived from the superfluid weight fail,

@@ -98,20 +98,45 @@ if os.path.exists(pe):
     fig.tight_layout(); fig.savefig(os.path.join(FIG, "hubbard_ladder_laser.png"), dpi=140)
 
 # ---- optical conductivity of the chain -----------------------------------------------
-fig, ax = plt.subplots(1, 3, figsize=(13, 3.4))
-for k, U in enumerate([3, 6, 12]):
-    p = os.path.join(D, f"chain_sigma_U{U}_gwx_c0.npz")
+# Top: like-for-like on the open 14-site chain (exact diagonalization vs fast methods, all
+# with Lorentzian eta = 0.1 J).  Bottom: long chains and the 14-site ring vs the exact
+# Bethe-ansatz gap.  Numbers: data/chain_sigma_summary.txt (chain_sigma_compare.py).
+def _sig(fn):
+    p = os.path.join(D, fn)
     if not os.path.exists(p):
-        continue
+        return None
     d = np.load(p)
-    re = d["sigma"].real
-    ax[k].plot(d["w"], re / re.max(), "r-", label="TDHF/RPA linear response (64 sites)")
-    pc = os.path.join(D, f"chain_sigma_U{U}_L16_corr.npz")
-    if os.path.exists(pc):
-        dc = np.load(pc); rc = dc["sigma"].real
-        ax[k].plot(dc["w"], rc / rc.max(), "b-", label="with correlation dynamics (16 sites)")
-    ax[k].axvline(float(d["gap"]), color="orange", ls="--", label="exact Bethe-ansatz gap")
-    ax[k].set_title(f"U/J = {U}"); ax[k].set_xlabel(r"$\hbar\omega/J$"); ax[k].set_xlim(0, 1.5 * U + 6)
-ax[0].legend(fontsize=7); ax[0].set_ylabel(r"Re $\sigma(\omega)$ (norm.)")
+    return d["w"], np.real(d["sigma"])
+fig, ax = plt.subplots(2, 3, figsize=(14, 6.6))
+for k, U in enumerate([3, 6, 12]):
+    pe = os.path.join(D, f"chain_sigma_ed_obc_L14_U{U}.npz")
+    gap = float(np.load(pe)["gap"]) if os.path.exists(pe) else None
+    ymax = [0.0, 0.0]
+    for fn, lab, sty in ((f"chain_sigma_ed_obc_L14_U{U}.npz", "exact (ED), open 14 sites", "k-"),
+                         (f"chain_sigma_dh_sw_L14_U{U}.npz", "doublon-holon pairs, HF + spin waves (this work)", "b-"),
+                         (f"chain_sigma_dh_L14_U{U}.npz", "doublon-holon pairs, HF ground state", "c--"),
+                         (f"chain_sigma_U{U}_gwx_c0_L14.npz", "TDHF/RPA", "r--"),
+                         (f"chain_sigma_U{U}_gwx_c1_L14.npz", "ph fluctuations + collisions", "g:")):
+        z = _sig(fn)
+        if z is not None:
+            ax[0, k].plot(z[0], z[1], sty, lw=1, label=lab)
+            if "ed_obc" in fn or "dh_sw" in fn:
+                ymax[0] = max(ymax[0], z[1].max())
+    for fn, lab, sty in ((f"chain_sigma_ed_pbc_L14_U{U}.npz", "exact (ED), ring 14 sites", "k-"),
+                         (f"chain_sigma_dh_sw_ring_L128_U{U}.npz", "doublon-holon pairs, HF + spin waves, ring 128", "b-"),
+                         (f"chain_sigma_dh_ring_L128_U{U}.npz", "doublon-holon pairs, HF, ring 128", "c--"),
+                         (f"chain_sigma_U{U}_gwx_c0.npz", "TDHF/RPA, 64 sites", "r--")):
+        z = _sig(fn)
+        if z is not None:
+            ax[1, k].plot(z[0], z[1], sty, lw=1, label=lab)
+            ymax[1] = max(ymax[1], z[1].max())
+    for r in range(2):
+        if gap is not None:
+            ax[r, k].axvline(gap, color="orange", ls="--", lw=1, label="Bethe-ansatz gap (L = inf)")
+        ax[r, k].set_xlim(0, 1.5 * U + 6); ax[r, k].set_ylim(0, 1.25 * ymax[r] if ymax[r] > 0 else None)
+        ax[r, k].set_xlabel(r"$\hbar\omega/J$")
+    ax[0, k].set_title(f"U/J = {U}")
+ax[0, 0].set_ylabel(r"Re $\sigma(\omega)$, open 14-site chain"); ax[1, 0].set_ylabel(r"Re $\sigma(\omega)$, long chains")
+ax[0, 0].legend(fontsize=7); ax[1, 0].legend(fontsize=7)
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "hubbard_chain_sigma.png"), dpi=140)
 print("ok")

@@ -32,6 +32,18 @@ if what in ("all", "hubbard"):
     run(H, "ladder_laser.py", "ed"); run(H, "ladder_laser.py", "fast", "gwx"); run(H, "ladder_laser.py", "pp")
     for U in ("3", "6", "12"):
         run(H, "chain_sigma.py", U, "64", "2", "gwx", "0")
+    # optical conductivity: exact 14-site references, mean-field and collision kernels on the
+    # same chain, and the doublon-holon pair closure
+    run(H, "chain_sigma_ed.py", "pbc", "14", "12", "6", "3")
+    run(H, "chain_sigma_ed.py", "obc", "14", "12", "6", "3")
+    for U in ("3", "6", "12"):
+        run(H, "chain_sigma.py", U, "14", "2", "gwx", "0", "_L14")
+        run(H, "chain_sigma.py", U, "14", "exact", "gwx", "1", "_L14")
+    for flags in (["sw"], [], ["o1"]):
+        run(H, "chain_sigma_dh.py", *flags, "14", "3", "6", "12")
+    run(H, "chain_sigma_dh.py", "sw", "ring", "128", "3", "6", "12")
+    run(H, "chain_sigma_dh.py", "ring", "128", "3", "6", "12")
+    run(H, "chain_sigma_compare.py")
     run(H, "plots.py")
     run("benchmarks/speed", "timing.py")
 if what in ("all", "materials"):

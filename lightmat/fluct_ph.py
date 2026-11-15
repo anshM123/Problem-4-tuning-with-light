@@ -203,3 +203,166 @@ class PHFluct:
                 # <c^+_a c_b> = rho_{b a}
                 j += -2 * J * dx * np.imag(np.exp(1j * A * dx) * self.rho[b + s, a + s])
         return j
+
+
+# ==========================================================================================
+# Doublon-holon pair closure of the particle-hole channel (strong coupling, 1D chains)
+# ==========================================================================================
+def hf_antiferromagnet(h, U, nel=None, tol=1e-12, maxit=20000):
+    """Self-consistent collinear Hartree-Fock antiferromagnet of a bipartite chain with hopping
+    matrix h at half filling.  Returns rho_up, rho_dn (L x L) and the HF energy."""
+    L = h.shape[0]
+    N = L // 2 if nel is None else nel
+    stag = np.array([(-1) ** i for i in range(L)], float)
+    nu = 0.5 + 0.4 * stag; nd = 1 - nu
+    for _ in range(maxit):
+        _, vu = np.linalg.eigh(h + U * np.diag(nd)); _, vd = np.linalg.eigh(h + U * np.diag(nu))
+        ru = vu[:, :N] @ vu[:, :N].T; rd = vd[:, :N] @ vd[:, :N].T
+        nu2, nd2 = np.diag(ru).copy(), np.diag(rd).copy()
+        if max(abs(nu2 - nu).max(), abs(nd2 - nd).max()) < tol:
+            break
+        nu, nd = 0.5 * nu + 0.5 * nu2, 0.5 * nd + 0.5 * nd2
+    E = float(np.trace(h @ (ru + rd)) + U * np.sum(np.diag(ru) * np.diag(rd)))
+    return ru, rd, E
+
+
+class DoublonHolonPairs:
+    """Optical response of the half-filled open Hubbard chain from doublon-holon pair amplitudes.
+
+    At half filling the current operator acting on a Mott ground state creates a doublon (D)
+    and a holon (H) on neighbouring sites.  The particle-hole amplitude of such an
+    excitation is propagated *exactly as a two-body problem* in the self-interaction-free
+    field of the other electrons, the counterpart in the particle-hole channel of the
+    self-interaction-free pp ladder (fluct_hubbard.PPLadder, mode 'sic'):
+
+    * the other electrons form a singly occupied background; in one dimension a doublon or
+      holon moving through it only shifts the order of the background spins (spin-charge
+      separation of the open chain, Ogata and Shiba), so both move with the full hopping J.
+      With the operator ordering site by site (up before down) the doublon hop has amplitude
+      +J and the holon hop -J; D and H cannot occupy the same site;
+    * second order in J/U (Schrieffer-Wolff, antiferromagnetically ordered background):
+      - a background bond that touches the doublon or the holon can no longer gain its
+        exchange energy, so the pair energy is  E(i, j) = U - sum_{b touching i or j} e_b,
+        with e_b the ground-state energy of bond b (its kinetic energy K_b plus the share
+        U <n_up n_dn> / z of each of its two sites, z = number of bonds at the site);
+      - three-site processes move D or H by two sites across a singly occupied site with
+        amplitude t2 = -2 P_s J^2/U = K_b / 4, P_s being the singlet weight of the bond b
+        that is crossed (K_b = -8 J^2 P_s / U is its kinetic energy);
+      for a uniform ground state the band edge is U - 4J - 4 e_b - |K_b|, and with the exact
+      bond energy and singlet weight (e_b = -4 ln2 J^2/U, P_s = ln 2) this is the exact
+      strong-coupling Mott gap U - 4J + 8 ln2 J^2/U;
+    * the current creates the pair from bond (k, k+1) with amplitude proportional to the
+      square root of the bond singlet weight, i.e. of -K_k; for the antiferromagnetic order of
+      the (squeezed) background spin chain the amplitudes alternate in sign,
+      j_+|s> ~ sum_k (-1)^k sqrt(-K_k) (|H_k D_k+1> - |D_k H_k+1>).  At the same (first) order
+      in J/U as the weights, the virtual pairs of the ground state |0> = |s> - K_+|s>/U add the
+      vertex correction -(1/U) j_11 K_+|s>, in which the current moves the D or H of a virtual
+      pair (it creates pairs at distance 2 that interfere with the direct ones).  The overall
+      scale is fixed by the exact f-sum rule  2 <j|(H - E_0)^-1|j> = -<K>.
+
+    All inputs (bond kinetic energies K_b and bond energies e_b) come from the method's own
+    ground state, by default the Hartree-Fock antiferromagnet.  The linear response is obtained
+    in real time: after a vector-potential step A0 theta(t) the induced current is
+        delta j(t) / A0 = <K> + int_0^t chi(s) ds = -2 Re <xi| exp(-i (H - E_0) t) |j>,
+    xi = (H - E_0)^-1 j|0>, and Re sigma(w) is its Fourier transform with exp(-eta t), as for
+    the other fast methods.  The cost is O(L^2) per time step.
+    periodic=True closes the chain into a ring (kbond, ebond of length L; the cyclic shift of the
+    background spins when a particle crosses the boundary is neglected, an O(1/L) effect), used
+    for long-chain spectra without edge states.
+    order=1 keeps only the leading order for comparison: pair energy U - eps_i - eps_j with the
+    site energies eps (two sites of correlation energy removed), no three-site hops and no
+    vertex correction."""
+
+    def __init__(self, L, U, kbond, ebond, J=1.0, order=2, eps=None, periodic=False):
+        import scipy.sparse as sp
+        self.L, self.U = L, U
+        nb = L if periodic else L - 1                      # bonds b = (b, b+1 mod L)
+        site = (lambda x: x % L) if periodic else (lambda x: x if 0 <= x < L else None)
+        kbond = np.asarray(kbond, float); ebond = np.asarray(ebond, float)
+        idx = -np.ones((L, L), int)
+        pairs = [(i, j) for i in range(L) for j in range(L) if i != j]
+        for k, (i, j) in enumerate(pairs):
+            idx[i, j] = k
+        n = len(pairs)
+        touch = lambda i: {b % L for b in (i - 1, i) if periodic or 0 <= b < L - 1}
+        rows, cols, vals = [], [], []
+        for k, (i, j) in enumerate(pairs):
+            if order == 1:
+                e = U - eps[i] - eps[j]
+            else:
+                e = U - sum(ebond[b] for b in touch(i) | touch(j))
+            rows.append(k); cols.append(k); vals.append(e)
+            for d in (-1, 1):
+                i1, j1 = site(i + d), site(j + d)
+                if i1 is not None and i1 != j:                  # doublon hop
+                    rows.append(idx[i1, j]); cols.append(k); vals.append(+J)
+                if j1 is not None and j1 != i:                  # holon hop
+                    rows.append(idx[i, j1]); cols.append(k); vals.append(-J)
+                if order == 1:
+                    continue
+                # three-site hops of D or H across the singly occupied site a+d to c = a+2d
+                for a, other, isD in ((i, j, True), (j, i, False)):
+                    m1, c = site(a + d), site(a + 2 * d)
+                    if c is not None and m1 != other and c != other:
+                        t2 = kbond[m1 if d == 1 else c] / 4.0  # bond between m1 and c
+                        rows.append(idx[c, other] if isD else idx[other, c]); cols.append(k)
+                        vals.append(t2)
+        self.H = sp.csr_matrix((vals, (rows, cols)), shape=(n, n))
+        # current vertex: j|0> (common factor i J sqrt2 dropped) and, for order 2, its
+        # first-order correction from the virtual pairs of the ground state,
+        #   j|0> = j_+ |s> - (1/U) j_11 K_+ |s>,   |0> = |s> - K_+|s>/U,
+        # where K_+ creates a pair on a bond (even combination), and j_11 = -i J sum_d d T_d moves
+        # D or H by d within the one-pair sector.
+        phi = np.zeros(n); psiK = np.zeros(n)
+        for k in range(nb):
+            a = np.sqrt(max(-kbond[k], 0.0)) * (-1) ** k
+            phi[idx[(k + 1) % L, k]] += a; phi[idx[k, (k + 1) % L]] -= a
+            psiK[idx[(k + 1) % L, k]] -= a; psiK[idx[k, (k + 1) % L]] -= a
+        if order >= 2:
+            corr = np.zeros(n)
+            for k, (i, j) in enumerate(pairs):
+                if psiK[k] == 0.0:
+                    continue
+                for d in (-1, 1):
+                    i1, j1 = site(i + d), site(j + d)
+                    if i1 is not None and i1 != j:
+                        corr[idx[i1, j]] -= d * psiK[k]
+                    if j1 is not None and j1 != i:
+                        corr[idx[i, j1]] -= d * psiK[k]
+            phi = phi - (J / U) * corr
+        from scipy.sparse.linalg import spsolve
+        xi = spsolve(self.H.tocsc(), phi)
+        Ktot = float(np.sum(kbond))
+        scale = np.sqrt(-Ktot / (2 * phi @ xi))           # exact f-sum rule
+        self.phi, self.xi = phi * scale, xi * scale
+        self.n = n
+
+    def current_response(self, T=60.0, dt=0.02):
+        """delta j(t)/A0 on the grid t = 0, dt, ..., by RK4 propagation of the pair amplitudes."""
+        H = self.H
+        f = lambda v: -1j * (H @ v)
+        psi = self.phi.astype(complex)
+        nt = int(round(T / dt))
+        out = np.empty(nt)
+        for k in range(nt):
+            out[k] = -2.0 * np.real(np.vdot(self.xi, psi))
+            k1 = f(psi); k2 = f(psi + dt / 2 * k1); k3 = f(psi + dt / 2 * k2); k4 = f(psi + dt * k3)
+            psi = psi + dt / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+        return np.arange(nt) * dt, out
+
+
+def local_energies(h, U, ru, rd, d=None):
+    """Energy decomposition of a chain ground state (rho_up, rho_dn, double occupation d; the
+    Hartree-Fock value n_up n_dn if d is None): bond kinetic energies K_b (bond b = (b, b+1)),
+    bond energies e_b = K_b + sum_{sites s of b} U d_s / z_s (z_s = number of bonds at s) and
+    site energies eps_s = sum_{b at s} K_b / 2 + U d_s;  sum e_b = sum eps_s = E_0."""
+    L = h.shape[0]
+    Kb = np.array([2 * h[k, k + 1] * np.real(ru[k, k + 1] + rd[k, k + 1]) for k in range(L - 1)])
+    if d is None:
+        d = np.real(np.diag(ru) * np.diag(rd))
+    d = np.asarray(d, float)
+    z = np.full(L, 2.0); z[0] = z[-1] = 1.0
+    eb = Kb + U * (d[:-1] / z[:-1] + d[1:] / z[1:])
+    eps = U * d.copy()
+    eps[:-1] += Kb / 2; eps[1:] += Kb / 2
+    return Kb, eb, eps
