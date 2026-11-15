@@ -1822,7 +1822,7 @@ All timings are for one laptop CPU core, Python/NumPy.
 
 ```
 pip install -r requirements.txt
-python run_all.py            # all targets (several hours, one CPU)
+python run_all.py            # all targets (roughly 15–20 h, one CPU)
 python run_all.py hubbard    # model benchmarks only
 python run_all.py materials  # graphite, WSe2, MgB2, LiNbO3
 python run_all.py unified    # one solver: limits A, B, C, ED test, graphite end to end
@@ -1840,7 +1840,7 @@ python -m pytest tests -q    # 44 tests
   LiNbO₃ pipeline (identical), one-solver Level A and C limits (5×10⁻⁷), graphite end to end
   (identical), and the black-phosphorus pipeline (all predictions within 10⁻⁵, except the
   ill-conditioned biexponential amplitudes at one zone point, 0.7 %);
-- the full `run_all.py` takes well over a day on one laptop CPU and was not repeated end to end.
+- the full `run_all.py` (roughly 15–20 h on one laptop CPU) was not repeated end to end.
 
 Individual stages are documented at the top of each script. Precomputed force constants and
 electron–phonon tables are included; delete them to recompute from scratch.
