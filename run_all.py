@@ -3,6 +3,7 @@
 python run_all.py            # everything (several hours on one laptop CPU)
 python run_all.py hubbard    # only the model benchmarks
 python run_all.py materials  # only graphite, WSe2, MgB2
+python run_all.py unified    # one solver: limits A, B, C, ED test, graphite end to end
 python run_all.py blind      # run_material.py: graphite self-check, black-phosphorus blind test
 Precomputed force constants (materials/graphite/fc2.hdf5, fc3.hdf5) and electron-phonon
 tables are in the repository; delete them to recompute from scratch.
@@ -67,6 +68,15 @@ if what in ("all", "materials"):
     run(C, "eph_rates_avg.py", "4", "450")
     run(C, "dynamics.py", env={"VALID_MIN_THZ": "1.0", "RTOL": "1e-3", "OUT": "ctrl.npz"})
     run("materials/wse2", "plots.py")
+if what in ("all", "unified"):
+    run("benchmarks/unified_limits", "run.py")
+    U = "materials/graphite_unified"
+    run(U, "run.py", "450", "rta15", "1.0")
+    run(U, "run.py", "450", "rta15", "1.09", "_matched")
+    run(U, "run.py", "450", "U1.0", "1.0", "_localU")
+    for f in ("0.923", "0.945", "0.976", "0.979", "1.0", "1.145"):
+        run(U, "run.py", "300", "rta15", f, "_depth" + f, env={"STAGE1_ONLY": "1"})
+    run(U, "depth_absorption.py"); run(U, "analysis.py")
 if what in ("all", "blind"):
     # general structure-to-dynamics pipeline: graphite self-check and the black-phosphorus blind
     # test (the preregistered predictions file is written separately and is never regenerated)

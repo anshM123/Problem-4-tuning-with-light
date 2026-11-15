@@ -7,8 +7,12 @@ Materials with Light". It contains a hierarchy of time-linear methods for laser-
 materials that:
 - treat electron–electron, electron–phonon and phonon–phonon interactions together;
 - are orders of magnitude cheaper than two-time Kadanoff–Baym propagation;
+- are three limits of one solver (`lightmat/unified.py`), checked against exact diagonalization
+  with all three interactions on at once;
 - are verified on Hubbard models against exact results;
-- are applied to WSe₂, graphite and MgB₂.
+- are applied to WSe₂, graphite and MgB₂, and to light driving an infrared phonon (LiNbO₃);
+- run on any material from its structure (`run_material.py`), tested blind on black phosphorus
+  with predictions committed before the measurements were compiled.
 
 **Where to find things**
 - **One-page summary:** [SUBMISSION.md](SUBMISSION.md).
@@ -19,22 +23,29 @@ materials that:
 ## Layout
 | Path | Content |
 |---|---|
-| `lightmat/` | library: exact diagonalization (`ed.py`), positive-factorized pair-fluctuation NEGF, T-matrix and self-interaction-free strong-coupling closures (`fluct_hubbard.py`), particle–hole fluctuations (`fluct_ph.py`), phase-space trajectories (`ftwa.py`) |
+| `lightmat/unified.py` | one solver for e–e, e–ph and ph–ph (Nambu density matrix, pair correlations, phonon means, covariances and three-phonon correlations, mixed e–ph correlations); levels A, B and C are its limits |
+| `benchmarks/unified_limits/` | the limits checked numerically, and all three interactions against exact diagonalization |
+| `lightmat/` | library: exact diagonalization (`ed.py`), positive-factorized pair-fluctuation NEGF, T-matrix and self-interaction-free strong-coupling closures (`fluct_hubbard.py`), particle–hole fluctuations and the doublon–holon pair closure for the optical gap (`fluct_ph.py`), phase-space trajectories (`ftwa.py`) |
 | `benchmarks/hubbard/` | target 1: exact references and fast-method runs (CDW melting, ladder ground state, laser-driven ladder, optical conductivity) |
 | `materials/graphite/` | target 3: MACE phonons, electron–phonon tables, full three-phonon kinetics, dynamics |
 | `materials/graphite3d/` | the same pipeline for the 4-atom AB graphite cell (12 branches) |
 | `materials/graphene12/` | matched monolayer control on the same 12×12 grid as `graphite3d` |
 | `materials/wse2/` | target 2: exciton energetics and valley-resolved exciton/carrier kinetics |
-| `materials/mgb2/` | target 4: two-band superconductivity, amplitude-mode nonlinear response, pumped bottleneck state |
+| `materials/wse2/bloch.py` | excitonic Bloch equations (coherent polarization + energy-resolved incoherent excitons) |
+| `materials/mgb2/` | target 4: two-band superconductivity, amplitude-mode nonlinear response; real-time two-band Bogoliubov–de Gennes dynamics with electron–phonon collisions (`realtime.py`) for the pumped state and field dependence |
+| `materials/phononics/` | light driving an infrared phonon: LiNbO₃, Maxwell propagation + coherent modes + three-phonon bath, compared with two experiments |
+| `run_material.py`, `materials/blind/` | structure → light-driven phonon dynamics for any material; graphite self-check; preregistered black-phosphorus prediction, measurements and comparison |
 | `tests/` | `python -m pytest tests -q` |
 | `run_all.py` | reproduces every number and figure |
 
 ## Quick start
 ```
 pip install -r requirements.txt
-python -m pytest tests -q          # ~5 s
+python -m pytest tests -q          # ~2 min
 python run_all.py hubbard          # model benchmarks
-python run_all.py materials        # graphite, WSe2, MgB2
+python run_all.py materials        # graphite, WSe2, MgB2, LiNbO3
+python run_all.py blind            # run_material.py on graphite and black phosphorus
+python run_material.py my_crystal.cif --pump-eV 1.55 --fluence-mJcm2 5 --fwhm-fs 50 --T 300
 ```
 
 ## Applying the method to a new driven material

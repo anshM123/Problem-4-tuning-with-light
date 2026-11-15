@@ -1,0 +1,40 @@
+quantity                                        Level B (thermal e)  Level B (non-thermal e)                  unified     unified, field x1.09     unified, local-U e-e
+A1' peak (ps)                                                 0.700                    0.730                    0.740                    0.750                    1.300
+A1' rise 63% (ps)                                             0.200                    0.180                    0.190                    0.200                    0.360
+A1' 1/e decay after peak (ps)                                 3.200                    3.170                    3.110                    3.050                    2.750
+A1' peak excess                                               0.762                    0.798                    0.802                    0.871                    1.234
+diffuse K rise (fit, ps)                                      0.294                    0.312                    0.334                    0.350                    1.349
+diffuse K decay (fit, ps)                                     2.456                    2.519                    2.603                    2.348                    2.024
+diffuse K/2 rise (fit, ps)                                    0.820                    0.859                    0.923                    0.876                    1.623
+diffuse M/2 rise (fit, ps)                                    1.308                    1.242                    1.548                    1.517                    2.172
+diffuse M rise (fit, ps)                                      8.670                   10.155                   12.083                   10.239                   98.555
+E_TO at 0.5 ps (meV/cell)                                    31.652                   31.341                   21.978                   29.532                    9.908
+E_LO at 0.5 ps (meV/cell)                                    35.150                   35.321                   25.740                   33.776                   12.061
+E_LA at 0.5 ps (meV/cell)                                     6.422                    6.224                    4.047                    5.699                    1.947
+E_TA at 0.5 ps (meV/cell)                                     5.583                    5.475                    3.620                    5.030                    1.764
+E_ZO at 0.5 ps (meV/cell)                                     4.871                    4.463                    2.776                    3.990                    1.304
+E_ZA at 0.5 ps (meV/cell)                                     0.707                    0.658                    0.420                    0.611                    0.203
+Te at 0.5 ps (K)                                           3217.332                 3353.554                 3324.759                 3605.892                 4079.919
+E_TO at 1.5 ps (meV/cell)                                    22.496                   22.483                   16.683                   22.176                    8.751
+E_LO at 1.5 ps (meV/cell)                                    24.644                   24.872                   19.177                   24.922                   10.572
+E_LA at 1.5 ps (meV/cell)                                    11.785                   11.784                    8.397                   11.393                    4.192
+E_TA at 1.5 ps (meV/cell)                                    11.325                   11.367                    8.119                   10.966                    4.054
+E_ZO at 1.5 ps (meV/cell)                                    15.043                   14.469                    9.510                   13.529                    4.431
+E_ZA at 1.5 ps (meV/cell)                                     3.352                    3.328                    2.267                    3.172                    1.100
+Te at 1.5 ps (K)                                           2287.065                 2393.693                 2332.902                 2485.003                 3509.868
+E_TO at 5 ps (meV/cell)                                      10.907                   10.859                    7.617                   10.598                    5.036
+E_LO at 5 ps (meV/cell)                                      11.207                   11.201                    8.047                   11.006                    5.773
+E_LA at 5 ps (meV/cell)                                      15.243                   15.282                   11.256                   15.003                    7.088
+E_TA at 5 ps (meV/cell)                                      15.592                   15.650                   11.579                   15.353                    7.301
+E_ZO at 5 ps (meV/cell)                                      25.541                   25.345                   18.790                   24.733                   11.437
+E_ZA at 5 ps (meV/cell)                                      12.169                   12.299                    9.005                   12.094                    5.252
+Te at 5 ps (K)                                             1148.731                 1180.329                 1170.349                 1207.808                 1405.475
+E_TO at 100 ps (meV/cell)                                     6.724                    6.721                    4.286                    6.528                    2.219
+E_LO at 100 ps (meV/cell)                                     6.646                    6.643                    4.229                    6.451                    2.184
+E_LA at 100 ps (meV/cell)                                    16.734                   16.735                   12.299                   16.404                    7.855
+E_TA at 100 ps (meV/cell)                                    17.963                   17.964                   13.310                   17.618                    8.597
+E_ZO at 100 ps (meV/cell)                                    18.602                   18.595                   13.768                   18.236                    8.834
+E_ZA at 100 ps (meV/cell)                                    24.231                   24.242                   18.673                   23.838                   12.704
+Te at 100 ps (K)                                            629.589                  626.153                  558.390                  625.465                  478.924
+total phonon excess at 100 ps (meV/cell)                     90.899                   90.900                   66.565                   89.075                   42.394
+absorbed energy (meV/cell)                                   90.941                      nan                   64.620                   86.158                   40.834

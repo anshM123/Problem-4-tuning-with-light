@@ -33,6 +33,16 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 
 | Target | Quantity | This work | Reference | |
 |---|---|---|---|---|
+| **0 One solver** (`lightmat/unified.py`) | Level A limit (no phonons), 11-site CDW U/J = 5, t ≤ 50 | max \|ΔI\| 6×10⁻¹³ (T-matrix), 3×10⁻⁹ (sic) | `fluct_hubbard.PPLadder` | ✔ |
+| | Level B limit: Markov + random-phase collision integrals | 2×10⁻¹⁵ (three-phonon), 1×10⁻² (e–ph, detailed-balance form) | graphite `phph_rate`, `eph_rate` | ✔ |
+| | Level B dynamics, graphite protocol | N_opt within 3.5 %, acoustic within 2.2 % | graphite rate functions | ✔ |
+| | full vs kinetic as coupling decreases | deviation 0.34 → 0.11 (ph–ph), 3.4 → 0.13 (e–ph); finite-size floor 0.15–0.25 | kinetic limit | ≈ |
+| | Level C limit: MgB₂ gaps | 2.2066836, 7.0387521 meV (identical) | `twoband` gap equation | ✔ |
+| | Level C limit: amplitude (Higgs) response | within 2.9 %; peaks 4.58, 14.14 meV in both | `twoband` D(ω) | ✔ |
+| | e–ph + ph–ph + light vs ED (U = 0, g = 0.2) | D 0.045, E_opt 0.05 of 0.56 (Ehrenfest 0.12, 0.16); O(g⁴) | ED | ✔ |
+| | all three interactions vs ED (U = 2J, g = 0.1) | E_soft err 0.009 (Ehrenfest 0.033), D 0.13 | ED | ≈ |
+| | all three interactions vs ED (U = 2J, g = 0.2) | closure drifts after the pulse (E_opt err 0.93) | ED | ✘ |
+| | energy conservation, all three interactions | \|E − W − E₀\| ≤ 3×10⁻⁸ | — | ✔ |
 | **1 Hubbard 11-site CDW** | stability, U/J = 0…20 | stable for every U | GKBA+TPP unstable for U/J ≳ 12 | ✔ |
 | | long-time ⟨I⟩ over 16 values of U | mean abs. error 0.07 (T-matrix), 0.06 (self-interaction-free) | ED | ✔ |
 | | long-time Σd_corr | 12 % (T-matrix), 17 % (self-interaction-free) mean error | ED | ✔ |
@@ -68,6 +78,12 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | AB-stacked graphite (12 branches) vs matched graphene control | decay 2.37 vs 2.55 ps (−7 %) | — | interlayer modes are not the missing channel |
 | | all three interactions explicit (non-thermal carriers, e–e, e–ph, ph–ph) | A1′ peak 0.73 ps, decay 3.17 ps; thermal-electron model 0.70 / 3.20 ps | — | ✔ validates the thermal limit |
 | | energy conservation | exact | — | ✔ |
+| | **one solver, light to phonons** (`materials/graphite_unified`): absorbed energy from the coherent Bloch calculation | 65.9 meV/cell (absorptance 0.35; strongly nonlinear, ∝ I^1.6) | linear optics 91 meV/cell (0.48) | prediction (differs) |
+| | A1′(K) peak / 1/e decay at equal absorbed energy | 0.75 / 3.05 ps | Level B 0.70 / 3.20 ps; measured 0.6–0.7 / 1.7 ps | ✔ vs Level B; ✘ decay vs experiment (as Level B) |
+| | K diffuse rise / decay (fit), equal absorbed energy | 0.35 / 2.35 ps | Level B 0.29 / 2.46 ps; measured 0.28 / 1.7 ps | ✔ vs Level B |
+| | branch energies at 1.5, 5, 100 ps, equal absorbed energy | within 10 % of Level B | Level B | ✔ |
+| | e–e from the solver's local-U Markov limit | 5 ps at 0.775 eV; no thermalization | measured ≈ 15 fs | ✘ (local U inadequate) |
+| | energy conservation, light → phonons, 100 ps | 3 % | — | ≈ |
 | **4 MgB₂** | 2Δ_π(0), 2Δ_σ(0) | 1.07, 3.40 THz | 1.10, 3.4 THz | ✔ |
 | | 2Δ_π(T) | on the measured points from 5 to 36 K | Fig. 3c | ✔ |
 | | σ₂(ω) at 5 K | 9.0, 5.3, 2.4, 0.9 ×10⁴ Ω⁻¹cm⁻¹ at 0.3, 0.5, 1, 2 THz | ≈ 8, 6, 2, 1 ×10⁴ | ✔ |
@@ -107,6 +123,106 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 ---
 
 ## 2. Method
+
+### 2.0 One hierarchy, one solver
+
+Levels A, B and C are not three codes but three limits of one set of equations, implemented in
+`lightmat/unified.py` (class `UnifiedSolver`).
+
+**Hamiltonian.** The solver takes the general Hamiltonian
+H = Σ h_ij(t) c†_iσ c_jσ (light by Peierls or dipole) + U Σ n_i↑ n_i↓ + Σ V_ij c†_i↑ c†_i↓ c_j↓ c_j↑ (e–e)
++ Σ ω_a (x_a² + p_a²)/2 + Σ f_a(t) x_a (phonons, IR drive)
++ Σ x_a γ^a_ij c†_iσ c_jσ (linear e–ph)
++ (1/6) Σ κ_abc x_a x_b x_c (cubic ph–ph).
+
+**Propagated objects.** All of them obey ODEs in one time variable:
+- the Nambu one-body density matrix Γ, holding ρ↑, ρ↓ and the anomalous κ;
+- the e–e pair correlation G2, in the positive-factorized form of Level A (pair factors x, y), plus a dense phonon-exchange part;
+- the coherent displacements ⟨x⟩, ⟨p⟩;
+- the phonon one-body matrices S (equivalent to ⟨b†b⟩ and ⟨bb⟩);
+- the three-phonon correlation T;
+- the electron–phonon correlations C^μ = ⟨Ψ†Ψ δξ_μ⟩_c.
+
+**Equations of motion.** They follow from the Heisenberg (equivalently Wigner–Moyal) equations. Every connected correlation with more than three field operators is dropped, except G2.
+1. **One body (exact).** i∂_tΓ = [H_HFB, Γ] + Σ_a [G^a, C^{x_a}] + I_ee[G2]. The phonon mean values are given exactly by Ehrenfest with ⟨xx⟩ = XX + S, and S by the exact contraction with C and T.
+2. **Electron–phonon correlation.** C evolves with the mean-field (HFB + RPA) electron dynamics and the phonon matrix. Its source is
+   −½[(1−Γ)G^aΓ + ΓG^a(1−Γ)] − i Σ_b S_{x_b μ}[G^b, Γ] − γ^a·G2.
+   This is the Fan–Migdal source of Karlsson et al. (PRL 127, 036402), dressed by e–e correlation. With S = N + ½ it contains the factors (1−f) f (1+N) − f (1−f) N.
+3. **Three-phonon correlation.** T has the Gaussian source −κ S S plus the quantum term κ/4. The κ/4 term produces spontaneous decay; a classical treatment of the phonons misses it (the zero-point leakage of our earlier trajectory attempt).
+4. **Phonon-exchange part of G2.** Its source is Σ_e ([γ^e, ρ↑] ⊗ C↓^e + C↑^e ⊗ [γ^e, ρ↓]).
+
+**Conservation.** The truncated equations conserve ⟨H⟩ minus the work of the fields to 10⁻⁸–10⁻¹¹ without any correction step.
+
+**The limits.**
+
+| Level | Approximation of the one solver | Check (`benchmarks/unified_limits`) |
+|---|---|---|
+| A | γ = κ = 0 (no phonons): eqs. 2–4 vanish; eq. 1 + G2 are the Level A pair ladder | identical to `fluct_hubbard.PPLadder`: 11-site CDW, U/J = 5, t = 0–50 ħ/J, max \|ΔI\| = 6×10⁻¹³ (T-matrix), 3×10⁻⁹ (self-interaction-free) |
+| B | Markov + random-phase: C and T solved adiabatically with a dephasing memory kernel; only populations kept | collision integrals identical to the golden rule (2.7×10⁻¹⁵) and to graphite's three-phonon operator (`phph_rate`, 2×10⁻¹⁵) |
+| C | phonon-mediated pairing V < 0 (Eliashberg-derived), no G2: stationary point of eq. 1 + its linearization | two-band gaps identical to `materials/mgb2/twoband` (10 digits); amplitude response = D(ω)V⁻¹ − 1 within 2–3 %, Higgs peaks coincide |
+
+**(a) All three interactions against exact diagonalization.**
+
+*Setup.* Hubbard–Holstein dimer with one ↑ and one ↓ electron, starting as a doublon:
+- each site has an optical mode (ω = 1) with Holstein coupling g, and a soft mode (ω = 0.5);
+- the cubic term λ x_a x_b² (λ = 0.1) makes the optical mode decay resonantly into soft pairs;
+- a Peierls light pulse drives the bond;
+- the run lasts t = 0–20 ħ/J;
+- ED phonon cutoffs are 10, 10, 13, 13 (changing them moves the results by < 10⁻³).
+
+*Comparisons.* The full solver is compared with two references:
+- the same e–e treatment with Ehrenfest phonons ("Ehr.");
+- TDHF + Ehrenfest.
+
+*U = 0.* Electron–phonon and phonon–phonon correlations plus light, but no e–e interaction.
+- The scheme is exact to O(g²): errors are O(g⁴), against O(g²) for Ehrenfest.
+- At g = 0.1, t ≤ 8: D error 4×10⁻⁴ (Ehr. 9×10⁻³); optical phonon number 9×10⁻⁴ (Ehr. 2×10⁻²).
+- At g = 0.2, t ≤ 20: D error 0.045 (Ehr. 0.119); E_opt error 0.051 of 0.56 (Ehr. 0.16); E_soft error 0.025 of 0.13 (Ehr. 0.028).
+
+*U = 2.* All three interactions are active at once.
+- The e–e part is exact for two electrons.
+- At g = 0.1 the full solver improves both phonon channels: E_opt error 0.068 (Ehr. 0.088); E_soft error 0.009 (Ehr. 0.033, TDHF 0.10).
+- D is within 0.13 over t = 0–20 (Ehr. 0.10; TDHF 0.60).
+- At g = 0.2 the second-order closure drifts after the pulse (E_opt error 0.93 of 0.68), while Ehrenfest stays within 0.15. Up to the pulse (t ≤ 8) the full solver's D error is 0.10, against Ehrenfest's 0.11.
+
+*Origin of the U = 2 limit.* The phonons are driven by the doublon's correlated charge fluctuations. C propagates these only with TDHF/RPA electron dynamics, because the e–e–ph correlation ⟨c†c†cc δx⟩_c is dropped. In the same way, the unpositivized closures become unstable once relaxation rates approach the phonon frequency.
+
+**(c) Kinetic limit, dynamics.**
+
+*Level B protocol.* We use graphite's protocol: thermal hot electrons, an optical mode, and 16 acoustic modes. Two runs over t = 0–60 are compared:
+- graphite's own rate functions, fed with the model couplings;
+- the solver's kinetic limit.
+
+Results: optical occupation within 3.5 %, acoustic total within 2.2 %, T_e within 1.1 %. The residual comes from graphite's detailed-balance form of the electron–phonon term with a broadened δ (0.07–1.3 % in the rates).
+
+*Full coherent solver against its own kinetic limit.*
+- **Anharmonic decay of an optical phonon into 24 acoustic modes.** The maximum deviation of N₀ falls from 0.34 to 0.18 to 0.11 as the coupling is reduced ×0.3, 0.2, 0.14 (rates 0.25, 0.11, 0.054 ω₀). At ×0.1 it is 0.20, because the finite bath recurs.
+- **Phonon heating by hot electrons (40 levels).** The deviation falls from 3.4 to 1.8, 0.29 and 0.13 at ×1, 0.7, 0.5, 0.35. It then saturates at 0.15–0.25, once the rate drops below the level spacing.
+- **Stability.** At the strongest couplings (rate ≳ 0.4 ω₀) the full closure loses positivity (N < 0). The kinetic limit does not.
+
+**(d) Superconducting limit (MgB₂ couplings, T = 5 K).**
+- *Model.* Two bands of 2 × 100 and 2 × 73 levels (density-of-states ratio 0.73), with pairing −V_ab ω_c/n.
+- *Gaps.* The solver's equilibrium gaps are 2.2066836193 and 7.0387521201 meV, identical to the Level C gap equation on the same levels. The continuum Level C values (`twoband.gaps`) are 2.206675 and 7.038724 meV. This gives 2Δ_π = 1.0671 THz and 2Δ_σ = 3.4039 THz.
+- *Amplitude mode.* A weak pair-field pulse on the time-dependent BdG dynamics gives a response equal to the Level C propagator, D(ω)V⁻¹ − 1, within 2.2 % (π pulse) and 2.9 % (σ pulse) of its maximum over 0.5–15 meV.
+- *Peaks.* Both codes put the response peaks at 4.58 and 14.14 meV (2Δ_π = 4.41, 2Δ_σ = 14.08 meV; both are shifted by the same η = 0.15 meV broadening).
+- *Error source.* The residual comes from the RK4 step (dt = 0.04 ħ/meV) at the sharp σ peak.
+
+**What this does and does not show.**
+
+*Shown.* One code with one set of equations reproduces all three production levels in their limits:
+- Level A to rounding;
+- Level B's collision operators to 10⁻¹⁵;
+- Level C's gap and amplitude-mode propagator to the discretization and time-step error.
+
+The solver also runs e–e, e–ph and ph–ph coherently and simultaneously, conserving energy, and it is exact to second order in the e–ph coupling.
+
+*Not shown.*
+- Strongly correlated electrons coupled to phonons at intermediate coupling are not yet quantitative (U = 2, g = 0.2). Doing this needs a positive (sample-based) form of the mixed correlations, as Level A provides for G2.
+- No material has been run through the full coherent equations. The production materials calculations remain at Levels B and C.
+
+Figure: `figures/unified_limits.png`. Tests: `tests/test_unified.py`, 7 tests, 51 s.
+
+![unified](figures/unified_limits.png)
 
 ### 2.1 Level A: positive-factorized pair fluctuations
 
@@ -816,6 +932,82 @@ So the interlayer modes are not the missing channel. The A1′ anharmonic rate a
 quantity that controls this is the K-point electron–phonon coupling at T_e ≈ 2000 K: with
 the weaker DFT couplings the decay lengthens from 3.2 to 4.5 ps. This coupling (its GW
 enhancement and its temperature dependence) is the least certain input.
+
+#### Graphite end to end in the unified solver (`materials/graphite_unified`)
+
+**What changes relative to Level B.** Graphite was run through `lightmat/unified.py` itself, from the light field to the three-phonon decay. Nothing is assumed about the absorbed energy.
+
+**Electrons.**
+- π-band electrons of the tight-binding model in `eph_tb.py` are coherent Bloch density matrices ρ_k (2×2) on a full-Brillouin-zone 450×450 grid.
+- They are driven through h(k + eA/ħ) by the actual pulse: 35 fs, 800 nm, 12 mJ/cm².
+- The in-plane field inside the 70 nm film comes from the same thin-film optics as Level B (n = 2.72 + 1.47i). Its depth average reproduces the 48.3 % linear absorptance.
+
+**Correlations (Markov / random-phase limit).** The solver's correlations are evaluated from energy-binned occupations and act on each k as scattering and dephasing:
+- *e–ph:* Markov limit of the mixed-correlation equation with the first-principles energy-resolved kernel (`eph_kernel.npz`, GW-scaled).
+- *ph–ph:* Markov limit of the three-phonon correlation on the MACE process lists of `dynamics.py`.
+- *Conservation:* both operators conserve particle number and energy, and are tested against the solver's small-system kinetic limit.
+
+**Stages.**
+- After 150 fs, the run continues with isotropic electrons F(ε).
+- After 1 ps, the electrons are thermal (max |F − FD| = 6×10⁻³), and the run continues to 100 ps.
+
+**Electron–electron scattering.** Two treatments were run.
+- *The solver's own Markov limit with a local interaction* (U* = 1.6|t| = 4.8 eV, the optimal local U of graphene). It gives an out-scattering time of 5 ps for a 0.775 eV carrier at T_e = 3000 K, against the measured ≈ 15 fs.
+  - Its electrons never thermalize: max |F − FD| = 0.42 at 3 ps.
+  - Only 41 meV/cell is absorbed.
+  - The A1′(K) peak comes at 1.30 ps.
+  - Carrier thermalization in graphite is therefore driven by the long-range Coulomb interaction near the Dirac cones, which a local G2 ladder does not contain.
+- *The main runs* use e–e in the conserving relaxation-time form with the measured 15 fs, as `dynamics_neq.py` does. This acts on populations and dephases coherences at 1/τ.
+
+**Absorbed energy.** The coherent calculation absorbs less than linear optics.
+- *Weak-field limit:* the tight-binding absorption is 1.22× the linear-optics value (110.7 vs 91.0 meV/cell when scaled to full intensity).
+- *At the depth-rms field:* the absorbed energy is 64.6 meV/cell.
+- *Five depth slices of the standing-wave profile:* 101.9, 62.4, 53.6, 56.6, 62.9 meV/cell, against 119.3, 86.7, 77.5, 81.3, 87.2 from linear optics.
+- *Film average:* 65.9 meV/cell, absorptance 0.35 against 0.48.
+
+**Why the absorption is reduced.** The in-film peak field is 0.052 V/Å. The Peierls shift eA·v_F ≈ 0.33 eV exceeds both the pulse bandwidth and the 15 fs dephasing, so the interband transition is driven non-perturbatively.
+- At this intensity the absorbed energy scales as ≈ I^1.6: it is saturated below linear optics, and becomes super-linear at higher field (field ×1.4 absorbs 256 meV/cell).
+- A ±5 % uncertainty in the in-film field is therefore a ±15 % uncertainty in the absorbed energy.
+
+**Comparison with Level B.** Same analysis code for every run (A1′ = branch 6 at K; diffuse fits as in `diffuse.py`).
+
+| | Level B (thermal e⁻) | Level B (non-thermal e⁻) | unified, real pulse | unified, field ×1.09 (86 meV/cell absorbed) |
+|---|---|---|---|---|
+| absorbed energy (meV/cell) | 90.9 (input) | 90.9 (input) | 64.6 (65.9 film average) | 86.2 |
+| A1′(K) rise 63 % / peak (ps) | 0.20 / 0.70 | 0.18 / 0.73 | 0.19 / 0.74 | 0.20 / 0.75 |
+| A1′(K) 1/e decay (ps) | 3.20 | 3.17 | 3.11 | 3.05 |
+| K diffuse rise / decay, fit (ps) | 0.29 / 2.46 | 0.31 / 2.52 | 0.33 / 2.60 | 0.35 / 2.35 |
+| K/2, M/2, M diffuse rise (ps) | 0.82, 1.31, 8.7 | 0.86, 1.24, 10.2 | 0.92, 1.55, 12.1 | 0.88, 1.52, 10.2 |
+| T_e at 0.5 / 1.5 / 5 ps (K) | 3217 / 2287 / 1149 | 3354 / 2394 / 1180 | 3325 / 2333 / 1170 | 3606 / 2485 / 1208 |
+| TO, LO, LA, TA, ZO, ZA at 1.5 ps (meV/cell) | 22.5, 24.6, 11.8, 11.3, 15.0, 3.4 | 22.5, 24.9, 11.8, 11.4, 14.5, 3.3 | 16.7, 19.2, 8.4, 8.1, 9.5, 2.3 | 22.2, 24.9, 11.4, 11.0, 13.5, 3.2 |
+| same at 100 ps | 6.7, 6.6, 16.7, 18.0, 18.6, 24.2 | 6.7, 6.6, 16.7, 18.0, 18.6, 24.2 | 4.3, 4.2, 12.3, 13.3, 13.8, 18.7 | 6.5, 6.5, 16.4, 17.6, 18.2, 23.8 |
+
+**Reading the comparison.**
+- **Time scales.** At equal absorbed energy, the end-to-end calculation reproduces the Level B time scales:
+  - A1′ peak within 0.05 ps, decay within 5 %;
+  - K-point diffuse rise and decay within 0.06 and 0.11 ps;
+  - branch energies within 10 % (ZO at 0.5 ps: −18 %).
+- **Where the coherent stage matters.** It adds two things Level B lacks:
+  - the electrons start hotter and less thermal (T_e 12 % higher at 0.5 ps);
+  - during the pulse, the optical phonons are emitted by coherently excited, not yet thermal carriers.
+  Neither moves the measured observables appreciably. The A1′ decay stays 1.8× slower than the measured 1.7 ps, so the ab initio pipeline, not the electron treatment, sets that discrepancy.
+- **Absorbed energy.** With the real pulse, the film absorbs 28 % less than linear optics predicts. All excess energies and the final lattice temperature (558 K vs 630 K at 100 ps) scale down accordingly; the time constants do not.
+- **Energy conservation.** Absorbed energy and final excess agree to 3 %. The residual comes from the first-order exponential integrator of the 0.15–1 ps stage (64.6 → 66.6 meV/cell).
+
+**Limits.**
+- The e–ph and ph–ph correlations enter in their Markov limit, and the electrons are random-phase (isotropic in k at fixed energy) after 150 fs. The mixed correlations are not propagated coherently at full-BZ size.
+- e–e uses the measured thermalization time. The solver's local-U ladder is shown to be inadequate for graphite.
+- The film is represented by one depth-rms field in the dynamics. Absorption is depth-resolved only in the coherent stage.
+
+Reproduce:
+```
+python run.py 450 rta15 1.0
+python run.py 450 rta15 1.09 _matched
+python run.py 450 U1.0 1.0 _localU
+```
+Five `STAGE1_ONLY=1 python run.py 300 rta15 <f> _depth<f>` runs give the depth profile (`depth_absorption.py`). Then run `python analysis.py`. Each full run takes about 20 min on 4 cores.
+
+![graphite unified](materials/graphite_unified/graphite_unified.png)
 
 ### 3.4 Target 4: MgB₂ (`materials/mgb2`, `figures/mgb2.png`)
 
@@ -1608,10 +1800,14 @@ All timings are for one laptop CPU core, Python/NumPy.
    - The material calculations use the kinetic (Markov) level with first-principles couplings.
      Electron–electron, electron–phonon and phonon–phonon scattering are solved together for
      graphite, with energy conserved exactly.
-   - The coherent level-A dynamics has not been run in an ab initio band basis.
-   - A phase-space-trajectory treatment of a two-site Hubbard–Holstein model with anharmonic
-     phonons, compared with exact diagonalization, was less accurate than mean field because
-     of zero-point leakage. It is therefore not used.
+   - Graphite has been run end to end through the one solver (coherent Bloch electrons in the
+     real pulse, then e–ph and ph–ph correlations in their Markov limit). The e–ph and ph–ph
+     correlations are not propagated coherently at full-zone size, and the solver's local-U
+     electron–electron scattering cannot thermalize graphite's carriers (5 ps against the
+     measured ≈ 15 fs); the measured time is used instead.
+   - With strongly correlated electrons and intermediate electron–phonon coupling
+     (U = 2J, g = 0.2 on the dimer) the second-order mixed closure drifts after the pulse; a
+     positivity projection reduces but does not remove this.
 7. **Licensing.** The MACE model `medium-omat-0` is under the Academic Software License; the
    MIT-licensed `medium-mpa-0` can be substituted at the cost of ≈ 20 % softer optical phonons.
 

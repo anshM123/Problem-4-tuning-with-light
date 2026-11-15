@@ -1,0 +1,44 @@
+absorptance 0.483; absorbed fluence 5.79 mJ/cm^2; 90.9 meV/cell
+building three-phonon process lists ...
+  kind 0: 4065985 processes
+  kind 1: 4065983 processes
+  kind 2: 4065984 processes
+done 3s
+e-e: local Markov, U = 4.80 eV; Nk = 450^2; field scale 1.0; hbar w_L = 1.550 eV
+thin film: depth-averaged |E/E_inc|^2 = 0.1098; linear absorptance from it 0.483 (dynamics.py: 0.483); in-film peak field 0.0516 V/A; linear-optics absorbed energy 91.0 meV/cell (dynamics.py: 90.9)
+t =   -90.0 fs  E_e =   -0.00  E_ph =   0.00 meV/cell  |rho_cv| = 7.97e-07  [41s]
+t =   -80.0 fs  E_e =    0.00  E_ph =   0.00 meV/cell  |rho_cv| = 6.93e-06  [70s]
+t =   -70.0 fs  E_e =    0.00  E_ph =   0.00 meV/cell  |rho_cv| = 3.15e-05  [102s]
+t =   -60.0 fs  E_e =    0.00  E_ph =   0.00 meV/cell  |rho_cv| = 1.72e-04  [131s]
+t =   -50.0 fs  E_e =    0.04  E_ph =   0.01 meV/cell  |rho_cv| = 5.08e-04  [159s]
+t =   -40.0 fs  E_e =    0.36  E_ph =   0.04 meV/cell  |rho_cv| = 1.73e-03  [187s]
+t =   -30.0 fs  E_e =    2.07  E_ph =   0.22 meV/cell  |rho_cv| = 3.21e-03  [215s]
+t =   -20.0 fs  E_e =    6.83  E_ph =   0.84 meV/cell  |rho_cv| = 6.22e-03  [242s]
+t =   -10.0 fs  E_e =   12.38  E_ph =   1.90 meV/cell  |rho_cv| = 6.03e-03  [270s]
+t =    -0.0 fs  E_e =   18.02  E_ph =   3.51 meV/cell  |rho_cv| = 8.08e-03  [297s]
+t =    10.0 fs  E_e =   24.35  E_ph =   5.78 meV/cell  |rho_cv| = 5.09e-03  [324s]
+t =    20.0 fs  E_e =   28.74  E_ph =   8.29 meV/cell  |rho_cv| = 4.86e-03  [352s]
+t =    30.0 fs  E_e =   29.56  E_ph =  10.58 meV/cell  |rho_cv| = 2.06e-03  [379s]
+t =    40.0 fs  E_e =   28.27  E_ph =  12.55 meV/cell  |rho_cv| = 1.39e-03  [406s]
+t =    50.0 fs  E_e =   26.71  E_ph =  14.25 meV/cell  |rho_cv| = 4.43e-04  [434s]
+t =    60.0 fs  E_e =   25.26  E_ph =  15.70 meV/cell  |rho_cv| = 2.13e-04  [461s]
+t =    70.0 fs  E_e =   23.99  E_ph =  16.96 meV/cell  |rho_cv| = 6.79e-05  [488s]
+t =    80.0 fs  E_e =   22.90  E_ph =  18.04 meV/cell  |rho_cv| = 3.24e-05  [516s]
+t =    90.0 fs  E_e =   21.95  E_ph =  18.97 meV/cell  |rho_cv| = 1.57e-05  [543s]
+t =   100.0 fs  E_e =   21.13  E_ph =  19.77 meV/cell  |rho_cv| = 8.86e-06  [572s]
+t =   110.0 fs  E_e =   20.42  E_ph =  20.46 meV/cell  |rho_cv| = 5.39e-06  [600s]
+t =   120.0 fs  E_e =   19.81  E_ph =  21.06 meV/cell  |rho_cv| = 3.56e-06  [629s]
+t =   130.0 fs  E_e =   19.28  E_ph =  21.57 meV/cell  |rho_cv| = 2.52e-06  [657s]
+t =   140.0 fs  E_e =   18.83  E_ph =  22.02 meV/cell  |rho_cv| = 1.89e-06  [697s]
+t =   150.0 fs  E_e =   18.43  E_ph =  22.40 meV/cell  |rho_cv| = 1.47e-06  [738s]
+absorbed energy (electrons + phonons at 150 fs): 40.8 meV/cell; linear optics 91.0; Level B 90.9
+t =    200 fs  Te =   4358 K  max|F - FD(Te)| = 4.29e-01  E_e =  17.05  E_ph =  23.82  total  40.87 meV/cell  [758s]
+t =    300 fs  Te =   4238 K  max|F - FD(Te)| = 4.56e-01  E_e =  15.59  E_ph =  25.32  total  40.91 meV/cell  [799s]
+t =    500 fs  Te =   4080 K  max|F - FD(Te)| = 4.57e-01  E_e =  13.82  E_ph =  27.19  total  41.01 meV/cell  [851s]
+t =   1000 fs  Te =   3763 K  max|F - FD(Te)| = 4.42e-01  E_e =  10.70  E_ph =  30.58  total  41.28 meV/cell  [905s]
+t =   2000 fs  Te =   3280 K  max|F - FD(Te)| = 4.21e-01  E_e =   6.96  E_ph =  35.05  total  42.01 meV/cell  [947s]
+t =   3000 fs  Te =   2877 K  max|F - FD(Te)| = 4.18e-01  E_e =   4.64  E_ph =  37.77  total  42.41 meV/cell  [985s]
+switch to thermal electrons at 3.00 ps: max |F - FD(Te)| = 4.18e-01
+thermal stage: The solver successfully reached the end of the integration interval. nfev = 524 [1220s]
+energy: absorbed 40.83 meV/cell; at 100 ps electrons 0.02 + phonons 42.39 = 42.41
+written unified_out_localU.npz
