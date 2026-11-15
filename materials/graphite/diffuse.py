@@ -115,4 +115,36 @@ for name, qq in (("K/2", [1/6, 1/6]), ("M/2", [0.25, 0.0]), ("M", [0.5, 0.0])):
 print("experiment-style fits: K rise %.2f ps, K decay %.2f ps (measured 0.28, 1.7); K/2 rise %.2f, M/2 rise %.2f ps "
       "(measured 1.0-1.5); M rise %.1f ps (measured 2.1)" % (fits["K_rise"], fits["K_decay"], fits["K/2_rise"],
                                                           fits["M/2_rise"], fits["M_rise"]))
+# The same fits for traces integrated over circular regions of radius R around every K and M
+# point of the |Q| < 7 1/A plane (the reference integrates the K-point A1' signal over
+# R = 0.3 1/A; momentum resolution 0.06 1/A).
+def centers(qs):
+    out = []
+    for g1 in range(-5, 6):
+        for g2 in range(-5, 6):
+            for mm in qs:
+                Q = (np.array(mm) + [g1, g2]) @ B
+                if 0.3 < np.linalg.norm(Q) < 7:
+                    out.append(Q)
+    return np.array(out)
+Kc = centers([[1/3, 1/3], [2/3, 2/3]]); Mc = centers([[0.5, 0], [0, 0.5], [0.5, 0.5]])
+for R in (0.15, 0.3):
+    for name, Cc in (("K", Kc), ("M", Mc)):
+        sel = [k for k in range(len(pts)) if np.min(np.linalg.norm(Cc - pts[k], axis=1)) < R]
+        y = np.array([np.sum((n[it][lab_q[sel]] + 0.5) * W[sel]) for it in range(len(t))]); y = y - y[0]
+        if name == "K":
+            p, _ = curve_fit(fK, t[m10], y[m10], p0=[y.max(), 0.2, 2, y[-1]], maxfev=20000)
+            fits[f"K_rise_R{R}"], fits[f"K_decay_R{R}"] = p[1], p[2]
+        else:
+            p, _ = curve_fit(f1, t[m10], y[m10], p0=[y[m10].max(), 1, 0], bounds=([0, 0.01, -0.5], [np.inf, 1e3, 1]), maxfev=20000)
+            fits[f"M_rise_R{R}"] = p[1]
+    print(f"region R = {R} 1/A: K rise {fits[f'K_rise_R{R}']:.2f} ps, K decay {fits[f'K_decay_R{R}']:.2f} ps, "
+          f"M rise {fits[f'M_rise_R{R}']:.2f} ps")
+# TA pooling at M and M/3 (reference: TA population pools at M/3 and M after > 25 ps)
+for name, qq in (("M", [0.5, 0.0]), ("M/3", [1/6, 0.0])):
+    iq = [i for i in range(Nq) if np.allclose(qf[i], qq)][0]
+    dn = n[:, iq, 1] - n[0, iq, 1]
+    t50 = t[np.argmax(dn >= 0.5 * dn[-1])]; t90 = t[np.argmax(dn >= 0.9 * dn[-1])]
+    fits[f"TA_{name}_t50"], fits[f"TA_{name}_t90"] = t50, t90
+    print(f"TA({name}) population: 50 % of its final excess at {t50:.1f} ps, 90 % at {t90:.1f} ps")
 np.savez(os.path.join(HERE, "diffuse_fits.npz"), **fits)

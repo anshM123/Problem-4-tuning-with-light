@@ -58,7 +58,8 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | energy flow optical → acoustic → flexural, mode- and q-resolved | yes | yes | ✔ |
 | | one-phonon diffuse-scattering maps at 0.5, 1.5, 5, 100 ps | K-point spots early, Bragg-adjacent rings late (fig. `graphite_diffuse_maps.png`) | same sequence (Fig. 2 of the reference) | ✔ qualitative |
 | | diffuse rise at mid-zone K/2, M/2 | 0.82, 1.31 ps | 1.0–1.5 ps | ✔ |
-| | diffuse rise at M | 8.7 ps | 2.1 ps | ✘ |
+| | diffuse rise at M: M point / 0.3 Å⁻¹ region | 8.7 / 3.8 ps | 2.1 ps (Stern 2018) | ✘ / ≈ |
+| | TA pooling at ⅓M and M (challenge reference, René de Cotret 2019) | 90 % of final excess at 47 ps / 25 ps | "> 25 ps" | ✔ |
 | | AB-stacked graphite (12 branches) vs matched graphene control | decay 2.37 vs 2.55 ps (−7 %) | — | interlayer modes are not the missing channel |
 | | all three interactions explicit (non-thermal carriers, e–e, e–ph, ph–ph) | A1′ peak 0.73 ps, decay 3.17 ps; thermal-electron model 0.70 / 3.20 ps | — | ✔ validates the thermal limit |
 | | energy conservation | exact | — | ✔ |
@@ -477,12 +478,41 @@ Time constants of the diffuse intensity, fitted as in the experiment (`diffuse.p
 | K, rise | 0.29 ps | 0.28 ps |
 | K, decay | 2.46 ps | 1.7 ps |
 | K/2 and M/2 (mid-zone acoustic), early rise | 0.82 ps, 1.31 ps | 1.0–1.5 ps |
-| M, early rise | 8.7 ps | 2.1 ps |
+| M, early rise (M point itself) | 8.7 ps | 2.1 ps |
+| K rise / K decay / M rise, integrated over R = 0.15 Å⁻¹ | 0.18 / 2.28 / 5.5 ps | 0.28 / 1.7 / 2.1 ps |
+| K rise / K decay / M rise, integrated over R = 0.3 Å⁻¹ | 0.17 / 2.31 / 3.8 ps | 0.28 / 1.7 / 2.1 ps |
 
-- The mid-zone acoustic phonons, the first products of optical-phonon decay, fill on the
-  measured time scale.
-- The zone-boundary M-point acoustic phonons fill too slowly. This is consistent with the
-  slow decay of the optical reservoir.
+- **Mid-zone.** The mid-zone acoustic phonons, the first products of optical-phonon decay,
+  fill on the measured time scale.
+- **The M point.** The M-point signal is carried by the TA branch, which has 38 % of the
+  one-phonon weight there. The LA/LO/TO modes at 40 THz carry the rest but are only weakly
+  excited.
+  - TA(M) is fed almost only by optical-phonon decay (optical → TA(M) + 22 THz partner), at
+    0.019 per ps at 1 ps.
+  - This rate is converged in the energy-conservation width: 0.020, 0.019, 0.020 per ps for
+    σ = 0.4, 0.8, 1.6 THz. With the same three-phonon operator, the 300 K lifetimes of
+    A1′(K) and E2g(Γ) are 2.3 and 2.1 ps, as in DFT (Bonini et al.).
+  - Within converged three-phonon theory, the TA population at M therefore cannot rise in
+    2 ps. It reaches 50 % (90 %) of its final excess at 8.9 ps (25 ps), and at ⅓M at 2.5 ps
+    (47 ps).
+  - This is what the challenge's reference (René de Cotret et al. 2019, same group,
+    mode-resolved analysis) reports: the TA population "pooled significantly at ⅓M and M"
+    only after > 25 ps.
+- **What the 2.1 ps M-point time constant likely reflects.** The 2018 diffuse-intensity time
+  constant must contain other contributions. Integrating the simulated intensity over the
+  0.3 Å⁻¹ region that the reference uses at K brings in mid-zone phonons and gives 3.8 ps.
+  The same region shortens the K rise to 0.17 ps, so no single region matches every 2018 time
+  constant.
+
+**Comparison with the challenge reference** (René de Cotret et al. 2019, mode-resolved
+populations):
+
+| Statement in the reference | This work |
+|---|---|
+| TO₂ (A1′) at K strongly populated within < 500 fs | 63 % rise at 0.18 ps, peak at 0.70 ps |
+| transfer away from TO₂ "well underway at 5 ps" | 21 % of the A1′ peak excess left at 5 ps |
+| LA increase at ½K at 500 fs, from E2g decay | K/2 rise 0.82 ps; E2g → LA(q) + LA(−q) is the dominant channel |
+| TA population pools at ⅓M and M after > 25 ps | TA(M): 90 % at 25 ps; TA(⅓M): 90 % at 47 ps |
 
 **All three interactions explicit** (`materials/graphite/dynamics_neq.py`). The photoexcited
 carriers (±0.775 eV) are treated as a separate non-thermal population.
@@ -648,8 +678,10 @@ All timings are for one laptop CPU core, Python/NumPy.
    - The optical gap is correct at U/J = 3 only when correlation dynamics are included, and
      overestimated at strong coupling.
 2. **Graphite.**
-   - The K-point decay is too slow (2.46 vs 1.7 ps with the experiment's fit), and M-point
-     acoustic phonons fill too slowly (8.7 vs 2.1 ps).
+   - The K-point decay is too slow (2.46 vs 1.7 ps with the experiment's fit).
+   - The 2018 diffuse-intensity rise at M (2.1 ps) is reproduced only if the intensity is
+     integrated over a wide momentum region (3.8 ps at 0.3 Å⁻¹). At the M point itself it is
+     8.7 ps. The TA phonons there fill in > 25 ps, as the 2019 reference finds.
    - Making the non-thermal electrons and their electron–electron scattering explicit does not
      change this.
    - Including the interlayer modes (AB-stacked graphite, 12 branches) shortens the decay by

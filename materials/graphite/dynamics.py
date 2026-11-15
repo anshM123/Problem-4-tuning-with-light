@@ -19,7 +19,7 @@ from scipy.integrate import solve_ivp
 from eph_tb import electron_energy, KB_eV, THz2eV
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SIG_DYN = 0.8          # THz Gaussian width for energy conservation on the 24x24 grid
+SIG_DYN = float(os.environ.get("SIG_DYN", "0.8"))   # THz Gaussian width for energy conservation on the 24x24 grid
 T0 = 295.0
 FWHM = 0.035           # ps pump duration
 # ---- absorbed energy -------------------------------------------------------------
