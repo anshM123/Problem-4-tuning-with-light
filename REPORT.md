@@ -46,7 +46,10 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | peak Σ / peak K | 1.18 | 1.3 | ✔ |
 | | late K/Σ ratio (resonant) | 0.57 | 0.47 | ✔ (≈) |
 | | decay time | 3.7 ps | 2.2 ps | ≈ |
-| | K→Σ rise delay | 50 fs | ~300 fs | ✘ |
+| | K and Σ densities at all measured delays (0.09–3.6 ps), one common scale | rms deviation 7 % of the Σ peak | Fig. 3c | ✔ |
+| | K/Σ at 0.09 ps and 0.4 ps | 1.01, 0.69 | 1.15, 0.69 | ✔ |
+| | bright-exciton phonon linewidth at 50 K (independent check of the couplings) | 6.9 meV | 6.0 meV (Moody et al. 2015) | ✔ |
+| | intrinsic K→Σ formation time | ≈ 20 fs (Σ at 79 % of its peak at 0.09 ps) | "~400 fs timescale" in the text; Σ at 67 % of its peak at 0.09 ps in Fig. 3c | open |
 | | above-gap K/Σ | 0.28 → 0.57 (rising) | 0.15 → 0.32 (rising) | qualitative |
 | **3 Graphite** | A1′(K) peak time | 0.70 ps | 0.6–0.7 ps | ✔ |
 | | K-point diffuse rise (fit as in experiment) | 0.29 ps | 0.28 ps | ✔ |
@@ -302,8 +305,25 @@ parameter:
   energy landscape;
 - the late decay is 3.7 ps (measured 2.2 ps).
 
-The ~300 fs delay between the K and Σ rises is not reproduced: the computed intervalley
-scattering is faster.
+**Timing.** The measured densities are sampled at −0.2, 0.09, 0.4, 0.7 ps, … with a 240 fs
+pump, so rise and peak times between samples are not resolved. We therefore compare at the
+measured delays, with one common scale for both valleys:
+- the rms deviation over all K and Σ points is 7 % of the Σ peak;
+- K/Σ is 1.01 at 0.09 ps (measured 1.15) and 0.69 at 0.4 ps (measured 0.69);
+- Σ reaches 79 % of its peak by 0.09 ps (measured 67 %).
+
+The paper describes Σ-K formation "on a ~400 fs timescale". With the DFPT couplings, the
+model's intrinsic K→Σ transfer, by phonon absorption into the Σ-K states 6.8 meV higher, takes
+≈ 20 fs. The same couplings give a phonon linewidth of the bright exciton of 6.9 meV at 50 K,
+against 6.0 meV measured (Moody et al. 2015). This is an independent check of the coupling
+strength, and the linewidth bounds the out-scattering rate from above.
+
+Weakening the couplings to slow the transfer worsens the agreement with the measured points:
+- ×0.5 gives an rms deviation of 8 % and K/Σ(0.4 ps) = 0.84;
+- ×0.3 gives 11 % and 0.94 (parameter `s_iv` in `dynamics.py`).
+
+We therefore keep the first-principles couplings and leave the difference between the quoted
+formation timescale and the sampled data open.
 
 **Above-gap 2.48 eV.**
 - Free carriers created near Λ/Σ give an initially Σ-rich ratio, K/Σ = 0.28, rising as
@@ -559,7 +579,9 @@ All timings are for one laptop CPU core, Python/NumPy.
      only 7 %. The likely remaining error is the K-point coupling at high T_e, which sets how
      strongly the hot electrons refeed A1′.
 3. **WSe₂.** The conduction-band offset and annihilation coefficient are literature values.
-   The K→Σ rise delay is too short.
+   - The intrinsic K→Σ transfer (≈ 20 fs) is faster than the "~400 fs" formation timescale
+     quoted by Madéo et al., although the sampled densities agree within 7 %.
+   - The late decay is 3.7 ps against 2.2 ps measured.
 4. **MgB₂.** The temperature dependence of the first harmonic is not reproduced.
 5. **Method coverage.**
    - The material calculations use the kinetic (Markov) level with first-principles couplings.

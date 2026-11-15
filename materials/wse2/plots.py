@@ -51,8 +51,26 @@ slope = np.polyfit(t[late], np.log(S[late]), 1)[0]
 with open(os.path.join(HERE, "summary.txt"), "w") as fh:
     fh.write(f"E(KK) reference = 1.73 eV (A resonance); E(SK)-E(KK) = {1e3*P['dE_SK']:.1f} meV "
              f"(binding energies {1e3*tab['Eb_KK']:.0f} / {1e3*tab['Eb_SK']:.0f} meV)\n")
-    fh.write(f"Sigma peak at {t[iS]:.2f} ps (measured 0.4 ps); K peak at {t[iK]:.2f} ps (measured 0.08-0.1)\n")
-    fh.write(f"delay of Sigma half-rise vs K half-rise: {rise_S*1e3:.0f} fs (measured ~300 fs)\n")
+    fh.write(f"Sigma peak at {t[iS]:.2f} ps; K peak at {t[iK]:.2f} ps (measured maxima at the samples "
+             f"0.4 and 0.09 ps)\n")
+    # timing against the measured points themselves (the data are sampled at -0.2, 0.09, 0.4,
+    # 0.7 ps, so rise and peak times between samples are not resolved by the measurement)
+    fh.write(f"Sigma at 0.09 ps / Sigma peak: {np.interp(0.09, t, S)/S.max():.2f} "
+             f"(measured {exp_S[2]/exp_S.max():.2f})\n")
+    fh.write(f"K/Sigma at 0.09 ps: {np.interp(0.09, t, K)/np.interp(0.09, t, S):.2f} (measured {exp_K[2]/exp_S[2]:.2f}); "
+             f"at 0.4 ps: {np.interp(0.4, t, K)/np.interp(0.4, t, S):.2f} (measured {exp_K[3]/exp_S[3]:.2f})\n")
+    mm = exp_t > 0
+    a = np.r_[np.interp(exp_t[mm], t, K), np.interp(exp_t[mm], t, S)]; b = np.r_[exp_K[mm], exp_S[mm]]
+    c = (a @ b) / (a @ a)
+    fh.write(f"rms deviation from all measured K and Sigma points (one common scale): "
+             f"{np.sqrt(np.mean((c * a - b) ** 2)) / exp_S.max() * 100:.0f} % of the Sigma peak\n")
+    fh.write(f"half-rise delay Sigma vs K: {rise_S*1e3:.0f} fs (not resolved by the measured sampling)\n")
+    # homogeneous linewidth implied by the couplings (out-scattering rate of Q = 0 bright excitons)
+    from dynamics import build
+    PP = dict(P); PP["T"] = 50.0; mdl = build(PP)
+    G = sum(r for (a_, b_, r, sh) in mdl["W"] if a_ == 0 and sh >= 0)
+    fh.write(f"phonon linewidth (FWHM) of the bright exciton at 50 K: {G * 1e-12 * 0.6582:.1f} meV "
+             f"(measured phonon part 6.0 meV, Moody et al., Nat. Commun. 6, 8315 (2015))\n")
     fh.write(f"mean K/Sigma over 1-3.6 ps: {ratio_late:.2f} (measured ~0.47)\n")
     fh.write(f"late decay time of Sigma: {-1/slope:.2f} ps (measured ~2.2-2.5 ps)\n")
     fh.write(f"peak Sigma / peak K: {S.max()/K.max():.2f} (measured 1.3)\n")

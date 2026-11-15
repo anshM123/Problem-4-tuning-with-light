@@ -62,6 +62,7 @@ def build(params):
     for (a, b, z, D, w) in procs:
         Omega = w / HBAR
         pref = (2 * np.pi / HBAR) * HBAR * D ** 2 / (2 * RHO * Omega) * dos2d(M[b]) * z
+        pref *= p.get("s_iv", 1.0)              # optional common scale of the zeroth-order couplings
         for sign, occ in ((+1, nB(w) + 1), (-1, nB(w))):   # emission (+1), absorption (-1)
             shift = E0[a] - E0[b] - sign * w                # eps_f = eps_i + shift
             W.append((sp.index(a), sp.index(b), pref * occ, int(round(shift / de))))

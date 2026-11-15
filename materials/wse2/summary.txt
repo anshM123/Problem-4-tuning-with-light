@@ -1,6 +1,10 @@
 E(KK) reference = 1.73 eV (A resonance); E(SK)-E(KK) = 6.8 meV (binding energies 184 / 212 meV)
-Sigma peak at 0.30 ps (measured 0.4 ps); K peak at 0.15 ps (measured 0.08-0.1)
-delay of Sigma half-rise vs K half-rise: 50 fs (measured ~300 fs)
+Sigma peak at 0.30 ps; K peak at 0.15 ps (measured maxima at the samples 0.4 and 0.09 ps)
+Sigma at 0.09 ps / Sigma peak: 0.79 (measured 0.67)
+K/Sigma at 0.09 ps: 1.01 (measured 1.15); at 0.4 ps: 0.69 (measured 0.69)
+rms deviation from all measured K and Sigma points (one common scale): 7 % of the Sigma peak
+half-rise delay Sigma vs K: 50 fs (not resolved by the measured sampling)
+phonon linewidth (FWHM) of the bright exciton at 50 K: 6.9 meV (measured phonon part 6.0 meV, Moody et al., Nat. Commun. 6, 8315 (2015))
 mean K/Sigma over 1-3.6 ps: 0.57 (measured ~0.47)
 late decay time of Sigma: 3.72 ps (measured ~2.2-2.5 ps)
 peak Sigma / peak K: 1.18 (measured 1.3)
