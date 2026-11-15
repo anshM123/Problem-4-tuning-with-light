@@ -22,7 +22,7 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 
 | Level | Propagated objects | Interactions | Cost / step | Used for |
 |---|---|---|---|---|
-| A. Positive-factorized pair fluctuations | ρ and low-rank factors x, y of the pair matrices X = A+𝒢, Y = B+𝒢 (pp channel); Hermitian fluctuation samples V (ph channel) | e–e in the T-matrix (pp) and RPA/GW (ph) channels | O(r L³) | Hubbard chains and ladders |
+| A. Positive-factorized pair fluctuations | ρ and low-rank factors x, y of the pair matrices X = A+𝒢, Y = B+𝒢 (pp channel); Hermitian fluctuation samples V (ph channel) | e–e in the T-matrix (pp), self-interaction-free pp (strong coupling, exact for two particles) and RPA/GW (ph) channels | O(r L³) | Hubbard chains and ladders |
 | B. Kinetic (Markov) limit with first-principles couplings | electronic energy, phonon occupations n_qν on a full-BZ grid, exciton valley and energy populations, free carriers | e–ph (DFT/GW), full three-phonon scattering (MACE cubic force constants), exciton–ph (DFPT deformation potentials) | O(N_proc) | graphite, WSe₂ |
 | C. Pairing mean field plus Gaussian amplitude fluctuations | two-band gaps Δ_π, Δ_σ, the amplitude-mode propagator, nonequilibrium quasiparticle distribution | phonon-mediated pairing (Eliashberg-derived couplings), A² light coupling, Rothwarf–Taylor bottleneck | O(N_ξ) | MgB₂ |
 
@@ -120,6 +120,20 @@ This is a deterministic, exact-rank, positivity-preserving formulation of the
 quantum-fluctuation idea of Schroedter, Bonitz and Joost (arXiv:2606.10773). Code:
 `lightmat/fluct_hubbard.py`. The plain G1–G2 mode, and a variant with positivity projection,
 are in the same file for comparison.
+
+**Self-interaction-free pair ladder for strong coupling** (`mode="sic"`).
+- In the T-matrix equation each electron of a pair feels the Hartree field of the full
+  density, including that of its own partner. The closure is therefore not exact even for two
+  electrons: for a single doublon at U/J = 15 it gives negative densities.
+- In the self-interaction-free ladder, each pair amplitude ψ_r (a column of y) evolves in the
+  field of all electrons except its own two. Its own one-body matrices o_r are subtracted from
+  ρ in both the Hartree term and the Pauli-blocking term U(1 − r↑⊗1 − 1⊗r↓)P, with r = ρ − o_r.
+- This makes the pair dynamics exact for one up and one down electron, so the doublon
+  hopping 2J²/U, which drives strong-coupling dynamics, comes out right.
+- After each step a positive rescaling of the amplitudes, which keeps Y positive
+  semidefinite, restores the exact pair sum rules Σ_b Y_(ab),(ab) = N↓ n↑_a (and up ↔ down)
+  and exact energy conservation.
+- The cost is unchanged. Results in Sec. 3.1.
 
 **Particle–hole channel** (`lightmat/fluct_ph.py`):
 - Hermitian samples V of the one-body operator fluctuations evolve with the linearized

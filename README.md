@@ -18,7 +18,7 @@ materials that:
 ## Layout
 | Path | Content |
 |---|---|
-| `lightmat/` | library: exact diagonalization (`ed.py`), positive-factorized pair-fluctuation NEGF (`fluct_hubbard.py`), particle–hole fluctuations (`fluct_ph.py`), phase-space trajectories (`ftwa.py`) |
+| `lightmat/` | library: exact diagonalization (`ed.py`), positive-factorized pair-fluctuation NEGF, T-matrix and self-interaction-free strong-coupling closures (`fluct_hubbard.py`), particle–hole fluctuations (`fluct_ph.py`), phase-space trajectories (`ftwa.py`) |
 | `benchmarks/hubbard/` | target 1: exact references and fast-method runs (CDW melting, ladder ground state, laser-driven ladder, optical conductivity) |
 | `materials/graphite/` | target 3: MACE phonons, electron–phonon tables, full three-phonon kinetics, dynamics |
 | `materials/graphite3d/` | the same pipeline for the 4-atom AB graphite cell (12 branches) |
