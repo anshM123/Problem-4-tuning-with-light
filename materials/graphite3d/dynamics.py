@@ -12,6 +12,11 @@ A_qj(Te) from eph_rates.npz (tight-binding pi bands, DFT-calibrated coupling),
 |Phi|^2 and C from phph.npz (MACE cubic force constants, prefactor calibrated against
 phono3py).  Energy is conserved exactly by both collision terms (up to delta broadening).
 
+Modes below 1 THz (3 of the 3456 grid modes, at Gamma) are held at 300 K (VALID_MIN_THZ);
+their few, nearly degenerate three-phonon partners on the 12x12x2 grid make the occupation
+equations stiff without affecting the optical-phonon decay.  The run stops at 15 ps (TEND), after the
+A1' decay; beyond ~10 ps the cooled electrons make the explicit integrator slow.
+
 Usage: python dynamics.py [absorbed_fluence_mJcm2]
 """
 import os, sys, time
@@ -76,7 +81,7 @@ if GW:
     Atab *= scale[:, None, None]
 C = float(P["C"]) * float(os.environ.get("PHPH_SCALE", "1"))
 trip = P["trip"]; wt = P["wt"]; phi2 = P["phi2"]
-valid = freq > 0.05
+valid = freq > float(os.environ.get("VALID_MIN_THZ", "1.0"))
 
 
 def gauss(x):
@@ -174,14 +179,16 @@ if __name__ == "__main__":
     n0 = nB(T0)
     y0 = np.concatenate([[0.0], n0.reshape(-1)])
     tout = np.concatenate([np.linspace(-0.1, 2.0, 106), np.linspace(2.05, 10, 160), np.linspace(10.5, 100, 180)])
+    TEND = float(os.environ.get("TEND", "15"))
+    tout = tout[tout <= TEND]
     t0 = time.time()
-    sol = solve_ivp(rhs, (-0.1, 100.0), y0, method="RK45", t_eval=tout, rtol=1e-4, atol=1e-7,
+    sol = solve_ivp(rhs, (-0.1, TEND), y0, method="RK45", t_eval=tout, rtol=float(os.environ.get("RTOL", "1e-3")), atol=1e-7,
                     max_step=0.01 if False else np.inf)
     print("integrated", sol.status, sol.message, f"{time.time()-t0:.0f}s, nfev={sol.nfev}")
     Ee = sol.y[0]; n = sol.y[1:].T.reshape(len(sol.t), Nq, nb)
     Te = Te_of(Ee)
     Eph = (n * hw[None]).sum((1, 2)) / Nq
-    np.savez(os.path.join(HERE, os.environ.get("OUT", "dynamics_out.npz")), t=sol.t, n=n.astype(np.float32), Te=Te,
+    np.savez(os.path.join(HERE, os.environ.get("OUT", "dyn3d.npz")), t=sol.t, n=n.astype(np.float32), Te=Te,
              Ee=Ee, Eph=Eph, freq=freq, qfrac=E["qfrac"], E_abs_cell=E_abs_cell, F_abs=F_abs)
     print("energy check (eV/cell): absorbed %.4f  final electrons+phonon excess %.4f" %
           (E_abs_cell, Ee[-1] + Eph[-1] - Eph[0]))

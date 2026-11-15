@@ -72,7 +72,7 @@ if GW:
     Atab *= scale[:, None, None]
 C = float(P["C"]) * float(os.environ.get("PHPH_SCALE", "1"))
 trip = P["trip"]; wt = P["wt"]; phi2 = P["phi2"]
-valid = freq > 0.05
+valid = freq > float(os.environ.get("VALID_MIN_THZ", "0.05"))
 
 
 def gauss(x):
@@ -171,7 +171,7 @@ if __name__ == "__main__":
     y0 = np.concatenate([[0.0], n0.reshape(-1)])
     tout = np.concatenate([np.linspace(-0.1, 2.0, 106), np.linspace(2.05, 10, 160), np.linspace(10.5, 100, 180)])
     t0 = time.time()
-    sol = solve_ivp(rhs, (-0.1, 100.0), y0, method="RK45", t_eval=tout, rtol=1e-4, atol=1e-7,
+    sol = solve_ivp(rhs, (-0.1, 100.0), y0, method="RK45", t_eval=tout, rtol=float(os.environ.get("RTOL", "1e-4")), atol=1e-7,
                     max_step=0.01 if False else np.inf)
     print("integrated", sol.status, sol.message, f"{time.time()-t0:.0f}s, nfev={sol.nfev}")
     Ee = sol.y[0]; n = sol.y[1:].T.reshape(len(sol.t), Nq, nb)

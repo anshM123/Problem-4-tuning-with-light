@@ -54,6 +54,7 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | energy flow optical → acoustic → flexural, mode- and q-resolved | yes | yes | ✔ |
 | | one-phonon diffuse-scattering maps at 0.5, 1.5, 5, 100 ps | K-point spots early, Bragg-adjacent rings late (fig. `graphite_diffuse_maps.png`) | same sequence (Fig. 2 of the reference) | ✔ qualitative |
 | | diffuse rise at K / at M | 0.18 ps / 8.3 ps | 0.28 ps / 2.1 ps | ≈ / ✘ |
+| | AB-stacked graphite (12 branches) vs matched graphene control | decay 2.37 vs 2.55 ps (−7 %) | — | interlayer modes are not the missing channel |
 | | all three interactions explicit (non-thermal carriers, e–e, e–ph, ph–ph) | A1′ peak 0.73 ps, decay 3.17 ps; thermal-electron model 0.70 / 3.20 ps | — | ✔ validates the thermal limit |
 | | energy conservation | exact | — | ✔ |
 | **4 MgB₂** | 2Δ_π(0), 2Δ_σ(0) | 1.07, 3.40 THz | 1.10, 3.4 THz | ✔ |
@@ -326,8 +327,8 @@ scattering is faster.
 - but the electrons, still at ≈ 2000 K, keep refeeding it.
 
 The model's coupled electron + strongly-coupled-phonon reservoir therefore cools too slowly.
-The most likely cause is the single-layer (graphene) treatment of the lattice, which omits
-graphite's interlayer modes and their additional decay channels.
+Adding graphite's interlayer modes (AB-stacked calculation below) shortens the decay by only
+7 %, so the single-layer treatment of the lattice is not the cause.
 
 **Mode-resolved excess energy** (meV per cell):
 
@@ -392,7 +393,30 @@ cell:
 - 12×12×2 grid with 2.4×10⁷ three-phonon processes;
 - layer-resolved electron–phonon coupling.
 
-AB_GRAPHITE_RESULT
+Result, against a matched monolayer control on the same 12×12 in-plane grid with the same
+settings (`materials/graphene12`; modes below 1 THz held at 300 K in both runs, which is 3 of
+the 3456 modes in graphite):
+
+| | graphene, 12×12 (control) | AB graphite, 12×12×2 | measured |
+|---|---|---|---|
+| A1′(K) peak time | 0.50 ps | 0.48 ps | 0.6–0.7 ps |
+| A1′(K) rise (63 %) | 0.14 ps | 0.14 ps | 0.28 ps |
+| A1′(K) decay (1/e) | 2.55 ps | 2.37 ps | 1.7 ps |
+| T_e at 10 ps | 751 K | 667 K | — |
+| energy, absorbed → final excess (eV/cell) | 0.0909 → 0.0911 | 0.1822 → 0.1822 | — |
+
+- The interlayer modes and the extra decay channels of the stacked lattice speed up the A1′
+  decay by 7 % and cool the electrons faster (by 84 K at 10 ps).
+- The two A1′ combinations of the two-layer cell (branches 10 and 11, 40.6 THz) behave
+  identically. The lower K-point optical pair (36.2 THz) decays in 9 ps.
+- Applying the same 7 % correction to the converged 24×24 monolayer result (3.2 ps) gives an
+  estimated ≈ 3.0 ps, still ≈ 1.7× the measured 1.7 ps.
+
+So the interlayer modes are not the missing channel. The A1′ anharmonic rate at 2 ps
+(τ ≈ 1.8 ps) is already fast; the bottleneck is the hot electrons refeeding the mode. The
+quantity that controls this is the K-point electron–phonon coupling at T_e ≈ 2000 K: with
+the weaker DFT couplings the decay lengthens from 3.2 to 4.5 ps. This coupling (its GW
+enhancement and its temperature dependence) is the least certain input.
 
 ### 3.4 Target 4: MgB₂ (`materials/mgb2`, `figures/mgb2.png`)
 
@@ -494,8 +518,10 @@ All timings are for one laptop CPU core, Python/NumPy.
 2. **Graphite.**
    - The A1′ decay is too slow (3.2 vs 1.7 ps), and M-point acoustic phonons fill too slowly.
    - Making the non-thermal electrons and their electron–electron scattering explicit does not
-     change this, so the remaining error lies in the lattice (anharmonic) part. See the
-     AB-graphite result above.
+     change this.
+   - Including the interlayer modes (AB-stacked graphite, 12 branches) shortens the decay by
+     only 7 %. The likely remaining error is the K-point coupling at high T_e, which sets how
+     strongly the hot electrons refeed A1′.
 3. **WSe₂.** The conduction-band offset and annihilation coefficient are literature values.
    The K→Σ rise delay is too short.
 4. **MgB₂.** The temperature dependence of the first harmonic is not reproduced.

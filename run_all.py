@@ -11,9 +11,10 @@ import os, sys, subprocess
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-def run(cwd, *args):
-    print(">>", cwd, " ".join(args), flush=True)
-    subprocess.run([sys.executable, *args], cwd=os.path.join(ROOT, cwd), check=True)
+def run(cwd, *args, env=None):
+    print(">>", cwd, " ".join(args), env or "", flush=True)
+    subprocess.run([sys.executable, *args], cwd=os.path.join(ROOT, cwd), check=True,
+                   env={**os.environ, **(env or {})})
 
 
 what = sys.argv[1] if len(sys.argv) > 1 else "all"
@@ -44,6 +45,12 @@ if what in ("all", "materials"):
     run(G, "eph_kernel.py"); run(G, "dynamics_neq.py")
     G3 = "materials/graphite3d"
     run(G3, "phonons.py"); run(G3, "phph.py", "12", "2"); run(G3, "eph.py", "450"); run(G3, "dynamics.py")
+    # matched monolayer control on the same 12x12 in-plane grid and the same soft-mode cut
+    C = "materials/graphene12"
+    run(C, "phph.py", "12"); run(C, "eph_rates.py", "12", "450")
+    os.replace(os.path.join(ROOT, C, "eph_rates.npz"), os.path.join(ROOT, C, "eph_rates_point.npz"))
+    run(C, "eph_rates_avg.py", "4", "450")
+    run(C, "dynamics.py", env={"VALID_MIN_THZ": "1.0", "RTOL": "1e-3", "OUT": "ctrl.npz"})
     run("materials/wse2", "plots.py")
     M = "materials/mgb2"
     run(M, "nonlinear.py"); run(M, "pump.py"); run(M, "plots.py")

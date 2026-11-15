@@ -22,6 +22,7 @@ materials that:
 | `benchmarks/hubbard/` | target 1: exact references and fast-method runs (CDW melting, ladder ground state, laser-driven ladder, optical conductivity) |
 | `materials/graphite/` | target 3: MACE phonons, electron–phonon tables, full three-phonon kinetics, dynamics |
 | `materials/graphite3d/` | the same pipeline for the 4-atom AB graphite cell (12 branches) |
+| `materials/graphene12/` | matched monolayer control on the same 12×12 grid as `graphite3d` |
 | `materials/wse2/` | target 2: exciton energetics and valley-resolved exciton/carrier kinetics |
 | `materials/mgb2/` | target 4: two-band superconductivity, amplitude-mode nonlinear response, pumped bottleneck state |
 | `tests/` | `python -m pytest tests -q` |
