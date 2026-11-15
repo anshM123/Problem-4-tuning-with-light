@@ -49,11 +49,12 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | K→Σ rise delay | 50 fs | ~300 fs | ✘ |
 | | above-gap K/Σ | 0.28 → 0.57 (rising) | 0.15 → 0.32 (rising) | qualitative |
 | **3 Graphite** | A1′(K) peak time | 0.70 ps | 0.6–0.7 ps | ✔ |
-| | A1′(K) rise | 0.18 ps (63 %) | 0.28 ps | ≈ |
-| | A1′(K) decay | 3.2 ps | 1.7 ps | ✘ (×1.9) |
+| | K-point diffuse rise (fit as in experiment) | 0.29 ps | 0.28 ps | ✔ |
+| | K-point diffuse decay (fit as in experiment); A1′ population 1/e | 2.46 ps; 3.2 ps | 1.7 ps | ✘ (×1.45) |
 | | energy flow optical → acoustic → flexural, mode- and q-resolved | yes | yes | ✔ |
 | | one-phonon diffuse-scattering maps at 0.5, 1.5, 5, 100 ps | K-point spots early, Bragg-adjacent rings late (fig. `graphite_diffuse_maps.png`) | same sequence (Fig. 2 of the reference) | ✔ qualitative |
-| | diffuse rise at K / at M | 0.18 ps / 8.3 ps | 0.28 ps / 2.1 ps | ≈ / ✘ |
+| | diffuse rise at mid-zone K/2, M/2 | 0.82, 1.31 ps | 1.0–1.5 ps | ✔ |
+| | diffuse rise at M | 8.7 ps | 2.1 ps | ✘ |
 | | AB-stacked graphite (12 branches) vs matched graphene control | decay 2.37 vs 2.55 ps (−7 %) | — | interlayer modes are not the missing channel |
 | | all three interactions explicit (non-thermal carriers, e–e, e–ph, ph–ph) | A1′ peak 0.73 ps, decay 3.17 ps; thermal-electron model 0.70 / 3.20 ps | — | ✔ validates the thermal limit |
 | | energy conservation | exact | — | ✔ |
@@ -318,13 +319,36 @@ scattering is faster.
 91 meV per cell. The electron temperature peaks at 6700 K.
 
 **A1′(K) population.**
-- rises in 0.18 ps (63 %; measured 0.28 ps);
+- rises in 0.18 ps (63 %);
 - peaks at 0.70 ps (measured 0.6–0.7 ps);
-- decays in 3.2 ps (measured 1.7 ps).
+- decays to 1/e of its peak excess in 3.2 ps.
+
+**Like-for-like comparison.** The measured 0.28 ps and 1.7 ps (Stern et al. 2018) are time
+constants of fits to the *diffuse intensity* at K, not 63 %/1/e times of a population. Fitting
+our simulated K-point diffuse intensity with the same form, rise × decay towards a plateau,
+gives:
+
+| | simulated | measured |
+|---|---|---|
+| K rise | 0.29 ps | 0.28 ps |
+| K decay | 2.46 ps | 1.7 ps |
+
+The rise matches, and the decay is 1.45× too slow, not 1.9×. The same fit of the A1′
+population gives 0.29 / 2.66 ps.
+
+**Where the energy sits.** Excess energy at 1 ps:
+- 41 of 91 meV per cell is in the high-frequency optical branches away from K and Γ. These
+  were excited while the electrons were above 4000 K.
+- The near-K and near-Γ optical modes hold 21 meV.
+- The electrons hold only 3 meV.
+
+The electrons stay in detailed balance with this large optical reservoir, so the A1′ decay
+follows the reservoir's anharmonic decay, not the A1′ mode's own.
 
 **Why the decay is too slow.** We decomposed the rates at 2 ps:
 - the anharmonic decay of A1′ alone corresponds to τ ≈ 1.8 ps, matching the measured decay;
-- but the electrons, still at ≈ 2000 K, keep refeeding it.
+- but the electrons, still at ≈ 2000 K and in balance with the optical reservoir, keep
+  refeeding it.
 
 The model's coupled electron + strongly-coupled-phonon reservoir therefore cools too slowly.
 Adding graphite's interlayer modes (AB-stacked calculation below) shortens the decay by only
@@ -366,10 +390,20 @@ The differential maps follow the measured sequence:
 - intensity spreading along the zone boundaries by 5 ps;
 - rings around the Bragg positions at 100 ps, from low-frequency acoustic phonons.
 
-Time constants of the diffuse intensity (`figures/graphite_diffuse_traces.png`):
-- at K: rise of 0.18 ps against 0.28 ps (A1′) measured;
-- at M: rise of 8.3 ps against 2.1 ps measured. M-point acoustic phonons fill too slowly,
-  consistent with the slow decay of the optical reservoir.
+Time constants of the diffuse intensity, fitted as in the experiment (`diffuse.py`,
+`figures/graphite_diffuse_traces.png`):
+
+| point | simulated | measured (Stern 2018) |
+|---|---|---|
+| K, rise | 0.29 ps | 0.28 ps |
+| K, decay | 2.46 ps | 1.7 ps |
+| K/2 and M/2 (mid-zone acoustic), early rise | 0.82 ps, 1.31 ps | 1.0–1.5 ps |
+| M, early rise | 8.7 ps | 2.1 ps |
+
+- The mid-zone acoustic phonons, the first products of optical-phonon decay, fill on the
+  measured time scale.
+- The zone-boundary M-point acoustic phonons fill too slowly. This is consistent with the
+  slow decay of the optical reservoir.
 
 **All three interactions explicit** (`materials/graphite/dynamics_neq.py`). The photoexcited
 carriers (±0.775 eV) are treated as a separate non-thermal population.
@@ -409,8 +443,9 @@ the 3456 modes in graphite):
   decay by 7 % and cool the electrons faster (by 84 K at 10 ps).
 - The two A1′ combinations of the two-layer cell (branches 10 and 11, 40.6 THz) behave
   identically. The lower K-point optical pair (36.2 THz) decays in 9 ps.
-- Applying the same 7 % correction to the converged 24×24 monolayer result (3.2 ps) gives an
-  estimated ≈ 3.0 ps, still ≈ 1.7× the measured 1.7 ps.
+- Applying the same 7 % correction to the converged 24×24 monolayer results gives an estimated
+  ≈ 3.0 ps (A1′ population, 1/e) and ≈ 2.3 ps (K-point diffuse intensity, fitted as in the
+  experiment), against the measured 1.7 ps.
 
 So the interlayer modes are not the missing channel. The A1′ anharmonic rate at 2 ps
 (τ ≈ 1.8 ps) is already fast; the bottleneck is the hot electrons refeeding the mode. The
@@ -516,7 +551,8 @@ All timings are for one laptop CPU core, Python/NumPy.
    - The optical gap is correct at U/J = 3 only when correlation dynamics are included, and
      overestimated at strong coupling.
 2. **Graphite.**
-   - The A1′ decay is too slow (3.2 vs 1.7 ps), and M-point acoustic phonons fill too slowly.
+   - The K-point decay is too slow (2.46 vs 1.7 ps with the experiment's fit), and M-point
+     acoustic phonons fill too slowly (8.7 vs 2.1 ps).
    - Making the non-thermal electrons and their electron–electron scattering explicit does not
      change this.
    - Including the interlayer modes (AB-stacked graphite, 12 branches) shortens the decay by

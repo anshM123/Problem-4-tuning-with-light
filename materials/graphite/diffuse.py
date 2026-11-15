@@ -93,3 +93,26 @@ ax.set_xscale("symlog", linthresh=1); ax.set_xlabel("time (ps)"); ax.set_ylabel(
 ax.set_title("diffuse intensity at reduced wavevectors")
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "graphite_diffuse_traces.png"), dpi=140)
 print("measured (Stern 2018): K rise 0.28 ps (A1'), K-LO 0.73 ps, M rise 2.1 ps, acoustic thermalization 34 ps")
+
+# Time constants extracted the way the experiment reports them (fits of the diffuse intensity,
+# not 63 % times of a population):
+#  K: rise x decay to a plateau, dI = A (1 - e^{-t/tr}) e^{-t/td} + C (1 - e^{-t/td}), 0..10 ps
+#  mid-zone (K/2, M/2) and M: single-exponential rise fitted to the early dynamics, 0..10 ps
+from scipy.optimize import curve_fit
+def tr_at(qq):
+    sel = [k for k in range(len(pts)) if np.allclose(qf[lab_q[k]], qq)]
+    return np.array([np.sum((n[it][lab_q[sel]] + 0.5) * W[sel]) for it in range(len(t))])
+m10 = (t >= -0.1) & (t <= 10)
+y = tr_at([1/3, 1/3]); y = y - y[0]
+fK = lambda x, A, tr_, td, C: np.where(x > 0, A * (1 - np.exp(-x / tr_)) * np.exp(-x / td) + C * (1 - np.exp(-x / td)), 0)
+pK, _ = curve_fit(fK, t[m10], y[m10], p0=[y.max(), 0.2, 2, y[-1]], maxfev=20000)
+fits = {"K_rise": pK[1], "K_decay": pK[2]}
+f1 = lambda x, A, tau, t0: np.where(x > t0, A * (1 - np.exp(-(x - t0) / tau)), 0)
+for name, qq in (("K/2", [1/6, 1/6]), ("M/2", [0.25, 0.0]), ("M", [0.5, 0.0])):
+    y = tr_at(qq); y = y - y[0]
+    p, _ = curve_fit(f1, t[m10], y[m10], p0=[y[m10].max(), 1, 0], bounds=([0, 0.01, -0.5], [np.inf, 1e3, 1]), maxfev=20000)
+    fits[name + "_rise"] = p[1]
+print("experiment-style fits: K rise %.2f ps, K decay %.2f ps (measured 0.28, 1.7); K/2 rise %.2f, M/2 rise %.2f ps "
+      "(measured 1.0-1.5); M rise %.1f ps (measured 2.1)" % (fits["K_rise"], fits["K_decay"], fits["K/2_rise"],
+                                                          fits["M/2_rise"], fits["M_rise"]))
+np.savez(os.path.join(HERE, "diffuse_fits.npz"), **fits)
