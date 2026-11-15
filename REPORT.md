@@ -1830,5 +1830,17 @@ python run_all.py blind      # run_material.py: graphite self-check, black phosp
 python -m pytest tests -q    # 44 tests
 ```
 
+**Fresh-clone check.** On a fresh clone of the repository (same machine, Python 3.14):
+- the test suite passes (40 passed and 4 skipped before any regeneration, because 4 tests need
+  intermediates that are not stored in git; 44 passed after);
+- the Hubbard CDW sweep (16 values of U, both closures, HF and G1–G2 runs) regenerates bit for bit,
+  apart from the stored wall-clock times;
+- every new component regenerates to the stated precision: optical-conductivity closures (10⁻¹⁴),
+  WSe₂ summary (identical), MgB₂ real-time run at 47 kV/cm (6×10⁻⁵, single-precision threading),
+  LiNbO₃ pipeline (identical), one-solver Level A and C limits (5×10⁻⁷), graphite end to end
+  (identical), and the black-phosphorus pipeline (all predictions within 10⁻⁵, except the
+  ill-conditioned biexponential amplitudes at one zone point, 0.7 %);
+- the full `run_all.py` takes well over a day on one laptop CPU and was not repeated end to end.
+
 Individual stages are documented at the top of each script. Precomputed force constants and
 electron–phonon tables are included; delete them to recompute from scratch.
