@@ -11,14 +11,21 @@ Technical report for Discovered Materials Grand Challenge 04, "Tuning Materials 
 
 ## 1. Summary
 
-We present a hierarchy of time-linear methods for driven electron–phonon matter.
+We present one time-linear solver for driven electron–phonon matter and three production
+levels that are its controlled limits.
 
-- Every level descends from the Kadanoff–Baym / G1–G2 hierarchy.
-- Each level reduces to the next in a controlled limit.
-- All levels share three ingredients:
-  - one-body density matrices;
-  - two-particle (pair) fluctuations kept positive by construction;
-  - phonon populations or fields.
+- **One solver** (`lightmat/unified.py`, §2.0) propagates the Nambu one-body density matrix,
+  positive-factorized pair correlations, phonon means, covariances and three-phonon
+  correlations, and the mixed electron–phonon correlations, all in one time variable. With
+  e–e, e–ph and ph–ph on at once it is checked against exact diagonalization, and graphite is
+  run through it end to end, from the light field to three-phonon decay.
+- **Levels A, B, C** are its limits, checked numerically: no phonons (Level A, to 6×10⁻¹³),
+  Markov + random phase (Level B collision operators, to 10⁻¹⁵), pairing mean field and its
+  linearization (Level C gaps to 10 digits, amplitude mode within 3 %).
+- **Targets.** The four challenge targets (Hubbard models, WSe₂, graphite, MgB₂), light
+  driving an infrared phonon directly (LiNbO₃, §3.5), and any material from its structure
+  (`run_material.py`, §3.6), tested blind on black phosphorus with predictions committed to git
+  before the measurements were compiled.
 
 | Level | Propagated objects | Interactions | Cost / step | Used for |
 |---|---|---|---|---|
@@ -1817,7 +1824,10 @@ All timings are for one laptop CPU core, Python/NumPy.
 pip install -r requirements.txt
 python run_all.py            # all targets (several hours, one CPU)
 python run_all.py hubbard    # model benchmarks only
-python run_all.py materials  # graphite, WSe2, MgB2 only
+python run_all.py materials  # graphite, WSe2, MgB2, LiNbO3
+python run_all.py unified    # one solver: limits A, B, C, ED test, graphite end to end
+python run_all.py blind      # run_material.py: graphite self-check, black phosphorus
+python -m pytest tests -q    # 44 tests
 ```
 
 Individual stages are documented at the top of each script. Precomputed force constants and
