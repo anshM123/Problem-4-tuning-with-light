@@ -528,7 +528,9 @@ Adiabatic switching of U.
 - The pp ladder is quantitative up to U/J ≈ 1.5.
 - It underestimates moment formation beyond that, and adiabatic switching fails for
   U/J ≥ 5.
-- The ph (RPA-kernel) method brackets the exact result from above: C_loc = 0.204 at U/J = 2.
+- The ph (RPA-kernel) method brackets the exact result from above. It is within 1 % (U/J = 0.5)
+  and 4 % (U/J = 1) of exact for C_loc, then overshoots: 0.204 vs 0.162 at U/J = 2 and 0.407 vs
+  0.228 at U/J = 7.5, as the RPA kernel approaches its magnetic instability.
 
 ![ladder](figures/hubbard_ladder.png)
 
