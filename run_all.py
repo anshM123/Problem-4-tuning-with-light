@@ -3,6 +3,7 @@
 python run_all.py            # everything (several hours on one laptop CPU)
 python run_all.py hubbard    # only the model benchmarks
 python run_all.py materials  # only graphite, WSe2, MgB2
+python run_all.py blind      # run_material.py: graphite self-check, black-phosphorus blind test
 Precomputed force constants (materials/graphite/fc2.hdf5, fc3.hdf5) and electron-phonon
 tables are in the repository; delete them to recompute from scratch.
 """
@@ -66,5 +67,18 @@ if what in ("all", "materials"):
     run(C, "eph_rates_avg.py", "4", "450")
     run(C, "dynamics.py", env={"VALID_MIN_THZ": "1.0", "RTOL": "1e-3", "OUT": "ctrl.npz"})
     run("materials/wse2", "plots.py")
+if what in ("all", "blind"):
+    # general structure-to-dynamics pipeline: graphite self-check and the black-phosphorus blind
+    # test (the preregistered predictions file is written separately and is never regenerated)
+    run(".", "run_material.py", "graphite", "--pump-eV", "1.55", "--fluence-mJcm2", "12",
+        "--fwhm-fs", "35", "--T", "295", "--thickness-nm", "70", "--tmax-ps", "100")
+    run("materials/blind/graphite", "compare_with_repo.py")
+    run(".", "run_material.py", "black_phosphorus", "--pump-eV", "1.61", "--fluence-mJcm2", "9.8",
+        "--fwhm-fs", "50", "--T", "100", "--thickness-nm", "39", "--nk", "3.19+0.29j",
+        "--pol", "0,0,1", "--tmax-ps", "100", "--beam", "0 1 0",
+        "--bragg", "4 0 0;0 0 4;2 0 0;0 0 2", "--diffuse-zone", "4 0 0", "--irf-fs", "150",
+        "--qmax", "10")
+    run("materials/blind/black_phosphorus", "compare_with_measurements.py")
+if what in ("all", "materials"):
     M = "materials/mgb2"
     run(M, "nonlinear.py"); run(M, "pump.py"); run(M, "plots.py")

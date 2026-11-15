@@ -77,6 +77,11 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | | superfluid-weight (diamagnetic) vertex instead | FH rises to 2.5× toward T_c | monotonic fall | ✘, excluded by the data |
 | | un-normalized FH maximum | 25 K | 35–36 K | ✘ |
 | | conductivity 2 ps after 150 kV/cm (bottleneck state) | σ₁(0.8) = 2.23, σ₂(0.5) = 1.98, σ₂(1.0) = 1.15 ×10⁴ | 2.55, 2.6, 1.5 ×10⁴ | ✔ (13–24 %) |
+| **5 Blind test: black phosphorus** (`run_material.py`, predictions committed before the data were compiled) | absorbed energy density | 377 J/cm³ | 380 ± 70 J/cm³ (Zahn 2020) | ✔ |
+| | ΔMSD zigzag τ₁ / τ₂ | 0.81 / 20.5 ps | 0.58 / 20 ps | ≈ / ✔ |
+| | ΔMSD armchair τ₁ / τ₂ | 0.12 / 14.0 ps | 0.48 / 22 ps | ✘ / ≈ |
+| | diffuse at Seiler's A / X (points matched by coordinates) | rise 1.9 ps, relax 19 ps / 11.0 ps | 1.7, 30 ps / 14.3 ps | ✔, ≈ / ✔ |
+| | late ΔMSD amplitude, anisotropy armchair/zigzag | 2.5–3× too large; 1.91 | 1.53 / 2.50 ×10⁻³ Å²; 1.63 | ✘; ≈ |
 | **Speed (measured)** | two-time KBE (second Born, our implementation) vs this work, 11-site chain, same dt and machine | cost ∝ N_t^1.21 vs N_t^3.15; 300× faster at N_t = 400; extrapolated 10⁴× (9 s vs 29 h, KBE needing 48 GB) at t = 50 ħ/J | — | ✔ |
 | **Speed** | graphite: 576 q × 6 branches, 1.2×10⁷ three-phonon processes, 100 ps | 11 min, 1 CPU core | two-time NEGF: not feasible | ✔ |
 
@@ -802,6 +807,256 @@ published couplings. The equilibrium σ₂(ω) agrees with the measurement withi
   - σ₂(0.5) = 1.98×10⁴ against 2.6×10⁴;
   - σ₂(1.0) = 1.15×10⁴ against 1.5×10⁴.
 - The pump therefore leaves MgB₂ in a band-selective non-thermal state.
+
+### 3.6 Any material from its structure: `run_material.py` and a blind prediction
+
+**What it does.** `run_material.py` takes a crystal structure (any ASE-readable file, or a
+built-in name: `graphite`, `black_phosphorus`, `silicon`, `hbn`) and the pump conditions. It
+returns the light-driven, mode- and momentum-resolved phonon dynamics with no per-material
+fitting:
+
+```
+python run_material.py <structure> --pump-eV 1.55 --fluence-mJcm2 5 --fwhm-fs 50 --T 300 \
+    [--thickness-nm 40] [--tmax-ps 50] [--nk n+ki] [--gap-eV Eg] [--beam "u v w"] \
+    [--bragg "h k l;..."] [--diffuse-zone "h k l"] [--irf-fs 150]
+```
+
+Every material goes through the same steps. Intermediates are cached in `materials/blind/<name>/`.
+
+1. **Structure.**
+   - Validation: periodic cell, no overlapping atoms, elements covered by the potential, and a
+     warning for open d/f shells.
+   - Vacuum directions (gaps > 7 Å) are detected, so slabs are treated as 2D.
+   - Internal coordinates are relaxed with MACE at fixed cell and fixed symmetry.
+2. **Phonons.** Harmonic and cubic force constants come from MACE (`medium-omat-0`) finite
+   displacements (phonopy/phono3py).
+   - Supercells are chosen by length: ≥ 18 Å for fc2, ≥ 10 Å for fc3.
+   - The pair cutoff is max(4 Å, 1.8 d_NN).
+3. **Three-phonon operator.** The full nonlinear collision integral is built on the whole q-grid
+   without symmetry reduction, exactly as for graphite.
+   - The grid is set by a cost budget, N_q² n_b³ ≤ 2.5×10⁸. This gives 24×24 for graphite and
+     8×8×6 for black phosphorus.
+   - The energy-conservation width scales with grid spacing and maximum frequency, in the same
+     ratio as the graphite run (0.81 THz on 24×24, against 0.8 THz in §3.3).
+   - The absolute prefactor is calibrated against phono3py's imaginary self-energy.
+4. **Electron–phonon coupling.** This is the step that normally needs per-material DFT. Here one
+   universal model is used for every material.
+   - **Hamiltonian.** sp³ Slater–Koster tight binding on the nearest-neighbour shell, with
+     Harrison's universal hoppings V = η ħ²/(m d²) (Harrison 1980: η_ssσ = −1.40,
+     η_spσ = 1.84, η_ppσ = 3.24, η_ppπ = −0.81). On-site energies are the NIST LDA atomic
+     eigenvalues.
+   - **Vertex.** g_mn^ν(k,q) is the exact derivative of this Hamiltonian along the MACE phonon
+     eigenvectors (d⁻² scaling plus angular terms). A unit test checks it against a frozen-phonon
+     finite difference.
+   - **Coupling function.** The q- and energy-resolved coupling function W_qν(ε), a mode-resolved
+     Eliashberg function, is tabulated once. It gives the generation coefficients A_qν(T_e) of the
+     §2.2 kinetics at any electron temperature.
+   - **Metals and semimetals.** One chemical potential, fixed by charge neutrality at each T_e.
+   - **Semiconductors.** A scissor shift imposes the gap (`--gap-eV`, or a tabulated value).
+     Electrons and holes share T_e but have separate quasi-Fermi levels at the photo-carrier
+     density. The energy hν − E_g per pair heats the carriers; E_g per pair stays electronic.
+     Recombination is optional (`--recomb-ps`).
+   - **q-cell averaging.** W is averaged over each q-cell: 3×3 sub-points in 2D, the cell centre
+     in 3D. The cells carrying the most emitted power (up to 16 in 2D, 8 in 3D) are refined on a
+     finer sub-grid.
+5. **Optics.** The absorbed energy comes from thin-film transfer-matrix optics with a complex
+   index. The index is, in order of preference:
+   - given by the user;
+   - taken from a small built-in table;
+   - computed from the tight-binding interband dielectric function (Peierls velocities and
+     Kramers–Kronig) as a fallback. This fallback is always printed for comparison.
+6. **Kinetics.** The Level-B equations (§2.2) for T_e and every n_qν are integrated as follows:
+   - with RK45 when the electron–phonon rates are moderate;
+   - otherwise (rates > 20 ps⁻¹) with BDF and the analytic electron–phonon Jacobian. Both
+     integrators give the same graphite traces to 10⁻³;
+   - the three-phonon sum (up to 1.2×10⁸ processes) is evaluated by a parallel numba kernel;
+   - energy is conserved to 4×10⁻⁴.
+7. **Observables.**
+   - Branch populations and effective temperatures (optical against acoustic).
+   - Hot-phonon rise, peak and decay times; T_e cooling time; lattice-equilibration time.
+   - One-phonon diffuse intensities at all high-symmetry points in the plane normal to the beam.
+   - Debye–Waller (mean-square displacement) traces of chosen Bragg peaks.
+   - Fits in the form UED experiments use: biexponential, single exponential, and rise × decay,
+     each convolved with the instrument response.
+   - Output files: `results.json` and `results.png`.
+
+Tests: `tests/test_run_material.py`, 9 tests, ~3 s.
+- Graphene Dirac cone: ħv_F = 6.53 eV Å.
+- Vertex against frozen phonon.
+- Invariance of the diffuse structure factor under the choice of q representative.
+- Thin-film absorptance (repository graphite value).
+- Fit recovery.
+- Effective-temperature inversion.
+- Quasi-Fermi-level carrier conservation.
+- Input validation.
+
+**Expected accuracy, stated before any comparison.**
+- Phonon frequencies: within ~5 %. Black phosphorus Raman modes from MACE are 10.1 and 13.4 THz,
+  against 10.9 and 14.0 measured.
+- Three-phonon rates: within a factor 1.5–2. MACE overestimates the anharmonicity in graphite by
+  about 2×.
+- Electron–phonon coupling: within a factor ~2 in |g|².
+  - The model has no many-body (GW) enhancement, no d orbitals and no polar (Fröhlich) coupling.
+  - It can misplace the gap badly. For black phosphorus it gives 3.8 eV before the scissor, so
+    the band curvature near the edges, and with it the carrier phase space, is the least
+    reliable input.
+- Absorbed energy: ±15 % with a tabulated index. The tight-binding fallback is good to ~50 %:
+  graphite 2.36 + 1.91i against 2.72 + 1.47i; black phosphorus 2.44 + 0.71i against 3.19 + 0.29i.
+- Characteristic times are therefore expected within a factor ~2, and lattice amplitudes within
+  ~30 %.
+
+**Graphite self-check** (`materials/blind/graphite`, `compare_with_repo.py`). Same conditions as
+§3.3: 12 mJ/cm², 35 fs, 1.55 eV, 70 nm, 295 K. The general pipeline is compared with the
+dedicated graphite model (DFT-calibrated π coupling with GW enhancement), using identical
+post-processing.
+
+The universal coupling is 0.80× the DFT-calibrated coupling at K and 0.70–0.75× at Γ. The total
+emitted power is 0.57–0.66× at 1000–3000 K, before the dedicated model's GW factor of 193/92 at K.
+
+| | general pipeline | dedicated model (§3.3) | general, coupling ×2.5 (diagnostic) | measured |
+|---|---|---|---|---|
+| absorbed energy (meV/cell) | 90.9 | 90.9 | 90.9 | — |
+| T_e peak (K) | 7210 | 6690 | 6980 | — |
+| A1′(K) rise, 63 % (ps) | 0.46 | 0.20 | 0.24 | — |
+| A1′(K) peak (ps) | 1.42 | 0.70 | 0.79 | 0.6–0.7 |
+| A1′(K) decay to 1/e of peak (ps) | 3.9 | 3.2 | 3.0 | — |
+| A1′(K) rise × decay fit (ps) | 1.34 / 2.45 | 0.29 / 2.66 | 0.40 / 2.42 | 0.28 / 1.7 (K diffuse) |
+| excess energy, acoustic / optical, 1.5 ps (meV/cell) | 19 / 63 | 26 / 62 | — | — |
+| excess energy, acoustic / optical, 5 ps (meV/cell) | 50 / 40 | 51 / 40 | — | — |
+| excess energy, acoustic / optical, 50 ps (meV/cell) | 64 / 27 | 64 / 27 | — | — |
+
+- The pipeline reproduces the absorbed energy, the energy flow after ~2 ps, and the A1′ decay
+  (within 25 %).
+- The hot-phonon rise is about 2× slower than in the dedicated model. This is the expected
+  consequence of the missing GW enhancement and the 20–30 % weaker universal coupling.
+- Scaling the coupling by 2.5 (diagnostic only) recovers the dedicated-model rise, peak and decay.
+  The difference is therefore entirely the coupling magnitude, not the kinetics or the phonons.
+- The pipeline's K-point diffuse-intensity fit (1.36 / 2.30 ps) is poorly conditioned when
+  rise ≈ decay. Its 63 % rise is 0.50 ps.
+- Runtime: 40 min on 4 threads while the machine was otherwise fully loaded.
+  - Electron–phonon tabulation: 25 min.
+  - Force constants: 2 min.
+  - Three-phonon kernel: 15 s.
+  - Dynamics: 9 s with the numba kernel.
+
+**Blind prediction: bulk black phosphorus**
+(`materials/blind/black_phosphorus/preregistered_predictions.json`).
+
+*Experiments:* Seiler et al., Nano Lett. 21, 6171 (2021) (diffuse scattering) and Zahn et al.,
+Nano Lett. 20, 3728 (2020) (Debye–Waller analysis, same setup).
+
+*Conditions used* (`conditions.md`):
+- sample: 39 nm free-standing film at 100 K, electron beam along b;
+- pump: 1.61 eV, 50 fs, armchair polarization, 9.8 mJ/cm² incident;
+- optics: n = 3.19 + 0.29i (the paper's stated optical constant);
+- analysis: 150 fs instrument response; Bragg peaks (400) zigzag and (004) armchair; diffuse
+  intensity at the X and A points in the zone around (400).
+
+The only material inputs are the crystal structure and the 0.33 eV bulk gap. Measured results
+were not consulted.
+
+*Simulation:*
+- Absorptance 0.150, giving 377 J/cm³. This matches the experiment's stated 380 ± 70 J/cm³.
+- 1.46×10²¹ pairs/cm³ (0.111 per primitive cell). 80 % of the absorbed energy heats the carriers.
+- T_e peaks at 3640 K. The carriers lose their excess energy in ≈ 0.1 ps, because this
+  degenerate, dense plasma couples strongly to the optical branches.
+- The hot optical set (5 % of modes, mean 10 THz) rises in 0.08 ps, peaks at 0.23 ps and decays
+  with τ = 4.0–4.6 ps.
+- The acoustic branches reach 63 % of their final excess at 10.6 ps and 90 % at 29 ps.
+- The branch temperatures equalize (spread < 10 %) at 30 ps.
+- The lattice is at 304 K at 100 ps. The remaining 20 % of the absorbed energy is held across the
+  gap, because no recombination is modelled.
+
+| prediction | central | coupling ×0.5 | coupling ×2 |
+|---|---|---|---|
+| ΔMSD (400), zigzag: τ₁ / τ₂ (ps), biexp. ⊗ 150 fs | 0.81 / 20.5 | 1.06 / 21.1 | 0.61 / 19.3 |
+| amplitudes A₁ / A₂ (10⁻³ Å²) | 2.35 / 1.48 | 2.17 / 1.56 | 2.53 / 1.40 |
+| ΔMSD (004), armchair: τ₁ / τ₂ (ps) | 0.12 / 14.0 | 0.18 / 15.7 | 0.12 / 12.2 |
+| amplitudes A₁ / A₂ (10⁻³ Å²) | 1.37 / 5.89 | 1.25 / 5.96 | 1.55 / 5.78 |
+| ΔMSD at 100 ps, zigzag / armchair (10⁻³ Å²) | 3.87 / 7.38 | 3.78 / 7.30 | 3.99 / 7.47 |
+| diffuse X: single exponential τ (ps) | 1.15 | 1.12 | 1.34 |
+| diffuse X: biexp. rise / relaxation (ps) | 1.93 / 19 | — | — |
+| diffuse A: biexp. τ₁ / τ₂ (ps), amplitudes −0.27 / +1.40 | 6.5 / 16.9 | 7.6 / 15.7 | 5.3 / 18.0 |
+| diffuse A: single exponential τ (ps) | 20.5 | — | — |
+
+- The prediction is robust to a factor-4 change in the electron–phonon coupling. The slow time
+  constants are set by the MACE anharmonic decay of the optical phonons. That is the dominant
+  uncertainty: in graphite MACE gives lifetimes about 2× shorter than DFT, so the 14–20 ps times
+  could be underestimates by up to 2×.
+- The model predicts the following, all recorded before comparison:
+  - an anisotropic lattice response: the armchair MSD grows 1.9× more than the zigzag MSD by
+    100 ps;
+  - a sub-ps zigzag component;
+  - a fast diffuse signal at X;
+  - a slow (~20 ps) build-up at A, which is carried mainly by the lowest acoustic branches
+    (56 % of the one-phonon weight).
+
+*Runtime:* 57 min on 4 threads on the fully loaded machine.
+- Force constants: 16 min.
+- Three-phonon kernel: 1.3 min (1.2×10⁸ processes).
+- Electron–phonon tabulation: 38 min.
+- Dynamics: 53 s.
+- Each sensitivity run: < 2 min.
+
+*Limits of the general route:*
+- no d-electron materials (TMDs, transition metals): the run warns and the coupling is
+  qualitative;
+- no polar Fröhlich coupling;
+- no GW enhancement;
+- no carrier recombination by default;
+- no excitons;
+- Debye–Waller amplitudes are computed on the q-grid without the Γ acoustic modes, which
+  underestimates absolute MSDs slightly; MSD changes are less affected.
+
+**Comparison with the measurements**
+(`materials/blind/black_phosphorus/comparison.md`, `comparison.json`).
+
+The predictions were committed (9389d30) before the measured values were compiled, and they are
+unchanged. The measurements come from Zahn et al. 2020 (Debye–Waller fits, same form and 150 fs
+IRF) and Seiler et al. 2021 (diffuse scattering).
+
+| Observable | Preregistered | Post hoc (points matched by coordinates) | Measured | Ratio |
+|---|---|---|---|---|
+| ΔMSD zigzag τ₁ / τ₂ | 0.81 / 20.5 ps | — | 0.58 / 20 ps | 1.40 / 1.03 |
+| ΔMSD armchair τ₁ / τ₂ | 0.12 / 14.0 ps | — | 0.48 / 22 ps | 0.25 / 0.64 |
+| ΔMSD at 100 ps, zigzag / armchair | 3.87 / 7.38 ×10⁻³ Å² | — | 1.53 / 2.50 ×10⁻³ Å² | 2.5 / 3.0 |
+| late anisotropy ac/zz | 1.91 | — | 1.63 | 1.17 |
+| I/I₀ plateau (400) / (004) | 0.800 / 0.784 | — | 0.911 / 0.910 | −ln ratio 2.4 / 2.6 |
+| diffuse, S21 A point (zigzag): rise / relaxation | 6.5 / 16.9 ps (label A = corner) | 1.9 / 19 ps | 1.7 / 30 ps | 3.8, 0.56 (1.14, 0.64) |
+| diffuse, S21 X point (armchair): single exponential | 1.15 ps (label X = zigzag) | 11.0 ps | 14.3 ps | 0.08 (0.77) |
+| return to equilibrium (Z20 definition) | 26 ps | — | ≈ 60 ps | 0.44 |
+| absorbed energy | 377 J/cm³ | — | 380 J/cm³ | 0.99 |
+
+**Convention audit.**
+- **Axes.** The pipeline's axes match Z20: x = a = zigzag, z = c = armchair, U₁₁ and U₃₃ as
+  defined there.
+- **Point labels.** The special points carry Setyawan–Curtarolo labels: X along zigzag, Z along
+  armchair, A at the zone corner. Seiler et al. use another convention. Their text puts Γ–X along
+  armchair and Γ–A along zigzag. The preregistered file defines each point by its coordinates, so
+  the post hoc column only re-pairs preregistered numbers.
+- **MSD bookkeeping.** The MSD is per atom and projected on G. It agrees with phonopy's thermal
+  displacements to 5 %.
+- **The amplitude excess is not a bookkeeping or convention error.** The harmonic MACE lattice
+  itself gives ΔU(100 → 370 K) = 5.2 and 9.4 ×10⁻³ Å², which is 3.4–3.8× the measured
+  asymptotes at the experiment's own temperature rise. The measured slopes would imply effective
+  Debye temperatures of 710–900 K. The remaining gap (MACE stiffness, film multiple scattering, or
+  the true heating) is unresolved.
+- No code was changed.
+
+**What this test says about the pipeline.**
+- **What came out right**, from the structure alone:
+  - where in the zone the energy goes first: a fast rise followed by relaxation along zigzag, and
+    a slow build-up along armchair;
+  - the 20 ps zigzag phonon–phonon time;
+  - the sign of the late-time anisotropy;
+  - six of eight coordinate-matched time constants within a factor 2.
+- **Systematic errors:**
+  - Debye–Waller amplitudes 2.5–3× too large;
+  - armchair electron–phonon time 4× too short;
+  - return to equilibrium about 2× too fast, in line with MACE's anharmonicity over-estimate
+    already seen in graphite.
+- **Lesson.** Diffuse-scattering predictions must be stated by momentum coordinates, not by
+  high-symmetry labels, because labels differ between BZ conventions.
 
 ---
 
