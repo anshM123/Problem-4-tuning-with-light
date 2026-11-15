@@ -12,26 +12,55 @@ FIG = os.path.join(HERE, "..", "..", "figures"); os.makedirs(FIG, exist_ok=True)
 fig, ax = plt.subplots(2, 2, figsize=(10, 6), sharex=True)
 for c, U in enumerate([5, 15]):
     e = np.load(os.path.join(D, f"ed_cdw_U{U}.npz")); f = np.load(os.path.join(D, f"fast_cdw_U{U}_factorized.npz"))
+    sc = os.path.join(D, f"fast_cdw_U{U}_sic.npz")
     h = os.path.join(D, f"fast_cdw_U{U}_hf.npz")
     ax[0, c].plot(e["t"], e["I"], "k-", lw=1.2, label="exact (ED)")
-    ax[0, c].plot(f["t"], f["I"], "r-", lw=1, label="factorized pp ladder (this work)")
+    ax[0, c].plot(f["t"], f["I"], "r-", lw=1, label="T-matrix pp ladder (factorized)")
+    if os.path.exists(sc):
+        ss = np.load(sc); ax[0, c].plot(ss["t"], ss["I"], "-", color="tab:blue", lw=1,
+                                        label="self-interaction-free pp ladder (this work)")
+        ax[1, c].plot(ss["t"], ss["dcorr"].sum(1), "-", color="tab:blue", lw=1)
     if os.path.exists(h):
-        hh = np.load(h); ax[0, c].plot(hh["t"], hh["I"], "b:", lw=1, label="TDHF")
+        hh = np.load(h); ax[0, c].plot(hh["t"], hh["I"], "g:", lw=1, label="TDHF")
     ax[0, c].set_title(f"U/J = {U}"); ax[0, c].set_ylabel("density imbalance I")
     ax[1, c].plot(e["t"], e["dcorr"].sum(1), "k-", lw=1.2)
     ax[1, c].plot(f["t"], f["dcorr"].sum(1), "r-", lw=1)
     ax[1, c].set_ylabel(r"$\sum_i d^{corr}_i$"); ax[1, c].set_xlabel("t J / hbar")
-ax[0, 0].legend(fontsize=8)
+ax[0, 0].legend(fontsize=7)
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "hubbard_cdw.png"), dpi=150)
 
-S = np.loadtxt(os.path.join(D, "cdw_sweep_summary.txt"))
-fig, ax = plt.subplots(1, 3, figsize=(12, 3.4))
-ax[0].plot(S[:, 0], S[:, 1], "ko-", label="exact"); ax[0].plot(S[:, 0], S[:, 2], "rs-", label="fast")
-ax[0].set_xlabel("U/J"); ax[0].set_ylabel(r"$\langle I\rangle_{t\in[20,50]}$"); ax[0].legend()
-ax[1].plot(S[:, 0], S[:, 3], "ko-"); ax[1].plot(S[:, 0], S[:, 4], "rs-")
-ax[1].set_xlabel("U/J"); ax[1].set_ylabel("first zero crossing of I (hbar/J)")
-ax[2].plot(S[:, 0], S[:, 5], "ko-"); ax[2].plot(S[:, 0], S[:, 6], "rs-")
-ax[2].set_xlabel("U/J"); ax[2].set_ylabel(r"$\langle\sum d^{corr}\rangle_{t\in[20,50]}$")
+# U sweep: the quantities of Fig. 3 of the reference plus the melting time t(I < 0.5)
+Us = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 15, 16, 18, 20]
+def metrics(t, I, dc):
+    k = np.where(I < 0)[0]; z = t[k[0]] if len(k) else np.nan
+    k = np.where(I < 0.5)[0]; m = t[k[0]] if len(k) else np.nan
+    w = (t >= 20) & (t <= 50)
+    return [I[w].mean(), z, m, dc.sum(1)[w].mean()]
+rows = []
+for U in Us:
+    r = [U]
+    for fn in (f"ed_cdw_U{U}.npz", f"fast_cdw_U{U}_factorized.npz", f"fast_cdw_U{U}_sic.npz"):
+        p = os.path.join(D, fn)
+        if os.path.exists(p):
+            z = np.load(p); r += metrics(z["t"], z["I"], z["dcorr"])
+        else:
+            r += [np.nan] * 4
+    rows.append(r)
+S = np.array(rows)
+np.savetxt(os.path.join(D, "cdw_sweep_metrics.txt"), S, fmt="%.4f",
+           header="U | ED: <I>, t_zero, t_melt(I<0.5), <dcorr> | T-matrix: same | self-interaction-free: same")
+fig, ax = plt.subplots(1, 4, figsize=(15, 3.4))
+lab = ["exact", "T-matrix pp ladder", "self-interaction-free pp ladder"]
+sty = ["ko-", "rs-", "^-"]
+ylab = [r"$\langle I\rangle_{t\in[20,50]}$", "first zero crossing of I (hbar/J)",
+        "melting time, I < 0.5 (hbar/J)", r"$\langle\sum d^{corr}\rangle_{t\in[20,50]}$"]
+for k in range(4):
+    for m in range(3):
+        kw = dict(color="tab:blue") if m == 2 else {}
+        ax[k].plot(S[:, 0], S[:, 1 + 4 * m + k], sty[m], ms=4, label=lab[m], **kw)
+    ax[k].set_xlabel("U/J"); ax[k].set_ylabel(ylab[k])
+ax[1].set_ylim(0, 30)
+ax[0].legend(fontsize=7)
 fig.tight_layout(); fig.savefig(os.path.join(FIG, "hubbard_cdw_sweep.png"), dpi=150)
 
 ed = np.loadtxt(os.path.join(D, "ladder_gs_ed.txt"))

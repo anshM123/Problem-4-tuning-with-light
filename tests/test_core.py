@@ -122,3 +122,22 @@ def test_kbe_reference_matches_exact_at_weak_coupling():
     psi = m.product_state(occ, occ)
     ex = evolve(m, psi, np.array([0.0, 1.0]), observe=lambda p, t: m.densities(p))
     assert np.max(np.abs(k.density() - ex[1][0])) < 0.01
+
+
+def test_sic_pair_ladder_exact_for_one_doublon():
+    """The self-interaction-free pair ladder is exact for one up + one down electron
+    (strong coupling, where the T-matrix closure fails)."""
+    from scipy.linalg import expm
+    L, U, c = 7, 15.0, 3
+    h = _chain(L)
+    H = np.kron(h, np.eye(L)) + np.kron(np.eye(L), h) + U * np.diag(np.eye(L).reshape(-1))
+    psi = np.zeros(L * L); psi[c * L + c] = 1.0
+    r0 = np.zeros((L, L)); r0[c, c] = 1.0
+    s = PPLadder(h, U, r0, r0, mode="sic")
+    t = 0.0
+    for _ in range(1500):
+        s.step(t, 0.002); t += 0.002
+    P = np.abs((expm(-1j * H * t) @ psi).reshape(L, L)) ** 2
+    nu, nd = s.densities()
+    assert np.max(np.abs(nu - P.sum(1))) < 1e-5
+    assert abs(nu[c] * nd[c] + s.dcorr()[c] - P[c, c]) < 1e-5

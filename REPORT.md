@@ -34,9 +34,10 @@ We present a hierarchy of time-linear methods for driven electron–phonon matte
 | Target | Quantity | This work | Reference | |
 |---|---|---|---|---|
 | **1 Hubbard 11-site CDW** | stability, U/J = 0…20 | stable for every U | GKBA+TPP unstable for U/J ≳ 12 | ✔ |
-| | long-time ⟨I⟩ over 16 values of U | mean abs. error 0.07 | ED | ✔ |
-| | long-time Σd_corr | 12 % mean error | ED | ✔ |
-| | first zero crossing of I | correct for U/J ≤ 4; delayed for U/J ≥ 5 (also in plain G1–G2) | ED | ✘ |
+| | long-time ⟨I⟩ over 16 values of U | mean abs. error 0.07 (T-matrix), 0.06 (self-interaction-free) | ED | ✔ |
+| | long-time Σd_corr | 12 % (T-matrix), 17 % (self-interaction-free) mean error | ED | ✔ |
+| | melting time t(I < 0.5), 16 values of U/J = 0…20 | self-interaction-free pp ladder: mean error 0.29 ħ/J (U/J = 5: 1.2 vs 1.2; U/J = 15: 3.9 vs 4.0); T-matrix ladder: 2.98 ħ/J | ED | ✔ |
+| | first zero crossing of I | mean error 1.8 ħ/J (T-matrix ladder 10.4 ħ/J); late at U/J = 15 (16.7 vs 5.4), where the curve hovers just above zero | ED | ≈ |
 | **1 Hubbard 6×2 ladder** | ground-state C_loc, C_leg, C_rung | pp ladder: C_loc, C_leg within 1.5 % at U/J = 0.5, 5 % at U/J = 1; −18 % (C_loc) at U/J = 4 | ED | ✔ for U/J ≤ 2 |
 | | laser-driven ΔC spectrum | dominant line 3.58 J (ph fluctuations) | 3.48 J (ED) | ✔ (3 %) |
 | **1 1D optical conductivity** | gap onset, U/J = 3, 6, 12 (RPA level, 64 sites) | 1.56, 5.06, 11.4 J | Bethe ansatz 0.63, 2.89, 8.46 J | ✘ (overestimated, as in the reference δGW) |
@@ -233,11 +234,65 @@ kernels.
 | ⟨Σd_corr⟩ exact | 0.57 | 0.88 | 1.22 | 1.53 | 1.78 | 1.97 | 2.22 | 2.36 | 2.45 | 2.53 | 2.61 |
 | ⟨Σd_corr⟩ this work | 0.76 | 1.06 | 1.49 | 1.82 | 2.09 | 2.23 | 2.41 | 2.50 | 2.51 | 2.55 | 2.29 |
 
-**Weakness.** The CDW melts too slowly at strong coupling: at U/J = 15 the first zero
-crossing comes at 27 ħ/J against 5.4 ħ/J exactly. Plain G1–G2 with the same self-energy
-shows the same lag. It even stays at I ≈ 0.33 at long times, and our positivity-projected
-variant does too. The lag is therefore a property of the T-matrix closure, not of the
-factorization.
+**Why the T-matrix closure fails at strong coupling.** At U/J = 15 the T-matrix closure
+melts the CDW far too slowly: the first zero crossing comes at 27.6 ħ/J against 5.4 ħ/J
+exactly. Plain G1–G2 with the same self-energy and our positivity-projected variant show the
+same lag, so the lag comes from the closure, not from the factorization. The failure already
+appears for a single doublon on an empty chain, a two-electron problem. There the T-matrix
+dynamics leaves the doublon frozen and then gives negative densities by t = 6 ħ/J.
+
+The reason is self-interaction. In the pair equation, each electron feels the Hartree field
+U n of the full density, including its own partner's. When the doublon is split, the partner
+has left but its Hartree field stays. Breaking the doublon therefore costs nothing instead of
+U, so the second-order doublon hopping J_eff = 2J²/U, which drives strong-coupling melting,
+comes out wrong.
+
+**Self-interaction-free pair ladder (this work, `mode="sic"` in `lightmat/fluct_hubbard.py`).**
+- **Pair equation.** Each pair amplitude ψ_r (a column of the factor y, Y = y y⁺) evolves in
+  the field of all electrons *except its own two*. Its one-body matrices o_r = Tr ψ_r ψ_r⁺/|ψ_r|²
+  are subtracted from ρ in both the Hartree and the Pauli-blocking term:
+  i ∂ψ_r/∂t = [h⊗1 + 1⊗h + U diag(n↓ − o↓_r)⊗1 + 1⊗U diag(n↑ − o↑_r)] ψ_r + U (1 − r↑_r⊗1 − 1⊗r↓_r) P ψ_r,
+  with r_r = ρ − o_r.
+- **Exact for two particles.** For one up and one down electron this is the exact two-body
+  Schrödinger equation. The single-doublon dynamics is reproduced to 10⁻⁶ (test
+  `test_sic_pair_ladder_exact_for_one_doublon`).
+- **Sum rules and energy.** The one-body matrices obey the exact first BBGKY equation with
+  G = Y − B. After every step a positive rescaling of the amplitudes, which keeps Y positive
+  semidefinite, restores three exact constraints:
+  - the pair sum rules Σ_b Y_(ab),(ab) = N↓ n↑_a and Σ_a Y_(ab),(ab) = N↑ n↓_b;
+  - energy conservation, U Σ_a Y_(aa),(aa) = E₀ − Tr h ρ.
+- **Cost.** The same as the T-matrix ladder, O(N↑N↓ L³) per step.
+
+**Results over U/J = 1–20** (`figures/hubbard_cdw_sweep.png`, `data/cdw_sweep_metrics.txt`):
+
+| U/J | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12 | 15 | 20 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| melting time t(I < 0.5), exact | 0.6 | 0.6 | 0.6 | 0.9 | 1.2 | 1.5 | 2.0 | 2.6 | 3.1 | 4.0 | 5.4 |
+| T-matrix ladder | 0.6 | 0.6 | 0.7 | 1.2 | 2.4 | 3.1 | 6.4 | 6.1 | 10.0 | 8.8 | 10.8 |
+| self-interaction-free ladder | 0.6 | 0.6 | 0.6 | 0.9 | 1.2 | 1.4 | 1.8 | 2.8 | 3.5 | 3.9 | 4.1 |
+| first zero crossing of I, exact | 0.7 | 0.8 | 1.0 | 1.4 | 1.8 | 2.1 | 2.9 | 3.6 | 4.3 | 5.4 | 7.1 |
+| T-matrix ladder | 0.7 | 0.8 | 1.3 | 1.5 | 11.9 | 7.3 | 20.6 | 22.4 | 26.7 | 27.6 | none |
+| self-interaction-free ladder | 0.7 | 0.8 | 1.1 | 1.4 | 1.5 | 2.6 | 2.4 | 5.2 | 4.8 | 16.7 | 4.5 |
+| ⟨Σd_corr⟩ over t = 20–50, exact | 0.57 | 0.88 | 1.22 | 1.53 | 1.78 | 1.97 | 2.22 | 2.36 | 2.45 | 2.53 | 2.61 |
+| T-matrix ladder | 0.76 | 1.06 | 1.49 | 1.82 | 2.08 | 2.23 | 2.41 | 2.50 | 2.51 | 2.55 | 2.29 |
+| self-interaction-free ladder | 0.29 | 0.39 | 1.08 | 1.51 | 1.81 | 2.10 | 2.57 | 3.07 | 2.63 | 2.62 | 2.85 |
+
+**Melting.** Over all 16 values of U/J (0 to 20):
+- The melting time agrees with the exact one to 0.29 ħ/J on average. The T-matrix ladder
+  misses by 2.98 ħ/J.
+- The mean error of the first zero crossing falls from 10.4 to 1.8 ħ/J.
+- At U/J = 15 the imbalance follows the exact curve up to t ≈ 4 ħ/J (Fig. above).
+- Σd_corr rises to its exact plateau of 2.5 within ≈ 8 ħ/J, against ≈ 12 ħ/J for the T-matrix
+  ladder, which first turns negative.
+
+**Remaining differences.**
+- After melting, the exact imbalance overshoots to −0.36 at U/J = 15 (coherent doublon
+  oscillation). The new closure instead hovers at 0.1–0.2. Its zero crossing is therefore late
+  at U/J = 15, and sensitive to the time step after t ≈ 6 ħ/J.
+- The long-time Σd_corr has a 17 % mean error, against 12 % for the T-matrix ladder. It is low
+  at U/J ≤ 2 and high at U/J = 10.
+- We therefore recommend the T-matrix ladder for U/J ≲ 3 and the self-interaction-free ladder
+  for strong coupling.
 
 ![sweep](figures/hubbard_cdw_sweep.png)
 
@@ -566,7 +621,10 @@ All timings are for one laptop CPU core, Python/NumPy.
 ## 6. Limitations (what is not solved)
 
 1. **Hubbard.**
-   - The T-matrix closure melts the CDW too slowly for U/J ≳ 5.
+   - The T-matrix closure melts the CDW too slowly for U/J ≳ 5. The self-interaction-free
+     closure fixes the melting time (mean error 0.29 ħ/J up to U/J = 20) but misses the
+     negative overshoot of the imbalance at U/J = 15, and its long-time Σd_corr is less
+     accurate at weak coupling (17 % mean error, against 12 %).
    - The ladder ground state is quantitative only for U/J ≲ 2.
    - The optical gap is correct at U/J = 3 only when correlation dynamics are included, and
      overestimated at strong coupling.

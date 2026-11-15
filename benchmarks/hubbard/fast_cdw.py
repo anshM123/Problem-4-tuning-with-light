@@ -1,6 +1,6 @@
 """Fast-method CDW melting on the 11-site chain (same protocol as ed_cdw.py).
 Usage: python fast_cdw.py U [mode] [dt]
-mode: factorized (default) | g1g2 | hf
+mode: factorized (default, T-matrix pp ladder) | sic (self-interaction-free pp ladder) | g1g2 | hf
 """
 import sys, os, time
 import numpy as np

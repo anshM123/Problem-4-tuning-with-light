@@ -47,6 +47,11 @@ class PPLadder:
         self.Nd = float(np.real(np.trace(rho_dn)))
         self.ru = rho_up.astype(complex)
         self.rd = rho_dn.astype(complex)
+        self.sic = (mode == "sic")
+        if self.sic:
+            mode = self.mode = "factorized"
+            self.gw = (0.0, 1.0)
+            self.sum_rules = True          # exact pair sum rules + energy conservation
         if mode == "factorized":
             I = np.eye(L)
             fu, fd = self._factor(I - self.ru, rank_tol), self._factor(I - self.rd, rank_tol)
@@ -124,6 +129,8 @@ class PPLadder:
         hu = h + U * np.diag(nd)
         hd = h + U * np.diag(nu)
         if self.mode == "factorized":
+            if getattr(self, "sic", False):
+                return self._rhs_sic(ru, rd, x, y, h)
             return self._rhs_fact(ru, rd, x, y, hu, hd)
         if self.mode == "factorized_old":
             A, B = self._AB(ru, rd)
@@ -171,6 +178,8 @@ class PPLadder:
         for key in ("iiji", "ijjj", "iiij", "jijj", "diag"):
             out[key] = 0.0
         for s, (Mu, Md), wgt in ((x, (ubar, dbar), self.gw[0]), (y, (ru, rd), self.gw[1])):
+            if s is None or wgt == 0:
+                continue
             s4 = s.reshape(L, L, -1)
             sd = s4[idx, idx]          # (L, r): pair (p,p)
             cs4 = s4.conj(); csd = sd.conj()
@@ -190,6 +199,48 @@ class PPLadder:
         sd = s.reshape(L, L, -1)[idx, idx]
         out = np.einsum("ap,bp,pr->abr", ubar, dbar, sd) - np.einsum("ap,bp,pr->abr", ru, rd, sd)
         return out.reshape(L * L, -1)
+
+    def _rhs_sic(self, ru, rd, x, y, h):
+        """Self-interaction-free pair ladder (mode 'sic').
+
+        Each column psi_r of y is a pair amplitude (up index a, down index b).  The third
+        particles seen by a pair are all electrons *except the pair's own two*.  With the
+        pair's own one-body matrices o^up_r = Tr_dn psi psi^+ / |psi|^2 (o^dn_r alike) and
+        r_r = rho - o_r,
+          i dpsi/dt = [h (x) 1 + 1 (x) h + U diag(n_dn - o^dn_r) (x) 1 + 1 (x) U diag(n_up - o^up_r)] psi
+                      + U (1 - r^up_r (x) 1 - 1 (x) r^dn_r) P psi.
+        For one up and one down electron the 'other' densities vanish and this is the exact
+        two-body Schroedinger equation; the T-matrix closure is not exact there, because each
+        electron feels the Hartree field of its own partner (which makes breaking a doublon
+        resonant instead of costing U).  The correlation is G = Y - B, and the one-body
+        matrices follow the exact first BBGKY equation.  After every step the exact sum rules
+        and energy conservation are restored (see _sum_rules)."""
+        U = self._Ucur
+        L = self.L
+        r = y.shape[1]
+        Y4 = y.reshape(L, L, r)
+        nrm = np.maximum(np.real(np.einsum("abr,abr->r", Y4, Y4.conj())), 1e-300)
+        ou = np.einsum("abr,cbr->acr", Y4, Y4.conj()) / nrm
+        od = np.einsum("abr,adr->bdr", Y4, Y4.conj()) / nrm
+        nu = np.real(np.diag(ru)); nd = np.real(np.diag(rd))
+        vu = nd[:, None] - np.real(np.einsum("aar->ar", od))      # others' dn density seen by up
+        vd = nu[:, None] - np.real(np.einsum("bbr->br", ou))      # others' up density seen by dn
+        idx = np.arange(L)
+        s = Y4[idx, idx]                                           # (L, r) on-site amplitudes
+        ruo = ru[:, :, None] - ou; rdo = rd[:, :, None] - od
+        Pterm = np.zeros_like(Y4)
+        Pterm[idx, idx] += s
+        Pterm -= ruo * s[None, :, :] + s[:, None, :] * np.transpose(rdo, (1, 0, 2))
+        dY4 = (np.einsum("ac,cbr->abr", h, Y4) + np.einsum("bd,adr->abr", h, Y4)
+               + U * (vu[:, None, :] + vd[None, :, :]) * Y4 + U * Pterm)
+        dy = -1j * dY4.reshape(L * L, r)
+        hu = h + U * np.diag(nd); hd = h + U * np.diag(nu)
+        g = self._gsel(None, y, ru, rd)
+        Iu = U * (g["iiji"] - g["ijjj"])
+        Id = U * (g["iiij"] - g["jijj"])
+        dru = -1j * (hu @ ru - ru @ hu + Iu)
+        drd = -1j * (hd @ rd - rd @ hd + Id)
+        return [dru, drd, 0.0 * x, dy]
 
     def _rhs_fact(self, ru, rd, x, y, hu, hd):
         U = self._Ucur
@@ -212,6 +263,35 @@ class PPLadder:
             dx = dx + self._h2(x, Ku_h, Kd_h)
             dy = dy + self._h2(y, Ku_p, Kd_p)
         return [dru, drd, dx, dy]
+
+    def _sum_rules(self, iters=20):
+        """Exact constraints of the up-down pair matrix restored after each step by a
+        positive rescaling of the pair amplitudes (keeps Y = y y^+ positive semidefinite):
+          sum_b Y_(ab),(ab) = N_dn n^up_a,   sum_a Y_(ab),(ab) = N_up n^dn_b   (pair sum rules),
+          U sum_a Y_(aa),(aa) = E_0 - Tr h (rho^up + rho^dn)                  (energy conservation).
+        The first two use y -> (D_up (x) D_dn) y with positive diagonal D (Sinkhorn scaling);
+        the third rescales the on-site amplitudes; the three are iterated jointly."""
+        L = self.L
+        Y4 = self.y.reshape(L, L, -1)
+        nu = np.clip(np.real(np.diag(self.ru)), 1e-12, None)
+        nd = np.clip(np.real(np.diag(self.rd)), 1e-12, None)
+        du = np.ones(L); dd = np.ones(L); lam = 1.0
+        diag = np.real(np.einsum("abr,abr->ab", Y4, Y4.conj()))
+        h = self.hfun(self._tcur)
+        Ekin = float(np.real(np.trace(h @ (self.ru + self.rd))))
+        Dtarget = max((self.E0 - Ekin) / self._Ucur, 0.0) if self._Ucur > 0 else None
+        idx = np.arange(L)
+        for _ in range(iters):
+            M = diag * (du[:, None] ** 2) * (dd[None, :] ** 2); M[idx, idx] *= lam ** 2
+            du = du * np.sqrt(self.Nd * nu / np.maximum(M.sum(1), 1e-300))
+            M = diag * (du[:, None] ** 2) * (dd[None, :] ** 2); M[idx, idx] *= lam ** 2
+            dd = dd * np.sqrt(self.Nu * nd / np.maximum(M.sum(0), 1e-300))
+            if Dtarget is not None:
+                M = diag * (du[:, None] ** 2) * (dd[None, :] ** 2)
+                lam = np.sqrt(Dtarget / max(np.trace(M), 1e-300))
+        Y4 = Y4 * du[:, None, None] * dd[None, :, None]
+        Y4[idx, idx] *= lam
+        self.y = Y4.reshape(L * L, -1)
 
     def _lyap(self, M, C):
         """Hermitian K with K M + M K = C (M Hermitian PSD), regularized."""
@@ -246,6 +326,11 @@ class PPLadder:
         self.G = 0.5 * ((out[0] - A) + (out[1] - B))
 
     def step(self, t, dt):
+        self._tcur = t + dt
+        if getattr(self, "sum_rules", False) and not hasattr(self, "E0"):
+            U0 = self.U if self.Ufun is None else self.Ufun(t)
+            nu0, nd0 = np.real(np.diag(self.ru)), np.real(np.diag(self.rd))
+            self.E0 = float(np.real(np.trace(self.hfun(t) @ (self.ru + self.rd)))) + U0 * float(np.sum(nu0 * nd0 + self.dcorr()))
         s0 = self.state()
         k1 = self.rhs(t, s0)
         k2 = self.rhs(t + dt / 2, [a + dt / 2 * b for a, b in zip(s0, k1)])
@@ -255,6 +340,8 @@ class PPLadder:
                         for a, b, c, d, e in zip(s0, k1, k2, k3, k4)])
         if self.mode == "g1g2" and getattr(self, "project", False):
             self.purify()
+        if getattr(self, "sum_rules", False):
+            self._sum_rules()
 
     # -- observables -----------------------------------------------------
     def pair_corr(self):
@@ -264,6 +351,8 @@ class PPLadder:
         ubar = np.eye(L) - ru; dbar = np.eye(L) - rd
         out = 0.0
         for smp, (Mu, Md), wgt in ((self.x, (ubar, dbar), self.gw[0]), (self.y, (ru, rd), self.gw[1])):
+            if wgt == 0:
+                continue
             s4 = smp.reshape(L, L, -1)
             out = out + wgt * (np.real(np.einsum("ijr,ijr->ij", s4, s4.conj())) - np.real(np.outer(np.diag(Mu), np.diag(Md))))
         return out
